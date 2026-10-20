@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+  body { margin: 0; padding: 14px; background: #0f172a; color: #f8fafc; font-size: 13px; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; }
+  input, select { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 7px 9px; border-radius: 6px; width: 100%; font-size: 12px; }
+  button { cursor: pointer; border: none; border-radius: 7px; padding: 8px 12px; font-weight: bold; font-size: 12px; transition: 0.15s; }
+  .btn-green { background: #10b981; color: #052e16; }
+  .btn-blue { background: #3b82f6; color: #fff; }
+  .btn-amber { background: #f59e0b; color: #0f172a; }
+  .btn-red { background: #ef4444; color: #fff; }
+  .btn-purple { background: #6366f1; color: #fff; }
+  .tab { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
+  .tab.active { background: #2563eb; color: #fff; border-color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+  th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #334155; }
+  th { color: #94a3b8; font-size: 10px; text-transform: uppercase; background: #0f172a; }
+  .badge { padding: 3px 7px; border-radius: 10px; font-size: 10px; font-weight: bold; display: inline-block; }
+  .hidden { display: none; }
+  .switch-box { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 8px; cursor: pointer; }
+  .switch-box input { width: 16px; height: 16px; }
+  @media print {
+    body { background: #fff; color: #000; }
+    .no-print { display: none !important; }
+    .card, .stat-card { background: #fff; border: 1px solid #ccc; color: #000; }
+    th, td { color: #000; border-bottom: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGO Y BARRA SUPERIOR DE TASAS -->
+<div class="card row no-print" style="border-color: #EA0A6A;">
+  <div class="row" style="gap: 12px;">
+    <!-- Logotipo Oficial PIKI Vectorial -->
+    <div style="display:flex; align-items:center; gap:8px; background:#0f172a; padding:6px 12px; border-radius:10px; border:1px solid #334155;">
+      <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="#EA0A6A" opacity="0.1"/>
+        <path d="M30 45 C20 30, 40 20, 50 35 C60 20, 80 30, 70 45 C80 60, 60 70, 50 55 C40 70, 20 60, 30 45 Z" fill="#00B8B5"/>
+        <path d="M45 35 C45 25, 55 25, 55 35 C55 50, 45 50, 45 35 Z" fill="#EA0A6A"/>
+        <circle cx="50" cy="40" r="6" fill="#fff"/>
+      </svg>
+      <div>
+        <h2 style="margin:0; color:#EA0A6A; font-size:18px; font-weight:900; letter-spacing:0.5px;">Piki</h2>
+        <span style="color:#00B8B5; font-size:9px; font-weight:700; text-transform:uppercase;">Hogar · Cuidado · Eléctricos</span>
+      </div>
+    </div>
+    <div>
+      <h2 style="margin:0; color:#34d399; font-size:15px;">Sistema Administrativo Bimonetario</h2>
+      <span style="color:#94a3b8; font-size:11px;">Inventario • Facturación IGTF • Alertas Crédito • Flujo de Caja</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div style="background:#0f172a; padding:5px 10px; border-radius:8px; border:1px solid #334155;">
+      <div style="font-size:10px; color:#94a3b8;">TASA BCV (Bs/\$)</div>
+      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#34d399; padding:2px;" oninput="recalcularTodo()">
+    </div>
+    <div style="background:#1e1b4b; padding:5px 10px; border-radius:8px; border:1px solid #6366f1;">
+      <div style="font-size:10px; color:#a5b4fc;">MI TASA USD (Bs/\$)</div>
+      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#a5b4fc; padding:2px;" oninput="recalcularTodo()">
+    </div>
+    <button id="btnModoTasa" class="btn-green" onclick="cambiarModoTasa()">Usando: Tasa BCV (45.00 Bs)</button>
+  </div>
+</div>
+
+<!-- MENÚ DE PESTAÑAS -->
+<div class="row no-print" style="justify-content:flex-start; margin-bottom:14px;">
+  <button class="tab active" id="tab-INVENTARIO" onclick="verPestana('INVENTARIO')">📦 1. Inventario y Stock</button>
+  <button class="tab" id="tab-FACTURACION" onclick="verPestana('FACTURACION')">🧾 2. Facturación y Caja</button>
+  <button class="tab" id="tab-COBRANZAS" onclick="verPestana('COBRANZAS')">🔔 3. Alertas de Cobranza</button>
+  <button class="tab" id="tab-COMPRAS" onclick="verPestana('COMPRAS')">🛒 4. Compras y Pagos</button>
+  <button class="tab" id="tab-MASTER" onclick="verPestana('MASTER')">⚙️ 5. Master (Configuración)</button>
+  <button class="tab" id="tab-INGRESOS" onclick="verPestana('INGRESOS')">📈 6. Reporte Ingresos y Egresos</button>
+</div>
+
+<!-- =========================================================================
+     PESTAÑA 1: INVENTARIO COMPLETO + REPORTE DE VALORIZACIÓN
+     ========================================================================= -->
+<div id="sec-INVENTARIO">
+  <div class="card no-print" style="border-color:#EA0A6A;">
+    <h3 style="margin-top:0; color:#EA0A6A;">➕ Carga Manual de Producto Piki</h3>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap:8px; margin-bottom:10px;">
+      <div>
+        <label style="font-size:10px; color:#94a3b8;">Código / SKU</label>
+        <input type="text" id="invSku" value="PIKI-007">
+      </div>
+      <div style="grid-column: span 2;">
+        <label style="font-size:10px; color:#94a3b8;">Descripción del Producto *</label>
+        <input type="text" id="invNombre" placeholder="Ej: Plancha a Vapor / Protector Voltaje...">
+      </div>
+      <div>
+        <label style="font-size:10px; color:#94a3b8;">Categoría</label>
+        <select id="invCategoria">
+          <option value="Hogar">Hogar</option>
+          <option value="Cuidado Personal">Cuidado Personal</option>
+          <option value="Accesorios Eléctricos">Accesorios Eléctricos</option>
+          <option value="Iluminación">Iluminación</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:10px; color:#94a3b8;">Almacén</label>
+        <select id="invAlmacen">
+          <option value="Tienda Principal Piki">Tienda Principal Piki</option>
+          <option value="Depósito Central">Depósito Central</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:10px; color:#94a3b8;">Stock Actual</label>
+        <input type="number" id="invStock" value="15">
+      </div>
+      <div>
+        <label style="font-size:10px; color:#fbbf24; font-weight:bold;">Stock Mínimo</label>
+        <input type="number" id="invMinimo" value="5">
+      </div>
+      <div>
+        <label style="font-size:10px; color:#94a3b8;">Costo Unit. (\$)</label>
+        <input type="number" id="invCosto" value="12.00" step="0.01">
+      </div>
+      <div>
+        <label style="font-size:10px; color:#EA0A6A; font-weight:bold;">Precio Venta (\$)</label>
+        <input type="number" id="invPrecio" value="20.00" step="0.01">
+      </div>
+      <div>
+        <label style="font-size:10px; color:#94a3b8;">IVA SENIAT</label>
+        <select id="invIva">
+          <option value="1">IVA General (16%)</option>
+          <option value="0">Exento (0%)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-green" onclick="agregarAlInventario()" style="background:#EA0A6A; color:#fff;">+ GUARDAR EN CATÁLOGO PIKI</button>
+  </div>
+
+  <div class="card">
+    <div class="row no-print" style="margin-bottom:10px;">
+      <div class="row" style="gap:6px;">
+        <strong style="color:#00B8B5; margin-right:6px;">📊 Filtrar Stock:</strong>
+        <button class="btn-blue" id="f-TODOS" onclick="setFiltroStock('TODOS')">Todos</button>
+        <button class="tab" id="f-BAJO" onclick="setFiltroStock('BAJO')">🟠 Bajo Stock</button>
+        <button class="tab" id="f-AGOTADO" onclick="setFiltroStock('AGOTADO')">🔴 Agotados</button>
+      </div>
+      <div class="row" style="gap:8px;">
+        <input type="text" id="buscadorInv" placeholder="🔍 Buscar producto..." style="width:190px;" oninput="recalcularTodo()">
+        <button class="btn-purple" onclick="window.print()">🖨️ Imprimir Reporte</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Código / Categoría</th>
+            <th>Producto Piki</th>
+            <th>Stock (Mín)</th>
+            <th>Costo (\$)</th>
+            <th>Precio (\$)</th>
+            <th>Valor Stock (\$)</th>
+            <th class="no-print">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaInventario"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     PESTAÑA 2: FACTURACIÓN Y CAJA
+     ========================================================================= -->
+<div id="sec-FACTURACION" class="hidden">
+  <div class="grid2">
+    <div class="card">
+      <div class="row" style="margin-bottom:10px;">
+        <h3 style="margin:0; color:#EA0A6A;">Facturación Piki</h3>
+        <div>
+          <button id="btnContado" class="btn-green" onclick="setCondicionVenta('CONTADO')">Contado</button>
+          <button id="btnCredito" class="tab" onclick="setCondicionVenta('CREDITO')">A Crédito</button>
+        </div>
+      </div>
+      <div class="grid2" style="margin-bottom:10px;">
+        <input type="text" id="cliRif" value="J-40123456-7" placeholder="RIF Cliente">
+        <input type="text" id="cliNombre" value="CLIENTE GENERAL Piki" placeholder="Nombre Cliente">
+      </div>
+      <table>
+        <thead>
+          <tr><th>Producto</th><th>Cant.</th><th>Subtotal (\$)</th><th>Subtotal (Bs)</th></tr>
+        </thead>
+        <tbody id="tablaCarrito"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px;">
+        <h3 style="margin:0; color:#00B8B5;">Caja Mixta & IGTF</h3>
+        <label class="switch-box" style="margin:0; border-color:#EA0A6A;">
+          <span style="color:#EA0A6A; font-weight:bold; margin-right:8px;">¿Aplicar 3% IGTF?</span>
+          <input type="checkbox" id="chkIgtf" checked onchange="recalcularTodo()">
+        </label>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+        <div>
+          <label style="font-size:11px; color:#94a3b8;">Pago Móvil (Bs)</label>
+          <input type="number" id="pagoBs" value="4500" oninput="recalcularTodo()">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#94a3b8;">Efectivo (\$)</label>
+          <input type="number" id="pagoEfecUsd" value="300" oninput="recalcularTodo()">
+        </div>
+        <div>
+          <label style="font-size:11px; color:#94a3b8;">Zelle (\$)</label>
+          <input type="number" id="pagoZelleUsd" value="200" oninput="recalcularTodo()">
+        </div>
+      </div>
+
+      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px;" id="resumenFactura"></div>
+      <div id="cajaSaldoFactura" style="margin-bottom:10px;"></div>
+      <button class="btn-green" style="width:100%; padding:11px; background:#EA0A6A; color:#fff;" onclick="emitirFactura()">EMITIR FACTURA Y REGISTRAR INGRESO</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     PESTAÑA 3: ALERTAS DE COBRANZA
+     ========================================================================= -->
+<div id="sec-COBRANZAS" class="hidden">
+  <div class="card">
+    <h3 style="margin-top:0; color:#EA0A6A;">🚨 Cuentas por Cobrar y Abonos a Crédito</h3>
+    <table>
+      <thead>
+        <tr><th>Estado</th><th>Cliente</th><th>Factura</th><th>Deuda (\$)</th><th>Cobrar Hoy (Bs)</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="tablaCobranzas"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- =========================================================================
+     PESTAÑA 4: COMPRAS Y PAGOS
+     ========================================================================= -->
+<div id="sec-COMPRAS" class="hidden">
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0; color:#00B8B5;">Registrar Compra y Retenciones SENIAT</h3>
+      <div class="grid2" style="margin-bottom:10px;">
+        <input type="text" id="compProv" value="PROVEEDOR INDUSTRIAL, C.A.">
+        <input type="number" id="compMonto" value="500" oninput="recalcularTodo()" placeholder="Monto Base (\$)">
+      </div>
+      <label class="switch-box"><span style="color:#00B8B5; font-weight:bold;">1. ¿Aplica IVA (16%)?</span><input type="checkbox" id="chkCompIva" checked onchange="recalcularTodo()"></label>
+      <label class="switch-box"><span style="color:#818cf8; font-weight:bold;">2. ¿Retener IVA (75%)?</span><input type="checkbox" id="chkCompRetIva" checked onchange="recalcularTodo()"></label>
+      <label class="switch-box"><span style="color:#fbbf24; font-weight:bold;">3. ¿Retener ISLR (2%)?</span><input type="checkbox" id="chkCompRetIslr" onchange="recalcularTodo()"></label>
+      <div id="resumenCompra" style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px;"></div>
+      <button class="btn-blue" style="width:100%; padding:10px;" onclick="guardarCompra()">Guardar Compra (Registrar Egreso)</button>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0; color:#fbbf24;">Cuentas por Pagar a Proveedores</h3>
+      <div id="listaComprasPagar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     PESTAÑA 5: MASTER (CONFIGURACIÓN)
+     ========================================================================= -->
+<div id="sec-MASTER" class="hidden">
+  <div class="card">
+    <h3 style="margin-top:0; color:#EA0A6A;">⚙️ Configuración Maestra PIKI</h3>
+    <p style="color:#94a3b8; font-size:12px;">Personaliza las categorías de tu catálogo y almacenes oficiales.</p>
+    <div class="grid2">
+      <div>
+        <label style="font-size:11px; color:#94a3b8;">Categorías Oficiales</label>
+        <div style="background:#0f172a; padding:10px; border-radius:8px; margin-top:5px;" id="listaMasterCat">
+          <div>• Hogar</div><div>• Cuidado Personal</div><div>• Accesorios Eléctricos</div><div>• Iluminación</div>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px; color:#94a3b8;">Almacenes / Tiendas</label>
+        <div style="background:#0f172a; padding:10px; border-radius:8px; margin-top:5px;" id="listaMasterAlm">
+          <div>• Tienda Principal Piki</div><div>• Depósito Central</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     PESTAÑA 6: REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA)
+     ========================================================================= -->
+<div id="sec-INGRESOS" class="hidden">
+  <!-- TARJETAS RESUMEN FLUJO DE CAJA -->
+  <div class="grid4">
+    <div class="stat-card" style="border-left:4px solid #10b981;">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">🟢 Total Ingresos (Entradas)</div>
+      <div id="lblTotalIngresos" style="font-size:20px; font-weight:800; color:#34d399; margin-top:4px;">\$0.00 USD</div>
+      <div id="lblTotalIngresosBs" style="font-size:11px; color:#a7f3d0;">Bs. 0,00</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #ef4444;">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">🔴 Total Egresos (Salidas)</div>
+      <div id="lblTotalEgresos" style="font-size:20px; font-weight:800; color:#f87171; margin-top:4px;">\$0.00 USD</div>
+      <div id="lblTotalEgresosBs" style="font-size:11px; color:#fca5a5;">Bs. 0,00</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #3b82f6;">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">⚖️ Flujo Neto de Caja</div>
+      <div id="lblFlujoNeto" style="font-size:20px; font-weight:800; color:#60a5fa; margin-top:4px;">\$0.00 USD</div>
+      <div style="font-size:11px; color:#94a3b8;">Ingresos menos Egresos</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #EA0A6A;">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">📊 Movimientos Registrados</div>
+      <div id="lblCantMovimientos" style="font-size:20px; font-weight:800; color:#EA0A6A; margin-top:4px;">0</div>
+      <div style="font-size:11px; color:#94a3b8;">Transacciones en caja</div>
+    </div>
+  </div>
+
+  <!-- TABLA DE MOVIMIENTOS FINANCIEROS -->
+  <div class="card">
+    <div class="row" style="margin-bottom:10px;">
+      <h3 style="margin:0; color:#00B8B5;">📋 Historial Detallado de Ingresos y Egresos en Caja</h3>
+      <button class="btn-purple" onclick="window.print()">🖨️ Imprimir Reporte Financiero</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha / Hora</th>
+            <th>Tipo Movimiento</th>
+            <th>Descripción / Concepto</th>
+            <th>Tercero (Cliente / Proveedor)</th>
+            <th style="text-align:right;">Monto USD (\$)</th>
+            <th style="text-align:right;">Monto Bs</th>
+          </tr>
+        </thead>
+        <tbody id="tablaIngresosEgresos"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  let usarManual = false;
+  let condicionVenta = "CONTADO";
+  let filtroStockActual = "TODOS";
+
+  let inventario = [
+    { id: 1, sku: "PIKI-001", nombre: "Plancha a Vapor Portátil Piki", categoria: "Hogar", almacen: "Tienda Principal Piki", stock: 12, minimo: 3, costoUsd: 15.00, precioUsd: 28.00, iva: true },
+    { id: 2, sku: "PIKI-002", nombre: "Secador de Cabello iónico Cuidado Pro", categoria: "Cuidado Personal", almacen: "Tienda Principal Piki", stock: 8, minimo: 2, costoUsd: 22.00, precioUsd: 45.00, iva: true },
+    { id: 3, sku: "PIKI-003", nombre: "Protector de Voltaje LED 110V", categoria: "Accesorios Eléctricos", almacen: "Depósito Central", stock: 20, minimo: 5, costoUsd: 8.00, precioUsd: 15.00, iva: true },
+    { id: 4, sku: "PIKI-004", nombre: "Bombillo LED Inteligente RGB", categoria: "Iluminación", almacen: "Tienda Principal Piki", stock: 0, minimo: 4, costoUsd: 4.00, precioUsd: 9.00, iva: true }
+  ];
+
+  let carrito = [
+    { id: 1, nombre: "Plancha a Vapor Portátil Piki", cantidad: 1, precioUsd: 28.00, iva: true }
+  ];
+
+  let cobranzas = [
+    { id: 101, cliente: "INVERSIONES ZULIA, C.A.", factura: "FAC-00104", vence: "VENCIDA (3d)", saldoUsd: 85.00, tel: "584141112233" }
+  ];
+
+  let comprasPagar = [
+    { id: 201, prov: "PROVEEDOR INDUSTRIAL, C.A.", info: "CON IVA • Retenido: -\$12.00", netoUsd: 468.00 }
+  ];
+
+  let flujoCaja = [
+    { fecha: "20/10/2026 10:30 AM", tipo: "INGRESO", concepto: "Venta Contado Factura Inicial", tercero: "Cliente General Piki", usd: 56.00, bs: 2520.00 },
+    { fecha: "20/10/2026 11:15 AM", tipo: "EGRESO", concepto: "Compra Mercancía a Proveedor", tercero: "Proveedor Industrial, C.A.", usd: 468.00, bs: 21060.00 }
+  ];
+
+  function obtenerTasaActiva() {
+    const bcv = parseFloat(document.getElementById("tasaBcv").value) || 0;
+    const man = parseFloat(document.getElementById("tasaManual").value) || 0;
+    return usarManual ? man : bcv;
+  }
+
+  function cambiarModoTasa() {
+    usarManual = !usarManual;
+    recalcularTodo();
+  }
+
+  function verPestana(nombre) {
+    ["INVENTARIO", "FACTURACION", "COBRANZAS", "COMPRAS", "MASTER", "INGRESOS"].forEach(p => {
+      document.getElementById("sec-" + p).classList.toggle("hidden", p !== nombre);
+      document.getElementById("tab-" + p).classList.toggle("active", p === nombre);
+    });
+    recalcularTodo();
+  }
+
+  function setFiltroStock(f) {
+    filtroStockActual = f;
+    ["TODOS", "BAJO", "AGOTADO"].forEach(k => {
+      document.getElementById("f-" + k).className = (k === f) ? "btn-blue" : "tab";
+    });
+    recalcularTodo();
+  }
+
+  function setCondicionVenta(cond) {
+    condicionVenta = cond;
+    document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-green" : "tab";
+    document.getElementById("btnCredito").className = cond === "CREDITO" ? "btn-amber" : "tab";
+    recalcularTodo();
+  }
+
+  function agregarAlInventario() {
+    const sku = document.getElementById("invSku").value || "PIKI-999";
+    const nombre = document.getElementById("invNombre").value;
+    const categoria = document.getElementById("invCategoria").value;
+    const almacen = document.getElementById("invAlmacen").value;
+    const stock = parseFloat(document.getElementById("invStock").value) || 0;
+    const minimo = parseFloat(document.getElementById("invMinimo").value) || 0;
+    const costoUsd = parseFloat(document.getElementById("invCosto").value) || 0;
+    const precioUsd = parseFloat(document.getElementById("invPrecio").value) || 0;
+    const iva = document.getElementById("invIva").value === "1";
+
+    if (!nombre.trim()) { alert("Escribe el nombre del producto."); return; }
+
+    inventario.unshift({ id: Date.now(), sku, nombre, categoria, almacen, stock, minimo, costoUsd, precioUsd, iva });
+    document.getElementById("invNombre").value = "";
+    recalcularTodo();
+  }
+
+  function cambiarStock(id, delta) {
+    inventario = inventario.map(p => p.id === id ? { ...p, stock: Math.max(0, p.stock + delta) } : p);
+    recalcularTodo();
+  }
+
+  function mandarAFactura(id) {
+    const prod = inventario.find(p => p.id === id);
+    if (!prod) return;
+    const existe = carrito.find(c => c.id === id);
+    if (existe) existe.cantidad += 1;
+    else carrito.push({ id: prod.id, nombre: prod.nombre, cantidad: 1, precioUsd: prod.precioUsd, iva: prod.iva });
+    verPestana("FACTURACION");
+  }
+
+  function recalcularTodo() {
+    const bcv = parseFloat(document.getElementById("tasaBcv").value) || 0;
+    const man = parseFloat(document.getElementById("tasaManual").value) || 0;
+    const tasa = obtenerTasaActiva();
+
+    const btnTasa = document.getElementById("btnModoTasa");
+    btnTasa.textContent = usarManual ? `Usando: Mi Tasa (${man.toFixed(2)} Bs)` : `Usando: Tasa BCV (${bcv.toFixed(2)} Bs)`;
+    btnTasa.className = usarManual ? "btn-blue" : "btn-green";
+
+    const textoBuscar = (document.getElementById("buscadorInv").value || "").toLowerCase();
+    const invFiltrado = inventario.filter(p => {
+      const match = p.nombre.toLowerCase().includes(textoBuscar) || p.sku.toLowerCase().includes(textoBuscar) || p.categoria.toLowerCase().includes(textoBuscar);
+      if (!match) return false;
+      if (filtroStockActual === "AGOTADO") return p.stock <= 0;
+      if (filtroStockActual === "BAJO") return p.stock > 0 && p.stock <= p.minimo;
+      return true;
+    });
+
+    document.getElementById("tablaInventario").innerHTML = invFiltrado.map(p => {
+      let badge = `<span class="badge" style="background:#064e3b; color:#34d399;">Óptimo</span>`;
+      if (p.stock <= 0) badge = `<span class="badge" style="background:#7f1d1d; color:#fecaca;">Agotado</span>`;
+      else if (p.stock <= p.minimo) badge = `<span class="badge" style="background:#78350f; color:#fde68a;">Bajo Stock</span>`;
+
+      return `
+        <tr>
+          <td>${badge}</td>
+          <td><strong>${p.sku}</strong><br><span style="font-size:10px; color:#94a3b8;">${p.categoria}</span></td>
+          <td><strong>${p.nombre}</strong><br><span style="font-size:10px; color:#EA0A6A;">📍 ${p.almacen}</span></td>
+          <td>
+            <button class="tab no-print" onclick="cambiarStock(${p.id}, -1)">-</button>
+            <strong style="margin:0 6px;">${p.stock}</strong>
+            <button class="tab no-print" onclick="cambiarStock(${p.id}, 1)">+</button>
+          </td>
+          <td style="color:#94a3b8;">$${p.costoUsd.toFixed(2)}</td>
+          <td style="color:#EA0A6A; font-weight:bold;">$${p.precioUsd.toFixed(2)}</td>
+          <td style="font-weight:bold; color:#fff;">$${(p.stock * p.precioUsd).toFixed(2)}</td>
+          <td class="no-print"><button class="btn-blue" onclick="mandarAFactura(${p.id})" style="background:#00B8B5; color:#0f172a;">+ Facturar</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    let baseUsd = 0, exentoUsd = 0;
+    document.getElementById("tablaCarrito").innerHTML = carrito.map((c, i) => {
+      const sub = c.cantidad * c.precioUsd;
+      if (c.iva) baseUsd += sub; else exentoUsd += sub;
+      return `<tr>
+        <td>${c.nombre}</td>
+        <td><input type="number" min="1" value="${c.cantidad}" style="width:55px;" oninput="carrito[${i}].cantidad=Math.max(1,Number(this.value)); recalcularTodo();"></td>
+        <td style="color:#EA0A6A; font-weight:bold;">$${sub.toFixed(2)}</td>
+        <td>Bs. ${(sub * tasa).toFixed(2)}</td>
+      </tr>`;
+    }).join("");
+
+    const ivaUsd = baseUsd * 0.16;
+    const subtotalUsd = baseUsd + exentoUsd + ivaUsd;
+    const divisasUsd = (parseFloat(document.getElementById("pagoEfecUsd").value) || 0) + (parseFloat(document.getElementById("pagoZelleUsd").value) || 0);
+    const bsEnUsd = tasa > 0 ? (parseFloat(document.getElementById("pagoBs").value) || 0) / tasa : 0;
+    const aplicaIgtf = document.getElementById("chkIgtf").checked;
+    const igtfUsd = aplicaIgtf ? Math.min(subtotalUsd, divisasUsd) * 0.03 : 0;
+    const totalCobrarUsd = subtotalUsd + igtfUsd;
+    const recibidoUsd = divisasUsd + bsEnUsd;
+    const difUsd = recibidoUsd - totalCobrarUsd;
+
+    document.getElementById("resumenFactura").innerHTML = `
+      <div class="row"><span>Subtotal + IVA ($${ivaUsd.toFixed(2)}):</span><strong>$${subtotalUsd.toFixed(2)}</strong></div>
+      <div class="row" style="color:#EA0A6A; margin-top:4px;"><span>IGTF (3%):</span><strong>${aplicaIgtf ? '+$' + igtfUsd.toFixed(2) : '$0.00'}</strong></div>
+      <div class="row" style="color:#00B8B5; font-size:15px; border-top:1px solid #334155; margin-top:6px; padding-top:6px;">
+        <strong>TOTAL:</strong><strong>$${totalCobrarUsd.toFixed(2)} / Bs. ${(totalCobrarUsd * tasa).toFixed(2)}</strong>
+      </div>
+    `;
+
+    const cajaSaldo = document.getElementById("cajaSaldoFactura");
+    if (difUsd < -0.01) {
+      const falta = Math.abs(difUsd);
+      cajaSaldo.innerHTML = `<div style="background:#450a0a; border:1px solid #ef4444; padding:10px; border-radius:8px;">Falta por pagar: <strong>$${falta.toFixed(2)} USD</strong></div>`;
+      window.ultimoFaltanteUsd = falta;
+    } else {
+      cajaSaldo.innerHTML = `<div style="background:#064e3b; border:1px solid #10b981; padding:10px; border-radius:8px;">Vuelto: <strong>$${Math.max(0, difUsd).toFixed(2)} USD</strong></div>`;
+      window.ultimoFaltanteUsd = 0;
+    }
+
+    document.getElementById("tablaCobranzas").innerHTML = cobranzas.map(c => `
+      <tr>
+        <td><span class="badge" style="background:#7f1d1d; color:#fff;">${c.vence}</span></td>
+        <td><strong>${c.cliente}</strong></td>
+        <td>${c.factura}</td>
+        <td style="color:#EA0A6A; font-weight:bold;">$${c.saldoUsd.toFixed(2)}</td>
+        <td><strong>Bs. ${(c.saldoUsd * tasa).toFixed(2)}</strong></td>
+        <td><button class="btn-green" onclick="cobranzas=cobranzas.filter(x=>x.id!==${c.id}); recalcularTodo();">Cobrada</button></td>
+      </tr>
+    `).join("");
+
+    const montoC = parseFloat(document.getElementById("compMonto").value) || 0;
+    const cIva = document.getElementById("chkCompIva").checked;
+    const cRetIva = document.getElementById("chkCompRetIva").checked;
+    const cRetIslr = document.getElementById("chkCompRetIslr").checked;
+    const ivaCompra = cIva ? montoC * 0.16 : 0;
+    const totalC = montoC + ivaCompra;
+    const netoC = totalC - ((cIva && cRetIva) ? ivaCompra * 0.75 : 0) - (cRetIslr ? montoC * 0.02 : 0);
+    window.ultimaCompra = { netoC, prov: document.getElementById("compProv").value };
+
+    document.getElementById("resumenCompra").innerHTML = `<div>Neto a Pagar Proveedor: <strong style="color:#00B8B5;">$${netoC.toFixed(2)} USD</strong></div>`;
+    document.getElementById("listaComprasPagar").innerHTML = comprasPagar.map(x => `<div style="background:#0f172a; padding:10px; border-radius:8px; margin-bottom:8px;"><strong>${x.prov}</strong><br><strong style="color:#00B8B5;">$${x.netoUsd.toFixed(2)}</strong></div>`).join("");
+
+    let sumIngresos = 0, sumEgresos = 0;
+    document.getElementById("tablaIngresosEgresos").innerHTML = flujoCaja.map(m => {
+      if (m.tipo === "INGRESO") sumIngresos += m.usd;
+      else sumEgresos += m.usd;
+      return `
+        <tr>
+          <td style="color:#94a3b8;">${m.fecha}</td>
+          <td><span class="badge" style="background:${m.tipo === 'INGRESO' ? '#064e3b' : '#7f1d1d'}; color:#fff;">${m.tipo}</span></td>
+          <td><strong>${m.concepto}</strong></td>
+          <td>${m.tercero}</td>
+          <td style="text-align:right; font-weight:bold; color:${m.tipo === 'INGRESO' ? '#34d399' : '#f87171'};">$${m.usd.toFixed(2)}</td>
+          <td style="text-align:right;">Bs. ${(m.bs).toFixed(2)}</td>
+        </tr>
+      `;
+    }).join("");
+
+    const netoCaja = sumIngresos - sumEgresos;
+    document.getElementById("lblTotalIngresos").textContent = `$${sumIngresos.toFixed(2)} USD`;
+    document.getElementById("lblTotalIngresosBs").textContent = `Bs. ${(sumIngresos * tasa).toFixed(2)}`;
+    document.getElementById("lblTotalEgresos").textContent = `$${sumEgresos.toFixed(2)} USD`;
+    document.getElementById("lblTotalEgresosBs").textContent = `Bs. ${(sumEgresos * tasa).toFixed(2)}`;
+    document.getElementById("lblFlujoNeto").textContent = `$${netoCaja.toFixed(2)} USD`;
+    document.getElementById("lblCantMovimientos").textContent = flujoCaja.length;
+  }
+
+  function emitirFactura() {
+    let totalVentaUsd = 0;
+    carrito.forEach(item => {
+      totalVentaUsd += (item.cantidad * item.precioUsd);
+      inventario = inventario.map(p => p.id === item.id ? { ...p, stock: Math.max(0, p.stock - item.cantidad) } : p);
+    });
+
+    const tasa = obtenerTasaActiva();
+    flujoCaja.unshift({
+      fecha: "Justo ahora",
+      tipo: "INGRESO",
+      concepto: "Venta de Contado / Factura",
+      tercero: document.getElementById("cliNombre").value,
+      usd: totalVentaUsd,
+      bs: totalVentaUsd * tasa
+    });
+
+    alert("¡Factura emitida con éxito! Se registró automáticamente el ingreso en el Reporte Financiero.");
+    verPestana("INGRESOS");
+  }
+
+  function guardarCompra() {
+    const u = window.ultimaCompra;
+    const tasa = obtenerTasaActiva();
+    comprasPagar.unshift({ id: Date.now(), prov: u.prov, info: "Compra registrada", netoUsd: u.netoC });
+    
+    flujoCaja.unshift({
+      fecha: "Justo ahora",
+      tipo: "EGRESO",
+      concepto: "Pago a Proveedor / Compra",
+      tercero: u.prov,
+      usd: u.netoC,
+      bs: u.netoC * tasa
+    });
+
+    recalcularTodo();
+    alert("¡Compra guardada! Se registró automáticamente el egreso en el Reporte Financiero.");
+    verPestana("INGRESOS");
+  }
+
+  recalcularTodo();
+</script>
+</body>
+</html>
