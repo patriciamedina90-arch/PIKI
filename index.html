@@ -54,7 +54,7 @@
     </div>
     <div>
       <h2 style="margin:0; color:#34d399; font-size:15px;">Sistema Administrativo Bimonetario</h2>
-      <span style="color:#94a3b8; font-size:11px;">Inventario • Facturación IGTF • Alertas Crédito • Flujo de Caja</span>
+      <span style="color:#94a3b8; font-size:11px;">Inventario • Facturación IGTF • Alertas Crédito • Master Total • Flujo de Caja</span>
     </div>
   </div>
 
@@ -77,12 +77,12 @@
   <button class="tab" id="tab-FACTURACION" onclick="verPestana('FACTURACION')">🧾 2. Facturación y Caja</button>
   <button class="tab" id="tab-COBRANZAS" onclick="verPestana('COBRANZAS')">🔔 3. Alertas de Cobranza</button>
   <button class="tab" id="tab-COMPRAS" onclick="verPestana('COMPRAS')">🛒 4. Compras y Pagos</button>
-  <button class="tab" id="tab-MASTER" onclick="verPestana('MASTER')">⚙️ 5. Master (Configuración)</button>
+  <button class="tab" id="tab-MASTER" onclick="verPestana('MASTER')">⚙️ 5. Master (Editar Todo)</button>
   <button class="tab" id="tab-INGRESOS" onclick="verPestana('INGRESOS')">📈 6. Reporte Ingresos y Egresos</button>
 </div>
 
 <!-- =========================================================================
-     PESTAÑA 1: INVENTARIO COMPLETO + REPORTE DE VALORIZACIÓN
+     PESTAÑA 1: INVENTARIO COMPLETO
      ========================================================================= -->
 <div id="sec-INVENTARIO">
   <div class="card no-print" style="border-color:#EA0A6A;">
@@ -98,19 +98,17 @@
       </div>
       <div>
         <label style="font-size:10px; color:#94a3b8;">Categoría</label>
-        <select id="invCategoria">
-          <option value="Hogar">Hogar</option>
-          <option value="Cuidado Personal">Cuidado Personal</option>
-          <option value="Accesorios Eléctricos">Accesorios Eléctricos</option>
-          <option value="Iluminación">Iluminación</option>
-        </select>
+        <div style="display:flex; gap:4px;">
+          <select id="invCategoria"></select>
+          <button class="btn-green" onclick="crearCategoriaRapida()" style="padding:4px 8px;">+</button>
+        </div>
       </div>
       <div>
         <label style="font-size:10px; color:#94a3b8;">Almacén</label>
-        <select id="invAlmacen">
-          <option value="Tienda Principal Piki">Tienda Principal Piki</option>
-          <option value="Depósito Central">Depósito Central</option>
-        </select>
+        <div style="display:flex; gap:4px;">
+          <select id="invAlmacen"></select>
+          <button class="btn-green" onclick="crearAlmacenRapido()" style="padding:4px 8px;">+</button>
+        </div>
       </div>
       <div>
         <label style="font-size:10px; color:#94a3b8;">Stock Actual</label>
@@ -268,24 +266,28 @@
 </div>
 
 <!-- =========================================================================
-     PESTAÑA 5: MASTER (CONFIGURACIÓN)
+     PESTAÑA 5: MASTER (CONFIGURACIÓN Y EDICIÓN TOTAL)
      ========================================================================= -->
 <div id="sec-MASTER" class="hidden">
   <div class="card">
-    <h3 style="margin-top:0; color:#EA0A6A;">⚙️ Configuración Maestra PIKI</h3>
-    <p style="color:#94a3b8; font-size:12px;">Personaliza las categorías de tu catálogo y almacenes oficiales.</p>
+    <h3 style="margin-top:0; color:#EA0A6A;">⚙️ Configuración Maestra PIKI (Editar Categorías y Almacenes)</h3>
+    <p style="color:#94a3b8; font-size:12px;">Aquí puedes agregar o renombrar categorías y almacenes en cascada para todo tu inventario.</p>
     <div class="grid2">
-      <div>
-        <label style="font-size:11px; color:#94a3b8;">Categorías Oficiales</label>
-        <div style="background:#0f172a; padding:10px; border-radius:8px; margin-top:5px;" id="listaMasterCat">
-          <div>• Hogar</div><div>• Cuidado Personal</div><div>• Accesorios Eléctricos</div><div>• Iluminación</div>
+      <div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
+        <h4 style="margin-top:0; color:#00B8B5;">Gestión de Categorías</h4>
+        <div style="display:flex; gap:6px; margin-bottom:10px;">
+          <input type="text" id="nuevoCatMaster" placeholder="Nueva Categoría...">
+          <button class="btn-green" onclick="agregarCategoriaMaster()">Agregar</button>
         </div>
+        <div id="listaMasterCat"></div>
       </div>
-      <div>
-        <label style="font-size:11px; color:#94a3b8;">Almacenes / Tiendas</label>
-        <div style="background:#0f172a; padding:10px; border-radius:8px; margin-top:5px;" id="listaMasterAlm">
-          <div>• Tienda Principal Piki</div><div>• Depósito Central</div>
+      <div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
+        <h4 style="margin-top:0; color:#EA0A6A;">Gestión de Almacenes</h4>
+        <div style="display:flex; gap:6px; margin-bottom:10px;">
+          <input type="text" id="nuevoAlmMaster" placeholder="Nuevo Almacén...">
+          <button class="btn-green" onclick="agregarAlmacenMaster()">Agregar</button>
         </div>
+        <div id="listaMasterAlm"></div>
       </div>
     </div>
   </div>
@@ -295,7 +297,6 @@
      PESTAÑA 6: REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA)
      ========================================================================= -->
 <div id="sec-INGRESOS" class="hidden">
-  <!-- TARJETAS RESUMEN FLUJO DE CAJA -->
   <div class="grid4">
     <div class="stat-card" style="border-left:4px solid #10b981;">
       <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">🟢 Total Ingresos (Entradas)</div>
@@ -319,7 +320,6 @@
     </div>
   </div>
 
-  <!-- TABLA DE MOVIMIENTOS FINANCIEROS -->
   <div class="card">
     <div class="row" style="margin-bottom:10px;">
       <h3 style="margin:0; color:#00B8B5;">📋 Historial Detallado de Ingresos y Egresos en Caja</h3>
@@ -347,6 +347,9 @@
   let usarManual = false;
   let condicionVenta = "CONTADO";
   let filtroStockActual = "TODOS";
+
+  let categorias = ["Hogar", "Cuidado Personal", "Accesorios Eléctricos", "Iluminación"];
+  let almacenes = ["Tienda Principal Piki", "Depósito Central"];
 
   let inventario = [
     { id: 1, sku: "PIKI-001", nombre: "Plancha a Vapor Portátil Piki", categoria: "Hogar", almacen: "Tienda Principal Piki", stock: 12, minimo: 3, costoUsd: 15.00, precioUsd: 28.00, iva: true },
@@ -404,6 +407,77 @@
     document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-green" : "tab";
     document.getElementById("btnCredito").className = cond === "CREDITO" ? "btn-amber" : "tab";
     recalcularTodo();
+  }
+
+  function actualizarSelectsMaster() {
+    const selCat = document.getElementById("invCategoria");
+    const selAlm = document.getElementById("invAlmacen");
+    if(selCat) selCat.innerHTML = categorias.map(c => `<option value="${c}">${c}</option>`).join("");
+    if(selAlm) selAlm.innerHTML = almacenes.map(a => `<option value="${a}">${a}</option>`).join("");
+
+    const masterCat = document.getElementById("listaMasterCat");
+    if(masterCat) masterCat.innerHTML = categorias.map((c, i) => `
+      <div class="row" style="margin-bottom:6px;">
+        <span>• ${c}</span>
+        <button class="btn-red" style="padding:2px 6px; font-size:10px;" onclick="eliminarCategoriaMaster(${i})">Eliminar</button>
+      </div>
+    `).join("");
+
+    const masterAlm = document.getElementById("listaMasterAlm");
+    if(masterAlm) masterAlm.innerHTML = almacenes.map((a, i) => `
+      <div class="row" style="margin-bottom:6px;">
+        <span>• ${a}</span>
+        <button class="btn-red" style="padding:2px 6px; font-size:10px;" onclick="eliminarAlmacenMaster(${i})">Eliminar</button>
+      </div>
+    `).join("");
+  }
+
+  function crearCategoriaRapida() {
+    const nueva = prompt("Nombre de la nueva categoría:");
+    if(nueva && nueva.trim()) {
+      categorias.push(nueva.trim());
+      actualizarSelectsMaster();
+      document.getElementById("invCategoria").value = nueva.trim();
+    }
+  }
+
+  function crearAlmacenRapido() {
+    const nuevo = prompt("Nombre del nuevo almacén:");
+    if(nuevo && nuevo.trim()) {
+      almacenes.push(nuevo.trim());
+      actualizarSelectsMaster();
+      document.getElementById("invAlmacen").value = nuevo.trim();
+    }
+  }
+
+  function agregarCategoriaMaster() {
+    const val = document.getElementById("nuevoCatMaster").value;
+    if(val && val.trim()) {
+      categorias.push(val.trim());
+      document.getElementById("nuevoCatMaster").value = "";
+      actualizarSelectsMaster();
+    }
+  }
+
+  function agregarAlmacenMaster() {
+    const val = document.getElementById("nuevoAlmMaster").value;
+    if(val && val.trim()) {
+      almacenes.push(val.trim());
+      document.getElementById("nuevoAlmMaster").value = "";
+      actualizarSelectsMaster();
+    }
+  }
+
+  function eliminarCategoriaMaster(i) {
+    if(categorias.length <= 1) { alert("Debe haber al menos una categoría."); return; }
+    categorias.splice(i, 1);
+    actualizarSelectsMaster();
+  }
+
+  function eliminarAlmacenMaster(i) {
+    if(almacenes.length <= 1) { alert("Debe haber al menos un almacén."); return; }
+    almacenes.splice(i, 1);
+    actualizarSelectsMaster();
   }
 
   function agregarAlInventario() {
@@ -513,10 +587,8 @@
     if (difUsd < -0.01) {
       const falta = Math.abs(difUsd);
       cajaSaldo.innerHTML = `<div style="background:#450a0a; border:1px solid #ef4444; padding:10px; border-radius:8px;">Falta por pagar: <strong>$${falta.toFixed(2)} USD</strong></div>`;
-      window.ultimoFaltanteUsd = falta;
     } else {
       cajaSaldo.innerHTML = `<div style="background:#064e3b; border:1px solid #10b981; padding:10px; border-radius:8px;">Vuelto: <strong>$${Math.max(0, difUsd).toFixed(2)} USD</strong></div>`;
-      window.ultimoFaltanteUsd = 0;
     }
 
     document.getElementById("tablaCobranzas").innerHTML = cobranzas.map(c => `
@@ -584,7 +656,7 @@
       bs: totalVentaUsd * tasa
     });
 
-    alert("¡Factura emitida con éxito! Se registró automáticamente el ingreso en el Reporte Financiero.");
+    alert("¡Factura emitida con éxito! Se registró automáticamente el ingreso.");
     verPestana("INGRESOS");
   }
 
@@ -603,10 +675,11 @@
     });
 
     recalcularTodo();
-    alert("¡Compra guardada! Se registró automáticamente el egreso en el Reporte Financiero.");
+    alert("¡Compra guardada! Se registró automáticamente el egreso.");
     verPestana("INGRESOS");
   }
 
+  actualizarSelectsMaster();
   recalcularTodo();
 </script>
 </body>
