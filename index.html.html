@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Administrativo Bimonetario Venezuela</title>
+  <!-- Cargamos el diseño y el motor de React automáticamente desde internet -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo, useEffect } = React;
+
+    function SistemaVenezuelaApp() {
+      // NAVEGACIÓN PRINCIPAL
+      const [pestana, setPestana] = useState("FACTURACION");
+
+      // 1. TASAS DE CAMBIO (BCV vs TU TASA MANUAL EDITABLE)
+      const [tasaBcv, setTasaBcv] = useState(45.00);
+      const [tasaManual, setTasaManual] = useState(54.00);
+      const [usarTasaManual, setUsarTasaManual] = useState(false);
+      const tasaActiva = usarTasaManual ? tasaManual : tasaBcv;
+      const brecha = tasaBcv > 0 ? (((tasaManual - tasaBcv) / tasaBcv) * 100).toFixed(2) : "0.00";
+
+      // 2. INVENTARIO DE PRODUCTOS
+      const [inventario, setInventario] = useState([
+        { id: 1, sku: "INV-001", nombre: "Inversor Híbrido Solar 5KW", stock: 6, minimo: 3, costoUsd: 480, precioUsd: 650, iva: true },
+        { id: 2, sku: "SRV-002", nombre: "Servicio de Instalación y Configuración", stock: 99, minimo: 0, costoUsd: 0, precioUsd: 120, iva: false },
+        { id: 3, sku: "PRO-003", nombre: "Protector de Voltaje Industrial", stock: 2, minimo: 5, costoUsd: 35, precioUsd: 55, iva: true },
+      ]);
+
+      // 3. FACTURACIÓN, INTERRUPTOR IGTF Y CONDICIÓN DE CRÉDITO
+      const [clienteNombre, setClienteNombre] = useState("DISTRIBUIDORA EL LAGO, C.A.");
+      const [clienteRif, setClienteRif] = useState("J-40123456-7");
+      const [clienteTelefono, setClienteTelefono] = useState("584141234567");
+      const [condicionVenta, setCondicionVenta] = useState("CONTADO");
+      const [diasCreditoVenta, setDiasCreditoVenta] = useState(15);
+      const [aplicarIgtf, setAplicarIgtf] = useState(true);
+
+      const [carrito, setCarrito] = useState([
+        { id: 1, nombre: "Inversor Híbrido Solar 5KW", cantidad: 1, precioUsd: 650, iva: true },
+        { id: 2, nombre: "Servicio de Instalación y Configuración", cantidad: 1, precioUsd: 120, iva: false },
+      ]);
+
+      // Caja Mixta
+      const [pagoMovilBs, setPagoMovilBs] = useState(4500);
+      const [efectivoUsd, setEfectivoUsd] = useState(300);
+      const [zelleUsd, setZelleUsd] = useState(200);
+
+      // 4. ALERTAS DE COBRANZA (VENTAS A CRÉDITO)
+      const [cuentasPorCobrar, setCuentasPorCobrar] = useState([
+        { id: 101, cliente: "COMERCIALIZADORA MARACAIBO, C.A.", rif: "J-30998877-1", telefono: "584141112233", factura: "FAC-00104", vencimiento: "2026-10-15", alerta: "VENCIDA", diasMora: 5, saldoUsd: 240.00 },
+        { id: 102, cliente: "INVERSIONES DEL SUR, C.A.", rif: "J-50112233-4", telefono: "584124445566", factura: "FAC-00109", vencimiento: "2026-10-20", alerta: "VENCE_HOY", diasMora: 0, saldoUsd: 150.00 },
+      ]);
+
+      // 5. COMPRAS A PROVEEDORES (CON INTERRUPTORES DE IVA Y RETENCIONES)
+      const [provNombre, setProvNombre] = useState("MAYORISTA ZULIA, C.A.");
+      const [provRif, setProvRif] = useState("J-30112233-4");
+      const [provFactura, setProvFactura] = useState("FAC-004910");
+      const [montoCompraUsd, setMontoCompraUsd] = useState(500.00);
+      const [compraAplicaIva, setCompraAplicaIva] = useState(true);
+      const [compraRetenerIva, setCompraRetenerIva] = useState(true);
+      const [porcentajeRetIva, setPorcentajeRetIva] = useState(75);
+      const [compraRetenerIslr, setCompraRetenerIslr] = useState(false);
+      const [porcentajeRetIslr, setPorcentajeRetIslr] = useState(2);
+      const [diasCreditoCompra, setDiasCreditoCompra] = useState(15);
+
+      const [cuentasPorPagar, setCuentasPorPagar] = useState([
+        { id: 201, proveedor: "IMPORTADORA OCCIDENTE, C.A.", rif: "J-07001122-9", factura: "FAC-88210", llevoIva: true, llevoRetencion: true, totalUsd: 1160.00, retenidoUsd: 120.00, netoPagarUsd: 1040.00, alerta: "VENCIDA" },
+      ]);
+
+      // CÁLCULO EN VIVO DE FACTURACIÓN
+      const calcVenta = useMemo(() => {
+        let baseUsd = 0;
+        let exentoUsd = 0;
+        carrito.forEach((item) => {
+          if (item.iva) baseUsd += item.cantidad * item.precioUsd;
+          else exentoUsd += item.cantidad * item.precioUsd;
+        });
+        const ivaUsd = Number((baseUsd * 0.16).toFixed(2));
+        const subtotalUsd = baseUsd + exentoUsd + ivaUsd;
+
+        const divisasUsd = Number(efectivoUsd || 0) + Number(zelleUsd || 0);
+        const bsEnUsd = tasaActiva > 0 ? Number(pagoMovilBs || 0) / tasaActiva : 0;
+
+        const baseIgtfUsd = aplicarIgtf ? Math.min(subtotalUsd, divisasUsd) : 0;
+        const igtfUsd = Number((baseIgtfUsd * 0.03).toFixed(2));
+
+        const totalCobrarUsd = Number((subtotalUsd + igtfUsd).toFixed(2));
+        const totalRecibidoUsd = Number((divisasUsd + bsEnUsd).toFixed(2));
+        const difUsd = Number((totalRecibidoUsd - totalCobrarUsd).toFixed(2));
+
+        return {
+          baseUsd, exentoUsd, ivaUsd, subtotalUsd, igtfUsd, totalCobrarUsd,
+          totalCobrarBs: (totalCobrarUsd * tasaActiva).toFixed(2),
+          totalRecibidoUsd,
+          faltanteUsd: difUsd < 0 ? Math.abs(difUsd) : 0,
+          vueltoUsd: difUsd > 0 ? difUsd : 0,
+        };
+      }, [carrito, efectivoUsd, zelleUsd, pagoMovilBs, aplicarIgtf, tasaActiva]);
+
+      // CÁLCULO EN VIVO DE COMPRAS Y RETENCIONES
+      const calcCompra = useMemo(() => {
+        const ivaUsd = compraAplicaIva ? Number((montoCompraUsd * 0.16).toFixed(2)) : 0;
+        const totalFacturaUsd = Number((montoCompraUsd + ivaUsd).toFixed(2));
+        const retIvaUsd = (compraAplicaIva && compraRetenerIva) ? Number((ivaUsd * (porcentajeRetIva / 100)).toFixed(2)) : 0;
+        const retIslrUsd = compraRetenerIslr ? Number((montoCompraUsd * (porcentajeRetIslr / 100)).toFixed(2)) : 0;
+        const totalRetenidoUsd = Number((retIvaUsd + retIslrUsd).toFixed(2));
+        const netoPagarUsd = Number((totalFacturaUsd - totalRetenidoUsd).toFixed(2));
+
+        return { ivaUsd, totalFacturaUsd, retIvaUsd, retIslrUsd, totalRetenidoUsd, netoPagarUsd };
+      }, [montoCompraUsd, compraAplicaIva, compraRetenerIva, porcentajeRetIva, compraRetenerIslr, porcentajeRetIslr]);
+
+      const registrarVenta = () => {
+        if (condicionVenta === "CREDITO" && calcVenta.faltanteUsd > 0) {
+          setCuentasPorCobrar([
+            {
+              id: Date.now(),
+              cliente: clienteNombre,
+              rif: clienteRif,
+              telefono: clienteTelefono,
+              factura: `FAC-00\${cuentasPorCobrar.length + 115}`,
+              vencimiento: `En \${diasCreditoVenta} días`,
+              alerta: diasCreditoVenta <= 7 ? "VENCE_HOY" : "POR_VENCER",
+              diasMora: 0,
+              saldoUsd: calcVenta.faltanteUsd,
+            },
+            ...cuentasPorCobrar,
+          ]);
+          setPestana("COBRANZAS");
+        } else {
+          alert("¡Factura emitida y cobrada con éxito!");
+        }
+      };
+
+      const registrarCompra = () => {
+        setCuentasPorPagar([
+          {
+            id: Date.now(),
+            proveedor: provNombre,
+            rif: provRif,
+            factura: provFactura,
+            llevoIva: compraAplicaIva,
+            llevoRetencion: compraAplicaIva && compraRetenerIva,
+            totalUsd: calcCompra.totalFacturaUsd,
+            retenidoUsd: calcCompra.totalRetenidoUsd,
+            netoPagarUsd: calcCompra.netoPagarUsd,
+            alerta: `Vence en \${diasCreditoCompra}d`,
+          },
+          ...cuentasPorPagar,
+        ]);
+      };
+
+      return (
+        <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+          {/* BARRA DE CONTROL DE DOBLE TASA (BCV + TASA MANUAL) */}
+          <header className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+            <div>
+              <h1 className="text-xl font-extrabold text-emerald-400 flex items-center gap-2">
+                🇻🇪 ERP Administrativo Bimonetario Venezuela
+              </h1>
+              <p className="text-xs text-slate-400">
+                Doble Tasa en Vivo • Switch IGTF 3% • Crédito con Alertas WhatsApp • Compras con/sin IVA y Retenciones
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5">
+                <label className="block text-[10px] uppercase text-slate-400 font-bold">Tasa BCV (Bs/$)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={tasaBcv}
+                  onChange={(e) => setTasaBcv(parseFloat(e.target.value) || 0)}
+                  className="bg-transparent text-emerald-400 font-extrabold text-lg w-20 focus:outline-none"
+                />
+              </div>
+
+              <div className="bg-indigo-950/60 border border-indigo-500/60 rounded-xl px-3 py-1.5">
+                <label className="block text-[10px] uppercase text-indigo-300 font-bold">Mi Tasa USD (Bs/$)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={tasaManual}
+                  onChange={(e) => setTasaManual(parseFloat(e.target.value) || 0)}
+                  className="bg-transparent text-indigo-300 font-extrabold text-lg w-20 focus:outline-none"
+                />
+              </div>
+
+              <div className="text-right px-1">
+                <span className="block text-[10px] text-slate-400">Brecha</span>
+                <span className="text-xs font-bold text-amber-400">+{brecha}%</span>
+              </div>
+
+              <button
+                onClick={() => setUsarTasaManual(!usarTasaManual)}
+                className={`px-4 py-2.5 rounded-xl font-bold text-xs transition shadow-lg \${
+                  usarTasaManual ? "bg-indigo-600 text-white" : "bg-emerald-600 text-white"
+                }`}
+              >
+                {usarTasaManual ? `Usando: Mi Tasa (\${
