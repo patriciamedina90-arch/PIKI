@@ -12,13 +12,14 @@
   .stat-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; }
   input, select { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 7px 9px; border-radius: 6px; width: 100%; font-size: 12px; }
   button { cursor: pointer; border: none; border-radius: 7px; padding: 8px 12px; font-weight: bold; font-size: 12px; transition: 0.15s; }
+  .btn-magenta { background: #EA0A6A; color: #fff; }
+  .btn-turquesa { background: #00B8B5; color: #0f172a; }
   .btn-green { background: #10b981; color: #052e16; }
   .btn-blue { background: #3b82f6; color: #fff; }
   .btn-amber { background: #f59e0b; color: #0f172a; }
   .btn-red { background: #ef4444; color: #fff; }
-  .btn-purple { background: #6366f1; color: #fff; }
   .tab { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
-  .tab.active { background: #2563eb; color: #fff; border-color: #3b82f6; }
+  .tab.active { background: #EA0A6A; color: #fff; border-color: #EA0A6A; }
   table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
   th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #334155; }
   th { color: #94a3b8; font-size: 10px; text-transform: uppercase; background: #0f172a; }
@@ -36,58 +37,55 @@
 </head>
 <body>
 
-<!-- LOGO Y BARRA SUPERIOR DE TASAS -->
+<!-- LOGOTIPO OFICIAL PIKI Y BARRA DE TASAS -->
 <div class="card row no-print" style="border-color: #EA0A6A;">
   <div class="row" style="gap: 12px;">
-    <!-- Logotipo Oficial PIKI Vectorial -->
-    <div style="display:flex; align-items:center; gap:8px; background:#0f172a; padding:6px 12px; border-radius:10px; border:1px solid #334155;">
-      <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="45" fill="#EA0A6A" opacity="0.1"/>
+    <div style="display:flex; align-items:center; gap:10px; background:#0f172a; padding:6px 14px; border-radius:10px; border:1px solid #EA0A6A;">
+      <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="#EA0A6A" opacity="0.15"/>
         <path d="M30 45 C20 30, 40 20, 50 35 C60 20, 80 30, 70 45 C80 60, 60 70, 50 55 C40 70, 20 60, 30 45 Z" fill="#00B8B5"/>
         <path d="M45 35 C45 25, 55 25, 55 35 C55 50, 45 50, 45 35 Z" fill="#EA0A6A"/>
         <circle cx="50" cy="40" r="6" fill="#fff"/>
       </svg>
       <div>
-        <h2 style="margin:0; color:#EA0A6A; font-size:18px; font-weight:900; letter-spacing:0.5px;">Piki</h2>
-        <span style="color:#00B8B5; font-size:9px; font-weight:700; text-transform:uppercase;">Hogar · Cuidado · Eléctricos</span>
+        <h2 style="margin:0; color:#EA0A6A; font-size:20px; font-weight:900; letter-spacing:0.5px;">Piki</h2>
+        <span style="color:#00B8B5; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Hogar · Cuidado Personal · Accesorios Eléctricos</span>
       </div>
     </div>
     <div>
-      <h2 style="margin:0; color:#34d399; font-size:15px;">Sistema Administrativo Bimonetario</h2>
-      <span style="color:#94a3b8; font-size:11px;">Inventario • Facturación IGTF • Alertas Crédito • Master Total • Flujo de Caja</span>
+      <h2 style="margin:0; color:#00B8B5; font-size:15px;">Sistema Administrativo Bimonetario</h2>
+      <span style="color:#94a3b8; font-size:11px;">Inventario • Facturación IGTF • Master en Cascada • Flujo de Caja</span>
     </div>
   </div>
 
   <div class="row">
     <div style="background:#0f172a; padding:5px 10px; border-radius:8px; border:1px solid #334155;">
       <div style="font-size:10px; color:#94a3b8;">TASA BCV (Bs/\$)</div>
-      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#34d399; padding:2px;" oninput="recalcularTodo()">
+      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#00B8B5; padding:2px;" oninput="recalcularTodo()">
     </div>
-    <div style="background:#1e1b4b; padding:5px 10px; border-radius:8px; border:1px solid #6366f1;">
-      <div style="font-size:10px; color:#a5b4fc;">MI TASA USD (Bs/\$)</div>
-      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#a5b4fc; padding:2px;" oninput="recalcularTodo()">
+    <div style="background:#1e1b4b; padding:5px 10px; border-radius:8px; border:1px solid #EA0A6A;">
+      <div style="font-size:10px; color:#f472b6;">MI TASA USD (Bs/\$)</div>
+      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#f472b6; padding:2px;" oninput="recalcularTodo()">
     </div>
-    <button id="btnModoTasa" class="btn-green" onclick="cambiarModoTasa()">Usando: Tasa BCV (45.00 Bs)</button>
+    <button id="btnModoTasa" class="btn-magenta" onclick="cambiarModoTasa()">Usando: Tasa BCV (45.00 Bs)</button>
   </div>
 </div>
 
-<!-- MENÚ DE PESTAÑAS -->
+<!-- MENÚ DE PESTAÑAS ADMINISTRATIVAS -->
 <div class="row no-print" style="justify-content:flex-start; margin-bottom:14px;">
   <button class="tab active" id="tab-INVENTARIO" onclick="verPestana('INVENTARIO')">📦 1. Inventario y Stock</button>
   <button class="tab" id="tab-FACTURACION" onclick="verPestana('FACTURACION')">🧾 2. Facturación y Caja</button>
   <button class="tab" id="tab-COBRANZAS" onclick="verPestana('COBRANZAS')">🔔 3. Alertas de Cobranza</button>
-  <button class="tab" id="tab-COMPRAS" onclick="verPestana('COMPRAS')">🛒 4. Compras y Pagos</button>
+  <button class="tab" id="tab-COMPRAS" onclick="verPestana('COMPRAS')">🛒 4. Compras y SENIAT</button>
   <button class="tab" id="tab-MASTER" onclick="verPestana('MASTER')">⚙️ 5. Master (Editar Todo)</button>
-  <button class="tab" id="tab-INGRESOS" onclick="verPestana('INGRESOS')">📈 6. Reporte Ingresos y Egresos</button>
+  <button class="tab" id="tab-INGRESOS" onclick="verPestana('INGRESOS')">📈 6. Reporte Ingresos/Egresos</button>
 </div>
 
-<!-- =========================================================================
-     PESTAÑA 1: INVENTARIO COMPLETO
-     ========================================================================= -->
+<!-- PESTAÑA 1: INVENTARIO Y REPORTE DE STOCK -->
 <div id="sec-INVENTARIO">
   <div class="card no-print" style="border-color:#EA0A6A;">
-    <h3 style="margin-top:0; color:#EA0A6A;">➕ Carga Manual de Producto Piki</h3>
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap:8px; margin-bottom:10px;">
+    <h3 style="margin-top:0; color:#EA0A6A;">➕ Carga y Edición Manual de Productos Piki</h3>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:10px;">
       <div>
         <label style="font-size:10px; color:#94a3b8;">Código / SKU</label>
         <input type="text" id="invSku" value="PIKI-007">
@@ -100,14 +98,14 @@
         <label style="font-size:10px; color:#94a3b8;">Categoría</label>
         <div style="display:flex; gap:4px;">
           <select id="invCategoria"></select>
-          <button class="btn-green" onclick="crearCategoriaRapida()" style="padding:4px 8px;">+</button>
+          <button class="btn-turquesa" onclick="crearCategoriaRapida()" style="padding:4px 8px;">+</button>
         </div>
       </div>
       <div>
         <label style="font-size:10px; color:#94a3b8;">Almacén</label>
         <div style="display:flex; gap:4px;">
           <select id="invAlmacen"></select>
-          <button class="btn-green" onclick="crearAlmacenRapido()" style="padding:4px 8px;">+</button>
+          <button class="btn-turquesa" onclick="crearAlmacenRapido()" style="padding:4px 8px;">+</button>
         </div>
       </div>
       <div>
@@ -134,20 +132,20 @@
         </select>
       </div>
     </div>
-    <button class="btn-green" onclick="agregarAlInventario()" style="background:#EA0A6A; color:#fff;">+ GUARDAR EN CATÁLOGO PIKI</button>
+    <button class="btn-magenta" onclick="agregarAlInventario()">+ GUARDAR EN CATÁLOGO PIKI</button>
   </div>
 
   <div class="card">
     <div class="row no-print" style="margin-bottom:10px;">
       <div class="row" style="gap:6px;">
         <strong style="color:#00B8B5; margin-right:6px;">📊 Filtrar Stock:</strong>
-        <button class="btn-blue" id="f-TODOS" onclick="setFiltroStock('TODOS')">Todos</button>
+        <button class="btn-turquesa" id="f-TODOS" onclick="setFiltroStock('TODOS')">Todos</button>
         <button class="tab" id="f-BAJO" onclick="setFiltroStock('BAJO')">🟠 Bajo Stock</button>
         <button class="tab" id="f-AGOTADO" onclick="setFiltroStock('AGOTADO')">🔴 Agotados</button>
       </div>
       <div class="row" style="gap:8px;">
         <input type="text" id="buscadorInv" placeholder="🔍 Buscar producto..." style="width:190px;" oninput="recalcularTodo()">
-        <button class="btn-purple" onclick="window.print()">🖨️ Imprimir Reporte</button>
+        <button class="btn-blue" onclick="window.print()">🖨️ Imprimir Reporte</button>
       </div>
     </div>
     <div style="overflow-x:auto;">
@@ -170,16 +168,14 @@
   </div>
 </div>
 
-<!-- =========================================================================
-     PESTAÑA 2: FACTURACIÓN Y CAJA
-     ========================================================================= -->
+<!-- PESTAÑA 2: FACTURACIÓN Y CAJA MIXTA -->
 <div id="sec-FACTURACION" class="hidden">
   <div class="grid2">
     <div class="card">
       <div class="row" style="margin-bottom:10px;">
         <h3 style="margin:0; color:#EA0A6A;">Facturación Piki</h3>
         <div>
-          <button id="btnContado" class="btn-green" onclick="setCondicionVenta('CONTADO')">Contado</button>
+          <button id="btnContado" class="btn-magenta" onclick="setCondicionVenta('CONTADO')">Contado</button>
           <button id="btnCredito" class="tab" onclick="setCondicionVenta('CREDITO')">A Crédito</button>
         </div>
       </div>
@@ -221,14 +217,12 @@
 
       <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px;" id="resumenFactura"></div>
       <div id="cajaSaldoFactura" style="margin-bottom:10px;"></div>
-      <button class="btn-green" style="width:100%; padding:11px; background:#EA0A6A; color:#fff;" onclick="emitirFactura()">EMITIR FACTURA Y REGISTRAR INGRESO</button>
+      <button class="btn-magenta" style="width:100%; padding:11px;" onclick="emitirFactura()">EMITIR FACTURA Y REGISTRAR INGRESO</button>
     </div>
   </div>
 </div>
 
-<!-- =========================================================================
-     PESTAÑA 3: ALERTAS DE COBRANZA
-     ========================================================================= -->
+<!-- PESTAÑA 3: ALERTAS DE COBRANZA -->
 <div id="sec-COBRANZAS" class="hidden">
   <div class="card">
     <h3 style="margin-top:0; color:#EA0A6A;">🚨 Cuentas por Cobrar y Abonos a Crédito</h3>
@@ -241,9 +235,7 @@
   </div>
 </div>
 
-<!-- =========================================================================
-     PESTAÑA 4: COMPRAS Y PAGOS
-     ========================================================================= -->
+<!-- PESTAÑA 4: COMPRAS Y RETENCIONES SENIAT -->
 <div id="sec-COMPRAS" class="hidden">
   <div class="grid2">
     <div class="card">
@@ -256,7 +248,7 @@
       <label class="switch-box"><span style="color:#818cf8; font-weight:bold;">2. ¿Retener IVA (75%)?</span><input type="checkbox" id="chkCompRetIva" checked onchange="recalcularTodo()"></label>
       <label class="switch-box"><span style="color:#fbbf24; font-weight:bold;">3. ¿Retener ISLR (2%)?</span><input type="checkbox" id="chkCompRetIslr" onchange="recalcularTodo()"></label>
       <div id="resumenCompra" style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px;"></div>
-      <button class="btn-blue" style="width:100%; padding:10px;" onclick="guardarCompra()">Guardar Compra (Registrar Egreso)</button>
+      <button class="btn-turquesa" style="width:100%; padding:10px;" onclick="guardarCompra()">Guardar Compra (Registrar Egreso)</button>
     </div>
     <div class="card">
       <h3 style="margin-top:0; color:#fbbf24;">Cuentas por Pagar a Proveedores</h3>
@@ -265,19 +257,17 @@
   </div>
 </div>
 
-<!-- =========================================================================
-     PESTAÑA 5: MASTER (CONFIGURACIÓN Y EDICIÓN TOTAL)
-     ========================================================================= -->
+<!-- PESTAÑA 5: MASTER (CONFIGURACIÓN Y EDICIÓN EN CASCADA) -->
 <div id="sec-MASTER" class="hidden">
-  <div class="card">
-    <h3 style="margin-top:0; color:#EA0A6A;">⚙️ Configuración Maestra PIKI (Editar Categorías y Almacenes)</h3>
-    <p style="color:#94a3b8; font-size:12px;">Aquí puedes agregar o renombrar categorías y almacenes en cascada para todo tu inventario.</p>
+  <div class="card" style="border-color:#EA0A6A;">
+    <h3 style="margin-top:0; color:#EA0A6A;">⚙️ Configuración Maestra PIKI (Categorías y Almacenes)</h3>
+    <p style="color:#94a3b8; font-size:12px;">Agrega, renombra o elimina categorías y almacenes. Los cambios se actualizan automáticamente en todo el sistema.</p>
     <div class="grid2">
       <div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
         <h4 style="margin-top:0; color:#00B8B5;">Gestión de Categorías</h4>
         <div style="display:flex; gap:6px; margin-bottom:10px;">
           <input type="text" id="nuevoCatMaster" placeholder="Nueva Categoría...">
-          <button class="btn-green" onclick="agregarCategoriaMaster()">Agregar</button>
+          <button class="btn-turquesa" onclick="agregarCategoriaMaster()">Agregar</button>
         </div>
         <div id="listaMasterCat"></div>
       </div>
@@ -285,7 +275,7 @@
         <h4 style="margin-top:0; color:#EA0A6A;">Gestión de Almacenes</h4>
         <div style="display:flex; gap:6px; margin-bottom:10px;">
           <input type="text" id="nuevoAlmMaster" placeholder="Nuevo Almacén...">
-          <button class="btn-green" onclick="agregarAlmacenMaster()">Agregar</button>
+          <button class="btn-magenta" onclick="agregarAlmacenMaster()">Agregar</button>
         </div>
         <div id="listaMasterAlm"></div>
       </div>
@@ -293,9 +283,7 @@
   </div>
 </div>
 
-<!-- =========================================================================
-     PESTAÑA 6: REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA)
-     ========================================================================= -->
+<!-- PESTAÑA 6: REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA) -->
 <div id="sec-INGRESOS" class="hidden">
   <div class="grid4">
     <div class="stat-card" style="border-left:4px solid #10b981;">
@@ -308,9 +296,9 @@
       <div id="lblTotalEgresos" style="font-size:20px; font-weight:800; color:#f87171; margin-top:4px;">\$0.00 USD</div>
       <div id="lblTotalEgresosBs" style="font-size:11px; color:#fca5a5;">Bs. 0,00</div>
     </div>
-    <div class="stat-card" style="border-left:4px solid #3b82f6;">
+    <div class="stat-card" style="border-left:4px solid #00B8B5;">
       <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">⚖️ Flujo Neto de Caja</div>
-      <div id="lblFlujoNeto" style="font-size:20px; font-weight:800; color:#60a5fa; margin-top:4px;">\$0.00 USD</div>
+      <div id="lblFlujoNeto" style="font-size:20px; font-weight:800; color:#00B8B5; margin-top:4px;">\$0.00 USD</div>
       <div style="font-size:11px; color:#94a3b8;">Ingresos menos Egresos</div>
     </div>
     <div class="stat-card" style="border-left:4px solid #EA0A6A;">
@@ -323,7 +311,7 @@
   <div class="card">
     <div class="row" style="margin-bottom:10px;">
       <h3 style="margin:0; color:#00B8B5;">📋 Historial Detallado de Ingresos y Egresos en Caja</h3>
-      <button class="btn-purple" onclick="window.print()">🖨️ Imprimir Reporte Financiero</button>
+      <button class="btn-blue" onclick="window.print()">🖨️ Imprimir Reporte Financiero</button>
     </div>
     <div style="overflow-x:auto;">
       <table>
@@ -397,14 +385,14 @@
   function setFiltroStock(f) {
     filtroStockActual = f;
     ["TODOS", "BAJO", "AGOTADO"].forEach(k => {
-      document.getElementById("f-" + k).className = (k === f) ? "btn-blue" : "tab";
+      document.getElementById("f-" + k).className = (k === f) ? "btn-turquesa" : "tab";
     });
     recalcularTodo();
   }
 
   function setCondicionVenta(cond) {
     condicionVenta = cond;
-    document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-green" : "tab";
+    document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-magenta" : "tab";
     document.getElementById("btnCredito").className = cond === "CREDITO" ? "btn-amber" : "tab";
     recalcularTodo();
   }
@@ -519,7 +507,7 @@
 
     const btnTasa = document.getElementById("btnModoTasa");
     btnTasa.textContent = usarManual ? `Usando: Mi Tasa (${man.toFixed(2)} Bs)` : `Usando: Tasa BCV (${bcv.toFixed(2)} Bs)`;
-    btnTasa.className = usarManual ? "btn-blue" : "btn-green";
+    btnTasa.className = usarManual ? "btn-turquesa" : "btn-magenta";
 
     const textoBuscar = (document.getElementById("buscadorInv").value || "").toLowerCase();
     const invFiltrado = inventario.filter(p => {
@@ -539,7 +527,7 @@
         <tr>
           <td>${badge}</td>
           <td><strong>${p.sku}</strong><br><span style="font-size:10px; color:#94a3b8;">${p.categoria}</span></td>
-          <td><strong>${p.nombre}</strong><br><span style="font-size:10px; color:#EA0A6A;">📍 ${p.almacen}</span></td>
+          <td><strong>${p.nombre}</strong><br><span style="font-size:10px; color:#00B8B5;">📍 ${p.almacen}</span></td>
           <td>
             <button class="tab no-print" onclick="cambiarStock(${p.id}, -1)">-</button>
             <strong style="margin:0 6px;">${p.stock}</strong>
@@ -548,7 +536,7 @@
           <td style="color:#94a3b8;">$${p.costoUsd.toFixed(2)}</td>
           <td style="color:#EA0A6A; font-weight:bold;">$${p.precioUsd.toFixed(2)}</td>
           <td style="font-weight:bold; color:#fff;">$${(p.stock * p.precioUsd).toFixed(2)}</td>
-          <td class="no-print"><button class="btn-blue" onclick="mandarAFactura(${p.id})" style="background:#00B8B5; color:#0f172a;">+ Facturar</button></td>
+          <td class="no-print"><button class="btn-turquesa" onclick="mandarAFactura(${p.id})">+ Facturar</button></td>
         </tr>
       `;
     }).join("");
@@ -585,8 +573,7 @@
 
     const cajaSaldo = document.getElementById("cajaSaldoFactura");
     if (difUsd < -0.01) {
-      const falta = Math.abs(difUsd);
-      cajaSaldo.innerHTML = `<div style="background:#450a0a; border:1px solid #ef4444; padding:10px; border-radius:8px;">Falta por pagar: <strong>$${falta.toFixed(2)} USD</strong></div>`;
+      cajaSaldo.innerHTML = `<div style="background:#450a0a; border:1px solid #ef4444; padding:10px; border-radius:8px;">Falta por pagar: <strong>$${Math.abs(difUsd).toFixed(2)} USD</strong></div>`;
     } else {
       cajaSaldo.innerHTML = `<div style="background:#064e3b; border:1px solid #10b981; padding:10px; border-radius:8px;">Vuelto: <strong>$${Math.max(0, difUsd).toFixed(2)} USD</strong></div>`;
     }
@@ -656,7 +643,7 @@
       bs: totalVentaUsd * tasa
     });
 
-    alert("¡Factura emitida con éxito! Se registró automáticamente el ingreso.");
+    alert("¡Factura emitida con éxito! Ingreso registrado en el Flujo de Caja.");
     verPestana("INGRESOS");
   }
 
@@ -675,7 +662,7 @@
     });
 
     recalcularTodo();
-    alert("¡Compra guardada! Se registró automáticamente el egreso.");
+    alert("¡Compra guardada! Egreso registrado en el Flujo de Caja.");
     verPestana("INGRESOS");
   }
 
