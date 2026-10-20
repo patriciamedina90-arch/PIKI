@@ -2,327 +2,647 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIKI ERP - Sistema Administrativo y Financiero Bimonetario</title>
 <style>
-  * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-  body { margin: 0; padding: 14px; background: #0f172a; color: #f8fafc; font-size: 13px; }
-  .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  :root {
+    --piki-magenta: #EA0A6A;
+    --piki-magenta-dark: #c00655;
+    --piki-magenta-light: #fdf2f7;
+    --piki-turquesa: #00B8B5;
+    --piki-turquesa-dark: #008f8c;
+    --piki-turquesa-light: #f0fdfa;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-input: #f1f5f9;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 15px -2px rgba(15, 23, 42, 0.06);
+  }
+  body.dark-mode {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-input: #0f172a;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --piki-magenta-light: rgba(234, 10, 106, 0.14);
+    --piki-turquesa-light: rgba(0, 184, 181, 0.14);
+    --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+  }
+  * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+  body { margin: 0; padding: 14px; background: var(--bg-main); color: var(--text-main); font-size: 13px; transition: background 0.2s, color 0.2s; }
+  .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
-  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
-  .grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; }
-  .stat-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; }
-  input, select { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 7px 9px; border-radius: 6px; width: 100%; font-size: 12px; }
-  button { cursor: pointer; border: none; border-radius: 7px; padding: 8px 12px; font-weight: bold; font-size: 12px; transition: 0.15s; }
-  .btn-magenta { background: #EA0A6A; color: #fff; }
-  .btn-turquesa { background: #00B8B5; color: #0f172a; }
-  .btn-green { background: #10b981; color: #052e16; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+  .grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+  label { display: block; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.3px; }
+  input, select, textarea { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 8px; width: 100%; font-size: 12px; font-weight: 600; outline: none; transition: 0.15s; }
+  input:focus, select:focus { border-color: var(--piki-magenta); box-shadow: 0 0 0 2px rgba(234, 10, 106, 0.15); }
+  button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 13px; font-weight: 700; font-size: 12px; transition: 0.15s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+  button:hover { transform: translateY(-1px); filter: brightness(1.04); }
+  .btn-magenta { background: linear-gradient(135deg, var(--piki-magenta), var(--piki-magenta-dark)); color: #fff; }
+  .btn-turquesa { background: linear-gradient(135deg, var(--piki-turquesa), var(--piki-turquesa-dark)); color: #fff; }
+  .btn-green { background: #10b981; color: #fff; }
   .btn-blue { background: #3b82f6; color: #fff; }
-  .btn-amber { background: #f59e0b; color: #0f172a; }
+  .btn-amber { background: #f59e0b; color: #fff; }
   .btn-red { background: #ef4444; color: #fff; }
-  .tab { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
-  .tab.active { background: #EA0A6A; color: #fff; border-color: #EA0A6A; }
+  .btn-outline { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); }
+  .tab { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 9px 14px; border-radius: 10px; font-weight: 700; }
+  .tab.active { background: linear-gradient(135deg, var(--piki-magenta), var(--piki-magenta-dark)); color: #fff; border-color: var(--piki-magenta); box-shadow: 0 4px 12px rgba(234, 10, 106, 0.3); }
+  .subtab { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-color); padding: 7px 12px; border-radius: 8px; font-size: 11px; }
+  .subtab.active { background: var(--piki-turquesa); color: #fff; border-color: var(--piki-turquesa); }
   table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
-  th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #334155; }
-  th { color: #94a3b8; font-size: 10px; text-transform: uppercase; background: #0f172a; }
-  .badge { padding: 3px 7px; border-radius: 10px; font-size: 10px; font-weight: bold; display: inline-block; }
-  .hidden { display: none; }
-  .switch-box { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 8px; cursor: pointer; }
-  .switch-box input { width: 16px; height: 16px; }
+  th, td { padding: 9px 8px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+  th { color: var(--text-muted); font-size: 10px; text-transform: uppercase; background: var(--bg-input); font-weight: 800; letter-spacing: 0.4px; }
+  tr:hover td { background: var(--piki-magenta-light); }
+  .badge { padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; display: inline-block; }
+  .hidden { display: none !important; }
+  .switch-box { display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 8px; cursor: pointer; }
+  .switch-box input { width: 16px; height: 16px; accent-color: var(--piki-magenta); }
+  .master-list-item { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 10px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 6px; }
   @media print {
-    body { background: #fff; color: #000; }
+    body { background: #fff !important; color: #000 !important; padding: 0; }
     .no-print { display: none !important; }
-    .card, .stat-card { background: #fff; border: 1px solid #ccc; color: #000; }
-    th, td { color: #000; border-bottom: 1px solid #ccc; }
+    .card, .stat-card { box-shadow: none !important; border: 1px solid #ccc !important; }
   }
 </style>
 </head>
 <body>
 
-<!-- LOGOTIPO OFICIAL PIKI Y BARRA DE TASAS -->
-<div class="card row no-print" style="border-color: #EA0A6A;">
-  <div class="row" style="gap: 12px;">
-    <div style="display:flex; align-items:center; gap:10px; background:#0f172a; padding:6px 14px; border-radius:10px; border:1px solid #EA0A6A;">
-      <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="45" fill="#EA0A6A" opacity="0.15"/>
-        <path d="M30 45 C20 30, 40 20, 50 35 C60 20, 80 30, 70 45 C80 60, 60 70, 50 55 C40 70, 20 60, 30 45 Z" fill="#00B8B5"/>
-        <path d="M45 35 C45 25, 55 25, 55 35 C55 50, 45 50, 45 35 Z" fill="#EA0A6A"/>
-        <circle cx="50" cy="40" r="6" fill="#fff"/>
+<!-- =========================================================================
+     CABECERA CORPORATIVA CON EL LOGO OFICIAL DE PIKI Y CONTROL MULTIMONEDA
+     ========================================================================= -->
+<div class="card row no-print" style="border-top: 4px solid var(--piki-magenta); border-bottom: 2px solid var(--piki-turquesa);">
+  <div class="row" style="gap: 14px;">
+    <!-- LOGOTIPO OFICIAL PIKI (Enchufe Turquesa + Hoja Magenta + Tipografía 3D Piki) -->
+    <div id="contenedorLogoPiki" style="display:flex; align-items:center; gap:12px; background:#ffffff; padding:8px 16px; border-radius:14px; border:2px solid #f1f5f9; box-shadow: 0 2px 10px rgba(234,10,106,0.08);">
+      <img id="imgLogoPersonalizado" class="hidden" src="" alt="Logo Piki" style="max-height:54px; width:auto; object-fit:contain;">
+      <svg id="svgLogoOficialPiki" width="145" height="58" viewBox="0 0 260 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pikiPink" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF1E7A"/>
+            <stop offset="100%" stop-color="#D40058"/>
+          </linearGradient>
+          <linearGradient id="pikiCyan" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00D2CE"/>
+            <stop offset="100%" stop-color="#008F8C"/>
+          </linearGradient>
+        </defs>
+        <!-- Ícono Superior: Círculo Turquesa con Enchufe + Hoja Magenta entrelazada -->
+        <g transform="translate(72, 2)">
+          <!-- Círculo turquesa izquierdo -->
+          <circle cx="28" cy="22" r="17" stroke="url(#pikiCyan)" stroke-width="4.5" fill="none"/>
+          <!-- Enchufe turquesa y cable -->
+          <path d="M18 42 C14 35, 18 27, 25 22" stroke="url(#pikiCyan)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+          <rect x="22" y="15" width="9" height="7" rx="2" transform="rotate(-40 22 15)" fill="url(#pikiCyan)"/>
+          <line x1="29" y1="11" x2="32" y2="8" stroke="#008F8C" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="32" y1="14" x2="35" y2="11" stroke="#008F8C" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Gota / Hoja magenta derecha entrelazada -->
+          <path d="M40 22 C40 11, 50 5, 64 5 L64 22 C64 33, 54 39, 40 39 C34 39, 31 31, 40 22 Z" stroke="url(#pikiPink)" stroke-width="4.5" fill="none"/>
+          <!-- Hoja interna bicolor -->
+          <path d="M45 31 C45 19, 57 13, 59 13 C59 25, 53 33, 45 31 Z" fill="url(#pikiCyan)"/>
+          <path d="M45 31 C49 24, 54 18, 59 13" stroke="#EA0A6A" stroke-width="2.2" stroke-linecap="round"/>
+        </g>
+        <!-- Letras 3D Piki (Fucsia con reborde 3D Turquesa) -->
+        <g transform="translate(18, 44)">
+          <!-- Sombra/Reborde 3D Turquesa -->
+          <text x="19" y="46" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="54" fill="url(#pikiCyan)" letter-spacing="2">Piki</text>
+          <!-- Cuerpo Principal Magenta -->
+          <text x="15" y="44" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="54" fill="url(#pikiPink)" letter-spacing="2">Piki</text>
+        </g>
+        <!-- Eslogan inferior -->
+        <text x="130" y="103" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="600" font-size="9.2" fill="#64748b">Hogar · Cuidado Personal · Accesorios Eléctricos</text>
       </svg>
-      <div>
-        <h2 style="margin:0; color:#EA0A6A; font-size:20px; font-weight:900; letter-spacing:0.5px;">Piki</h2>
-        <span style="color:#00B8B5; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Hogar · Cuidado Personal · Accesorios Eléctricos</span>
-      </div>
     </div>
+
     <div>
-      <h2 style="margin:0; color:#00B8B5; font-size:15px;">Sistema Administrativo Bimonetario</h2>
-      <span style="color:#94a3b8; font-size:11px;">Inventario • Facturación IGTF • Master en Cascada • Flujo de Caja</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <h1 id="lblNombreEmpresa" style="margin:0; color:var(--piki-magenta); font-size:18px; font-weight:900;">PIKI, C.A.</h1>
+        <span id="lblRifEmpresa" class="badge" style="background:var(--piki-turquesa-light); color:var(--piki-turquesa-dark); border:1px solid var(--piki-turquesa);">J-50123456-0</span>
+      </div>
+      <div id="lblSloganEmpresa" style="color:var(--piki-turquesa-dark); font-size:11px; font-weight:700; margin-top:2px;">Hogar · Cuidado Personal · Accesorios Eléctricos</div>
+      <div id="lblDirEmpresa" style="color:var(--text-muted); font-size:11px;">Sistema ERP Administrativo, Inventario, Facturación SENIAT y Flujo de Caja</div>
     </div>
   </div>
 
-  <div class="row">
-    <div style="background:#0f172a; padding:5px 10px; border-radius:8px; border:1px solid #334155;">
-      <div style="font-size:10px; color:#94a3b8;">TASA BCV (Bs/\$)</div>
-      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#00B8B5; padding:2px;" oninput="recalcularTodo()">
+  <!-- PANEL DE TASAS BCV / MANUAL Y TEMA -->
+  <div class="row" style="gap: 8px;">
+    <div style="background:var(--piki-turquesa-light); padding:6px 10px; border-radius:10px; border:1px solid var(--piki-turquesa);">
+      <div style="font-size:9px; font-weight:800; color:var(--piki-turquesa-dark);">TASA OFICIAL BCV (Bs/$)</div>
+      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-turquesa-dark); padding:0;" oninput="guardarTasasYRecalcular()">
     </div>
-    <div style="background:#1e1b4b; padding:5px 10px; border-radius:8px; border:1px solid #EA0A6A;">
-      <div style="font-size:10px; color:#f472b6;">MI TASA USD (Bs/\$)</div>
-      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:70px; border:none; font-weight:bold; color:#f472b6; padding:2px;" oninput="recalcularTodo()">
+    <div style="background:var(--piki-magenta-light); padding:6px 10px; border-radius:10px; border:1px solid var(--piki-magenta);">
+      <div style="font-size:9px; font-weight:800; color:var(--piki-magenta);">MI TASA MANUAL (Bs/$)</div>
+      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-magenta); padding:0;" oninput="guardarTasasYRecalcular()">
     </div>
-    <button id="btnModoTasa" class="btn-magenta" onclick="cambiarModoTasa()">Usando: Tasa BCV (45.00 Bs)</button>
+    <button id="btnModoTasa" class="btn-turquesa" onclick="cambiarModoTasa()" style="height:44px;">Usando: BCV (45.00 Bs)</button>
+    <button class="btn-outline" onclick="alternarTema()" id="btnTema" style="height:44px;">🌙 Modo Oscuro</button>
   </div>
 </div>
 
-<!-- MENÚ DE PESTAÑAS ADMINISTRATIVAS -->
-<div class="row no-print" style="justify-content:flex-start; margin-bottom:14px;">
-  <button class="tab active" id="tab-INVENTARIO" onclick="verPestana('INVENTARIO')">📦 1. Inventario y Stock</button>
-  <button class="tab" id="tab-FACTURACION" onclick="verPestana('FACTURACION')">🧾 2. Facturación y Caja</button>
-  <button class="tab" id="tab-COBRANZAS" onclick="verPestana('COBRANZAS')">🔔 3. Alertas de Cobranza</button>
-  <button class="tab" id="tab-COMPRAS" onclick="verPestana('COMPRAS')">🛒 4. Compras y SENIAT</button>
-  <button class="tab" id="tab-MASTER" onclick="verPestana('MASTER')">⚙️ 5. Master (Editar Todo)</button>
-  <button class="tab" id="tab-INGRESOS" onclick="verPestana('INGRESOS')">📈 6. Reporte Ingresos/Egresos</button>
+<!-- =========================================================================
+     BARRA DE NAVEGACIÓN PRINCIPAL (6 MÓDULOS COMPLETOS)
+     ========================================================================= -->
+<div class="row no-print" style="justify-content:flex-start; margin-bottom:14px; gap:8px;">
+  <button class="tab active" id="tab-INVENTARIO" onclick="verPestana('INVENTARIO')">📦 1. Inventario, Reportes y Kardex</button>
+  <button class="tab" id="tab-FACTURACION" onclick="verPestana('FACTURACION')">🧾 2. Facturación y Caja Mixta</button>
+  <button class="tab" id="tab-COBRANZAS" onclick="verPestana('COBRANZAS')">🔔 3. Cuentas por Cobrar</button>
+  <button class="tab" id="tab-COMPRAS" onclick="verPestana('COMPRAS')">🛒 4. Compras y Retenciones</button>
+  <button class="tab" id="tab-INGRESOS" onclick="verPestana('INGRESOS')">📈 5. Reporte Ingresos y Egresos</button>
+  <button class="tab" id="tab-MASTER" onclick="verPestana('MASTER')">⚙️ 6. MASTER (Configuración Total)</button>
 </div>
 
-<!-- PESTAÑA 1: INVENTARIO Y REPORTE DE STOCK -->
+<!-- =========================================================================
+     MÓDULO 1: CENTRO DE INVENTARIO, VALORIZACIÓN, REPOSICIÓN Y KARDEX
+     ========================================================================= -->
 <div id="sec-INVENTARIO">
-  <div class="card no-print" style="border-color:#EA0A6A;">
-    <h3 style="margin-top:0; color:#EA0A6A;">➕ Carga y Edición Manual de Productos Piki</h3>
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:10px;">
-      <div>
-        <label style="font-size:10px; color:#94a3b8;">Código / SKU</label>
-        <input type="text" id="invSku" value="PIKI-007">
-      </div>
-      <div style="grid-column: span 2;">
-        <label style="font-size:10px; color:#94a3b8;">Descripción del Producto *</label>
-        <input type="text" id="invNombre" placeholder="Ej: Plancha a Vapor / Protector Voltaje...">
-      </div>
-      <div>
-        <label style="font-size:10px; color:#94a3b8;">Categoría</label>
-        <div style="display:flex; gap:4px;">
-          <select id="invCategoria"></select>
-          <button class="btn-turquesa" onclick="crearCategoriaRapida()" style="padding:4px 8px;">+</button>
-        </div>
-      </div>
-      <div>
-        <label style="font-size:10px; color:#94a3b8;">Almacén</label>
-        <div style="display:flex; gap:4px;">
-          <select id="invAlmacen"></select>
-          <button class="btn-turquesa" onclick="crearAlmacenRapido()" style="padding:4px 8px;">+</button>
-        </div>
-      </div>
-      <div>
-        <label style="font-size:10px; color:#94a3b8;">Stock Actual</label>
-        <input type="number" id="invStock" value="15">
-      </div>
-      <div>
-        <label style="font-size:10px; color:#fbbf24; font-weight:bold;">Stock Mínimo</label>
-        <input type="number" id="invMinimo" value="5">
-      </div>
-      <div>
-        <label style="font-size:10px; color:#94a3b8;">Costo Unit. (\$)</label>
-        <input type="number" id="invCosto" value="12.00" step="0.01">
-      </div>
-      <div>
-        <label style="font-size:10px; color:#EA0A6A; font-weight:bold;">Precio Venta (\$)</label>
-        <input type="number" id="invPrecio" value="20.00" step="0.01">
-      </div>
-      <div>
-        <label style="font-size:10px; color:#94a3b8;">IVA SENIAT</label>
-        <select id="invIva">
-          <option value="1">IVA General (16%)</option>
-          <option value="0">Exento (0%)</option>
-        </select>
-      </div>
+  <!-- TARJETAS EJECUTIVAS DE INVENTARIO -->
+  <div class="grid4">
+    <div class="stat-card" style="border-left:4px solid var(--piki-turquesa);">
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">💰 CAPITAL PIKI INVERTIDO (COSTO)</div>
+      <div id="kpiInvCostoUsd" style="font-size:20px; font-weight:900; color:var(--piki-turquesa-dark); margin-top:4px;">$0.00</div>
+      <div id="kpiInvCostoBs" style="font-size:11px; color:var(--text-muted); font-weight:700;">Bs. 0.00</div>
     </div>
-    <button class="btn-magenta" onclick="agregarAlInventario()">+ GUARDAR EN CATÁLOGO PIKI</button>
+    <div class="stat-card" style="border-left:4px solid var(--piki-magenta);">
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">🏷️ VALOR STOCK A PRECIO DETAL</div>
+      <div id="kpiInvVentaUsd" style="font-size:20px; font-weight:900; color:var(--piki-magenta); margin-top:4px;">$0.00</div>
+      <div id="kpiInvVentaBs" style="font-size:11px; color:var(--text-muted); font-weight:700;">Bs. 0.00</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #10b981;">
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">📈 GANANCIA BRUTA PROYECTADA</div>
+      <div id="kpiInvGananciaUsd" style="font-size:20px; font-weight:900; color:#10b981; margin-top:4px;">+$0.00</div>
+      <div id="kpiInvMargenProm" style="font-size:11px; color:var(--text-muted); font-weight:700;">Margen retorno sobre stock</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #f59e0b;">
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">🚨 SEMÁFORO DE STOCK PIKI</div>
+      <div id="kpiInvSemaforo" style="font-size:13px; font-weight:800; margin-top:6px;">0 Óptimos • 0 Bajos • 0 Agotados</div>
+      <div id="kpiInvTotalItems" style="font-size:11px; color:var(--text-muted); margin-top:2px;">0 productos registrados</div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="row no-print" style="margin-bottom:10px;">
-      <div class="row" style="gap:6px;">
-        <strong style="color:#00B8B5; margin-right:6px;">📊 Filtrar Stock:</strong>
-        <button class="btn-turquesa" id="f-TODOS" onclick="setFiltroStock('TODOS')">Todos</button>
-        <button class="tab" id="f-BAJO" onclick="setFiltroStock('BAJO')">🟠 Bajo Stock</button>
-        <button class="tab" id="f-AGOTADO" onclick="setFiltroStock('AGOTADO')">🔴 Agotados</button>
+  <!-- SUB-NAVEGACIÓN DE INVENTARIO -->
+  <div class="row no-print" style="margin-bottom:12px; justify-content:flex-start;">
+    <button class="subtab active" id="subinv-CATALOGO" onclick="verSubInv('CATALOGO')">📋 1.1 Catálogo y Carga/Edición Manual</button>
+    <button class="subtab" id="subinv-REPORTE" onclick="verSubInv('REPORTE')">📊 1.2 Reporte de Valorización y Lista de Compras por Reponer</button>
+    <button class="subtab" id="subinv-KARDEX" onclick="verSubInv('KARDEX')">🕓 1.3 Historial Kardex (Entradas y Salidas)</button>
+  </div>
+
+  <!-- SUB-VISTA 1.1: CATÁLOGO + FORMULARIO DE CARGA Y EDICIÓN COMPLETA -->
+  <div id="vista-inv-CATALOGO">
+    <div class="card no-print" style="border-left:4px solid var(--piki-magenta);">
+      <div class="row" style="margin-bottom:10px;">
+        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Con acceso directo al Master)</h3>
+        <button id="btnCancelarEdicionProd" class="btn-outline hidden" onclick="limpiarFormularioProducto()">✖ Cancelar Edición</button>
       </div>
-      <div class="row" style="gap:8px;">
-        <input type="text" id="buscadorInv" placeholder="🔍 Buscar producto..." style="width:190px;" oninput="recalcularTodo()">
-        <button class="btn-blue" onclick="window.print()">🖨️ Imprimir Reporte</button>
+      <input type="hidden" id="editProdId" value="">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap:10px; margin-bottom:10px;">
+        <div>
+          <label>Código / SKU *</label>
+          <input type="text" id="invSku" value="PIKI-007">
+        </div>
+        <div>
+          <label>Código de Barras</label>
+          <input type="text" id="invBarra" placeholder="759123456789">
+        </div>
+        <div style="grid-column: span 2;">
+          <label>Descripción del Producto Piki *</label>
+          <input type="text" id="invNombre" placeholder="Ej: Plancha a Vapor Vertical / Protector Voltaje...">
+        </div>
+        <div>
+          <label style="color:var(--piki-magenta);">Categoría * <span style="cursor:pointer; text-decoration:underline;" onclick="crearRapidoMaster('categorias', 'Categoría')">[+Nueva]</span></label>
+          <select id="invCategoria"></select>
+        </div>
+        <div>
+          <label style="color:var(--piki-turquesa-dark);">Almacén / Sucursal * <span style="cursor:pointer; text-decoration:underline;" onclick="crearRapidoMaster('almacenes', 'Almacén')">[+Nuevo]</span></label>
+          <select id="invAlmacen"></select>
+        </div>
+        <div>
+          <label>Unidad Medida <span style="cursor:pointer; text-decoration:underline;" onclick="crearRapidoMaster('unidades', 'Unidad')">[+Nueva]</span></label>
+          <select id="invUnidad"></select>
+        </div>
+        <div>
+          <label>Proveedor Habitual</label>
+          <input type="text" id="invProveedor" value="DISTRIBUIDORA PIKI, C.A.">
+        </div>
+        <div>
+          <label style="color:var(--piki-turquesa-dark);">Stock Actual</label>
+          <input type="number" id="invStock" value="15">
+        </div>
+        <div>
+          <label style="color:#f59e0b;">Stock Mínimo (Alerta)</label>
+          <input type="number" id="invMinimo" value="5">
+        </div>
+        <div>
+          <label>Stock Máximo (Óptimo)</label>
+          <input type="number" id="invMaximo" value="30">
+        </div>
+        <div>
+          <label>Impuesto SENIAT</label>
+          <select id="invIva">
+            <option value="GENERAL">IVA General (16%)</option>
+            <option value="REDUCIDO">IVA Reducido (8%)</option>
+            <option value="EXENTO">Exento de IVA (0%)</option>
+          </select>
+        </div>
+        <div>
+          <label>Costo Unitario ($ USD)</label>
+          <input type="number" id="invCosto" value="12.00" step="0.01" oninput="calcularMargenesPreview()">
+        </div>
+        <div>
+          <label style="color:var(--piki-turquesa-dark);">Precio 1: Detal (\$) <span id="lblMargen1" style="float:right;">+67%</span></label>
+          <input type="number" id="invPrecio1" value="20.00" step="0.01" oninput="calcularMargenesPreview()">
+        </div>
+        <div>
+          <label style="color:var(--piki-magenta);">Precio 2: Mayor (\$) <span id="lblMargen2" style="float:right;">+42%</span></label>
+          <input type="number" id="invPrecio2" value="17.00" step="0.01" oninput="calcularMargenesPreview()">
+        </div>
+        <div>
+          <label>Precio 3: Distribuidor (\$) <span id="lblMargen3" style="float:right;">+25%</span></label>
+          <input type="number" id="invPrecio3" value="15.00" step="0.01" oninput="calcularMargenesPreview()">
+        </div>
+      </div>
+      <div class="row">
+        <span style="font-size:11px; color:var(--text-muted);">💡 Puedes cambiar la categoría de cualquier producto directamente desde la tabla inferior o pulsando <strong>✏️ Editar Todo</strong>.</span>
+        <button class="btn-magenta" id="btnGuardarProducto" onclick="guardarProductoCatalogo()">+ GUARDAR EN CATÁLOGO PIKI</button>
       </div>
     </div>
-    <div style="overflow-x:auto;">
+
+    <!-- FILTROS Y TABLA PRINCIPAL DE INVENTARIO -->
+    <div class="card">
+      <div class="row no-print" style="margin-bottom:10px;">
+        <div class="row" style="gap:6px;">
+          <button class="btn-turquesa" id="f-TODOS" onclick="setFiltroStock('TODOS')">Todos</button>
+          <button class="btn-outline" id="f-OPTIMO" onclick="setFiltroStock('OPTIMO')">🟢 Óptimos</button>
+          <button class="btn-outline" id="f-BAJO" onclick="setFiltroStock('BAJO')">🟠 Bajo Stock (Reponer)</button>
+          <button class="btn-outline" id="f-AGOTADO" onclick="setFiltroStock('AGOTADO')">🔴 Agotados (Stock 0)</button>
+          <select id="filtroCatInv" style="width:160px;" onchange="recalcularTodo()"></select>
+          <select id="filtroAlmInv" style="width:160px;" onchange="recalcularTodo()"></select>
+        </div>
+        <div class="row" style="gap:8px;">
+          <input type="text" id="buscadorInv" placeholder="🔍 Buscar SKU, nombre, proveedor..." style="width:210px;" oninput="recalcularTodo()">
+          <button class="btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>SKU / Categoría Editable</th>
+              <th>Producto Piki / Almacén</th>
+              <th>Stock (Mín/Máx)</th>
+              <th>Costo (\$)</th>
+              <th>P1: Detal ($ / Bs)</th>
+              <th>P2: Mayor (\$)</th>
+              <th>Valor Total (\$)</th>
+              <th class="no-print">Acciones Rápidas</th>
+            </tr>
+          </thead>
+          <tbody id="tablaInventario"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUB-VISTA 1.2: REPORTE FINANCIERO DE VALORIZACIÓN Y ORDEN DE COMPRA SUGERIDA -->
+  <div id="vista-inv-REPORTE" class="hidden">
+    <div class="grid2">
+      <div class="card" style="border-top:3px solid var(--piki-turquesa);">
+        <div class="row" style="margin-bottom:8px;">
+          <h3 style="margin:0; color:var(--piki-turquesa-dark);">📊 Valorización de Inventario por Categoría Piki</h3>
+          <button class="btn-outline no-print" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Productos</th>
+              <th>Unidades</th>
+              <th>Costo Total (\$)</th>
+              <th>Venta Total (\$)</th>
+              <th>Utilidad (\$)</th>
+            </tr>
+          </thead>
+          <tbody id="tablaValorizacionCat"></tbody>
+        </table>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--piki-magenta);">
+        <h3 style="margin-top:0; color:var(--piki-magenta);">🚨 Orden de Compra Sugerida (Productos por Reponer)</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:0;">Calcula automáticamente cuántas unidades comprar para llevar cada producto en alerta hasta su Stock Máximo Óptimo.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Producto / Proveedor</th>
+              <th>Stock Actual</th>
+              <th>Sugerido Comprar</th>
+              <th>Costo Estimado ($ / Bs)</th>
+              <th class="no-print">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaReposicion"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUB-VISTA 1.3: KARDEX DE AUDITORÍA -->
+  <div id="vista-inv-KARDEX" class="hidden">
+    <div class="card">
+      <div class="row" style="margin-bottom:10px;">
+        <h3 style="margin:0; color:var(--piki-turquesa-dark);">🕓 Historial Kardex de Movimientos de Inventario</h3>
+        <button class="btn-outline no-print" onclick="window.print()">🖨️ Imprimir Kardex</button>
+      </div>
       <table>
         <thead>
           <tr>
-            <th>Estado</th>
-            <th>Código / Categoría</th>
-            <th>Producto Piki</th>
-            <th>Stock (Mín)</th>
-            <th>Costo (\$)</th>
-            <th>Precio (\$)</th>
-            <th>Valor Stock (\$)</th>
-            <th class="no-print">Acción</th>
+            <th>Fecha y Hora</th>
+            <th>Tipo Movimiento</th>
+            <th>SKU / Producto</th>
+            <th>Cantidad</th>
+            <th>Stock Resultante</th>
+            <th>Detalle / Motivo</th>
           </tr>
         </thead>
-        <tbody id="tablaInventario"></tbody>
+        <tbody id="tablaKardex"></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- PESTAÑA 2: FACTURACIÓN Y CAJA MIXTA -->
+<!-- =========================================================================
+     MÓDULO 2: FACTURACIÓN BIMONETARIA, 3 PRECIOS, CAJA MIXTA E IGTF
+     ========================================================================= -->
 <div id="sec-FACTURACION" class="hidden">
   <div class="grid2">
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--piki-magenta);">
       <div class="row" style="margin-bottom:10px;">
-        <h3 style="margin:0; color:#EA0A6A;">Facturación Piki</h3>
-        <div>
+        <h3 style="margin:0; color:var(--piki-magenta);">🧾 Nueva Factura / Nota de Entrega Piki</h3>
+        <div class="row" style="gap:6px;">
           <button id="btnContado" class="btn-magenta" onclick="setCondicionVenta('CONTADO')">Contado</button>
-          <button id="btnCredito" class="tab" onclick="setCondicionVenta('CREDITO')">A Crédito</button>
+          <button id="btnCredito" class="btn-outline" onclick="setCondicionVenta('CREDITO')">A Crédito</button>
         </div>
       </div>
-      <div class="grid2" style="margin-bottom:10px;">
-        <input type="text" id="cliRif" value="J-40123456-7" placeholder="RIF Cliente">
-        <input type="text" id="cliNombre" value="CLIENTE GENERAL Piki" placeholder="Nombre Cliente">
+
+      <div class="grid3" style="margin-bottom:10px;">
+        <div>
+          <label>RIF / Cédula Cliente</label>
+          <input type="text" id="cliRif" value="V-18900123">
+        </div>
+        <div>
+          <label>Nombre o Razón Social</label>
+          <input type="text" id="cliNombre" value="CLIENTE GENERAL PIKI">
+        </div>
+        <div>
+          <label>Teléfono WhatsApp</label>
+          <input type="text" id="cliTel" value="584141234567">
+        </div>
+        <div>
+          <label>Vendedor Asignado <span style="cursor:pointer; text-decoration:underline;" onclick="crearRapidoMaster('vendedores', 'Vendedor')">[+Nuevo]</span></label>
+          <select id="facVendedor"></select>
+        </div>
+        <div>
+          <label>Lista de Precio Aplicada</label>
+          <select id="facListaPrecio" onchange="cambiarListaPrecioCarrito()">
+            <option value="1">Precio 1: Detal</option>
+            <option value="2">Precio 2: Mayor</option>
+            <option value="3">Precio 3: Distribuidor</option>
+          </select>
+        </div>
+        <div id="boxDiasCredito" class="hidden">
+          <label style="color:#f59e0b;">Días de Crédito</label>
+          <input type="number" id="facDiasCredito" value="7">
+        </div>
       </div>
+
+      <!-- AGREGAR PRODUCTO RÁPIDO AL CARRITO -->
+      <div class="row no-print" style="background:var(--bg-input); padding:8px; border-radius:8px; margin-bottom:10px;">
+        <select id="selProductoFactura" style="flex:1;"></select>
+        <button class="btn-turquesa" onclick="agregarDesdeSelectorFactura()">+ Agregar a Factura</button>
+      </div>
+
       <table>
         <thead>
-          <tr><th>Producto</th><th>Cant.</th><th>Subtotal (\$)</th><th>Subtotal (Bs)</th></tr>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Precio Unit (\$)</th>
+            <th>Subtotal (\$)</th>
+            <th>Subtotal (Bs)</th>
+            <th class="no-print"></th>
+          </tr>
         </thead>
         <tbody id="tablaCarrito"></tbody>
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--piki-turquesa);">
       <div class="row" style="margin-bottom:10px;">
-        <h3 style="margin:0; color:#00B8B5;">Caja Mixta & IGTF</h3>
-        <label class="switch-box" style="margin:0; border-color:#EA0A6A;">
-          <span style="color:#EA0A6A; font-weight:bold; margin-right:8px;">¿Aplicar 3% IGTF?</span>
+        <h3 style="margin:0; color:var(--piki-turquesa-dark);">💵 Caja Mixta Bimonetaria & IGTF</h3>
+        <label class="switch-box" style="margin:0; border-color:var(--piki-magenta);">
+          <span style="color:var(--piki-magenta); font-weight:800; margin-right:8px;">¿Aplicar <span id="lblPorcIgtfFac">3</span>% IGTF Divisas?</span>
           <input type="checkbox" id="chkIgtf" checked onchange="recalcularTodo()">
         </label>
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+      <div class="grid3" style="margin-bottom:12px;">
         <div>
-          <label style="font-size:11px; color:#94a3b8;">Pago Móvil (Bs)</label>
-          <input type="number" id="pagoBs" value="4500" oninput="recalcularTodo()">
+          <label>Pago Móvil / Punto (Bs)</label>
+          <input type="number" id="pagoBs" value="0" step="0.01" oninput="recalcularTodo()">
         </div>
         <div>
-          <label style="font-size:11px; color:#94a3b8;">Efectivo (\$)</label>
-          <input type="number" id="pagoEfecUsd" value="300" oninput="recalcularTodo()">
+          <label>Efectivo Divisas ($ USD)</label>
+          <input type="number" id="pagoEfecUsd" value="28" step="0.01" oninput="recalcularTodo()">
         </div>
         <div>
-          <label style="font-size:11px; color:#94a3b8;">Zelle (\$)</label>
-          <input type="number" id="pagoZelleUsd" value="200" oninput="recalcularTodo()">
+          <label>Zelle / Binance ($ USD)</label>
+          <input type="number" id="pagoZelleUsd" value="0" step="0.01" oninput="recalcularTodo()">
         </div>
       </div>
 
-      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px;" id="resumenFactura"></div>
-      <div id="cajaSaldoFactura" style="margin-bottom:10px;"></div>
-      <button class="btn-magenta" style="width:100%; padding:11px;" onclick="emitirFactura()">EMITIR FACTURA Y REGISTRAR INGRESO</button>
+      <div style="background:var(--bg-input); padding:14px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:12px;" id="resumenFactura"></div>
+      <div id="cajaSaldoFactura" style="margin-bottom:12px;"></div>
+
+      <div class="row">
+        <button class="btn-outline" onclick="window.print()">🖨️ Imprimir Ticket/Factura</button>
+        <button class="btn-magenta" style="flex:1; padding:12px;" onclick="emitirFactura()">✅ EMITIR FACTURA Y DESCONTAR STOCK</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- PESTAÑA 3: ALERTAS DE COBRANZA -->
+<!-- =========================================================================
+     MÓDULO 3: CUENTAS POR COBRAR Y RECORDATORIOS WHATSAPP
+     ========================================================================= -->
 <div id="sec-COBRANZAS" class="hidden">
-  <div class="card">
-    <h3 style="margin-top:0; color:#EA0A6A;">🚨 Cuentas por Cobrar y Abonos a Crédito</h3>
+  <div class="card" style="border-top:3px solid var(--piki-magenta);">
+    <div class="row" style="margin-bottom:10px;">
+      <h3 style="margin:0; color:var(--piki-magenta);">🔔 Control de Cuentas por Cobrar (Indexadas a la Tasa del Día)</h3>
+      <span style="font-size:11px; color:var(--text-muted);">Al registrar un abono o cobro total, el dinero entra automáticamente al Reporte de Ingresos y Egresos.</span>
+    </div>
     <table>
       <thead>
-        <tr><th>Estado</th><th>Cliente</th><th>Factura</th><th>Deuda (\$)</th><th>Cobrar Hoy (Bs)</th><th>Acciones</th></tr>
+        <tr>
+          <th>Estado</th>
+          <th>Cliente / Teléfono</th>
+          <th>Documento</th>
+          <th>Saldo Pendiente ($ USD)</th>
+          <th>Equivalente Hoy (Bs)</th>
+          <th class="no-print">Acciones de Cobranza</th>
+        </tr>
       </thead>
       <tbody id="tablaCobranzas"></tbody>
     </table>
   </div>
 </div>
 
-<!-- PESTAÑA 4: COMPRAS Y RETENCIONES SENIAT -->
+<!-- =========================================================================
+     MÓDULO 4: COMPRAS A PROVEEDORES, CARGA DE STOCK Y RETENCIONES SENIAT
+     ========================================================================= -->
 <div id="sec-COMPRAS" class="hidden">
   <div class="grid2">
-    <div class="card">
-      <h3 style="margin-top:0; color:#00B8B5;">Registrar Compra y Retenciones SENIAT</h3>
+    <div class="card" style="border-top:3px solid var(--piki-turquesa);">
+      <h3 style="margin-top:0; color:var(--piki-turquesa-dark);">🛒 Registrar Factura de Compra y Retenciones SENIAT</h3>
       <div class="grid2" style="margin-bottom:10px;">
-        <input type="text" id="compProv" value="PROVEEDOR INDUSTRIAL, C.A.">
-        <input type="number" id="compMonto" value="500" oninput="recalcularTodo()" placeholder="Monto Base (\$)">
+        <div>
+          <label>Proveedor *</label>
+          <input type="text" id="compProv" value="DISTRIBUIDORA PIKI, C.A.">
+        </div>
+        <div>
+          <label>N° Factura / Control Proveedor</label>
+          <input type="text" id="compNumFac" value="FAC-PROV-088">
+        </div>
+        <div>
+          <label>Monto Base Imponible ($ USD)</label>
+          <input type="number" id="compMonto" value="350.00" step="0.01" oninput="recalcularTodo()">
+        </div>
+        <div>
+          <label>Método de Pago / Condición</label>
+          <select id="compEstadoPago">
+            <option value="PAGADA">Pagada de Contado (Registra Egreso en Caja)</option>
+            <option value="PENDIENTE">A Crédito (Pasa a Cuentas por Pagar)</option>
+          </select>
+        </div>
       </div>
-      <label class="switch-box"><span style="color:#00B8B5; font-weight:bold;">1. ¿Aplica IVA (16%)?</span><input type="checkbox" id="chkCompIva" checked onchange="recalcularTodo()"></label>
-      <label class="switch-box"><span style="color:#818cf8; font-weight:bold;">2. ¿Retener IVA (75%)?</span><input type="checkbox" id="chkCompRetIva" checked onchange="recalcularTodo()"></label>
-      <label class="switch-box"><span style="color:#fbbf24; font-weight:bold;">3. ¿Retener ISLR (2%)?</span><input type="checkbox" id="chkCompRetIslr" onchange="recalcularTodo()"></label>
-      <div id="resumenCompra" style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px;"></div>
-      <button class="btn-turquesa" style="width:100%; padding:10px;" onclick="guardarCompra()">Guardar Compra (Registrar Egreso)</button>
+
+      <label class="switch-box">
+        <span style="color:var(--piki-turquesa-dark); font-weight:700;">1. ¿Factura incluye IVA (<span id="lblCompIvaPorc">16</span>%)?</span>
+        <input type="checkbox" id="chkCompIva" checked onchange="recalcularTodo()">
+      </label>
+      <label class="switch-box">
+        <span style="color:var(--piki-magenta); font-weight:700;">2. ¿Aplicar Retención de IVA (<span id="lblCompRetIvaPorc">75</span>%)?</span>
+        <input type="checkbox" id="chkCompRetIva" checked onchange="recalcularTodo()">
+      </label>
+      <label class="switch-box">
+        <span style="color:#f59e0b; font-weight:700;">3. ¿Aplicar Retención de ISLR (<span id="lblCompRetIslrPorc">2</span>%)?</span>
+        <input type="checkbox" id="chkCompRetIslr" onchange="recalcularTodo()">
+      </label>
+
+      <div id="resumenCompra" style="background:var(--bg-input); padding:12px; border-radius:10px; margin-bottom:10px;"></div>
+      <button class="btn-turquesa" style="width:100%; padding:11px;" onclick="guardarCompra()">💾 REGISTRAR COMPRA</button>
     </div>
-    <div class="card">
-      <h3 style="margin-top:0; color:#fbbf24;">Cuentas por Pagar a Proveedores</h3>
+
+    <div class="card" style="border-top:3px solid #f59e0b;">
+      <h3 style="margin-top:0; color:#f59e0b;">📋 Cuentas por Pagar e Historial de Compras</h3>
       <div id="listaComprasPagar"></div>
     </div>
   </div>
 </div>
 
-<!-- PESTAÑA 5: MASTER (CONFIGURACIÓN Y EDICIÓN EN CASCADA) -->
-<div id="sec-MASTER" class="hidden">
-  <div class="card" style="border-color:#EA0A6A;">
-    <h3 style="margin-top:0; color:#EA0A6A;">⚙️ Configuración Maestra PIKI (Categorías y Almacenes)</h3>
-    <p style="color:#94a3b8; font-size:12px;">Agrega, renombra o elimina categorías y almacenes. Los cambios se actualizan automáticamente en todo el sistema.</p>
-    <div class="grid2">
-      <div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
-        <h4 style="margin-top:0; color:#00B8B5;">Gestión de Categorías</h4>
-        <div style="display:flex; gap:6px; margin-bottom:10px;">
-          <input type="text" id="nuevoCatMaster" placeholder="Nueva Categoría...">
-          <button class="btn-turquesa" onclick="agregarCategoriaMaster()">Agregar</button>
-        </div>
-        <div id="listaMasterCat"></div>
-      </div>
-      <div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
-        <h4 style="margin-top:0; color:#EA0A6A;">Gestión de Almacenes</h4>
-        <div style="display:flex; gap:6px; margin-bottom:10px;">
-          <input type="text" id="nuevoAlmMaster" placeholder="Nuevo Almacén...">
-          <button class="btn-magenta" onclick="agregarAlmacenMaster()">Agregar</button>
-        </div>
-        <div id="listaMasterAlm"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PESTAÑA 6: REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA) -->
+<!-- =========================================================================
+     MÓDULO 5: REPORTE COMPLETO DE INGRESOS, EGRESOS Y FLUJO DE CAJA
+     ========================================================================= -->
 <div id="sec-INGRESOS" class="hidden">
+  <!-- KPI FINANCIEROS DE FLUJO DE CAJA -->
   <div class="grid4">
     <div class="stat-card" style="border-left:4px solid #10b981;">
-      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">🟢 Total Ingresos (Entradas)</div>
-      <div id="lblTotalIngresos" style="font-size:20px; font-weight:800; color:#34d399; margin-top:4px;">\$0.00 USD</div>
-      <div id="lblTotalIngresosBs" style="font-size:11px; color:#a7f3d0;">Bs. 0,00</div>
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">🟢 TOTAL INGRESOS (ENTRADAS)</div>
+      <div id="lblTotalIngresos" style="font-size:22px; font-weight:900; color:#10b981; margin-top:4px;">$0.00</div>
+      <div id="lblTotalIngresosBs" style="font-size:11px; color:var(--text-muted); font-weight:700;">Bs. 0.00</div>
     </div>
     <div class="stat-card" style="border-left:4px solid #ef4444;">
-      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">🔴 Total Egresos (Salidas)</div>
-      <div id="lblTotalEgresos" style="font-size:20px; font-weight:800; color:#f87171; margin-top:4px;">\$0.00 USD</div>
-      <div id="lblTotalEgresosBs" style="font-size:11px; color:#fca5a5;">Bs. 0,00</div>
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">🔴 TOTAL EGRESOS Y GASTOS (SALIDAS)</div>
+      <div id="lblTotalEgresos" style="font-size:22px; font-weight:900; color:#ef4444; margin-top:4px;">$0.00</div>
+      <div id="lblTotalEgresosBs" style="font-size:11px; color:var(--text-muted); font-weight:700;">Bs. 0.00</div>
     </div>
-    <div class="stat-card" style="border-left:4px solid #00B8B5;">
-      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">⚖️ Flujo Neto de Caja</div>
-      <div id="lblFlujoNeto" style="font-size:20px; font-weight:800; color:#00B8B5; margin-top:4px;">\$0.00 USD</div>
-      <div style="font-size:11px; color:#94a3b8;">Ingresos menos Egresos</div>
+    <div class="stat-card" style="border-left:4px solid var(--piki-turquesa);">
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">⚖️ FLUJO NETO / UTILIDAD EN CAJA</div>
+      <div id="lblFlujoNeto" style="font-size:22px; font-weight:900; color:var(--piki-turquesa-dark); margin-top:4px;">$0.00</div>
+      <div id="lblFlujoNetoBs" style="font-size:11px; color:var(--text-muted); font-weight:700;">Bs. 0.00</div>
     </div>
-    <div class="stat-card" style="border-left:4px solid #EA0A6A;">
-      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase;">📊 Movimientos Registrados</div>
-      <div id="lblCantMovimientos" style="font-size:20px; font-weight:800; color:#EA0A6A; margin-top:4px;">0</div>
-      <div style="font-size:11px; color:#94a3b8;">Transacciones en caja</div>
+    <div class="stat-card" style="border-left:4px solid var(--piki-magenta);">
+      <div style="font-size:10px; font-weight:800; color:var(--text-muted);">📊 MARGEN FINANCIERO OPERATIVO</div>
+      <div id="lblRentabilidadCaja" style="font-size:22px; font-weight:900; color:var(--piki-magenta); margin-top:4px;">0%</div>
+      <div id="lblCantMovimientos" style="font-size:11px; color:var(--text-muted); font-weight:700;">0 movimientos registrados</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="row" style="margin-bottom:10px;">
-      <h3 style="margin:0; color:#00B8B5;">📋 Historial Detallado de Ingresos y Egresos en Caja</h3>
-      <button class="btn-blue" onclick="window.print()">🖨️ Imprimir Reporte Financiero</button>
+  <!-- FORMULARIO PARA REGISTRAR INGRESOS O GASTOS OPERATIVOS MANUALES -->
+  <div class="card no-print" style="border-left:4px solid var(--piki-turquesa);">
+    <h3 style="margin-top:0; color:var(--piki-turquesa-dark);">➕ Registrar Ingreso Extra o Gasto Operativo (Alquiler, Nómina, Servicios, Fletes...)</h3>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:10px;">
+      <div>
+        <label>Tipo de Movimiento *</label>
+        <select id="cajaTipo">
+          <option value="EGRESO">🔴 EGRESO / GASTO (Salida de Dinero)</option>
+          <option value="INGRESO">🟢 INGRESO EXTRA (Entrada de Dinero)</option>
+        </select>
+      </div>
+      <div>
+        <label>Categoría Financiera <span style="cursor:pointer; text-decoration:underline;" onclick="crearRapidoMaster('conceptosCaja', 'Categoría de Caja')">[+Nueva]</span></label>
+        <select id="cajaCategoria"></select>
+      </div>
+      <div style="grid-column: span 2;">
+        <label>Descripción o Concepto Detallado *</label>
+        <input type="text" id="cajaConcepto" placeholder="Ej: Pago de electricidad / Flete mercancía / Aporte...">
+      </div>
+      <div>
+        <label>Beneficiario / Cliente / Proveedor</label>
+        <input type="text" id="cajaTercero" placeholder="Ej: Corpoelec / Transporte / Cliente">
+      </div>
+      <div>
+        <label>Método / Banco <span style="cursor:pointer; text-decoration:underline;" onclick="crearRapidoMaster('metodosPago', 'Método de Pago')">[+Nuevo]</span></label>
+        <select id="cajaMetodo"></select>
+      </div>
+      <div>
+        <label style="color:var(--piki-magenta);">Monto en Dólares ($ USD) *</label>
+        <input type="number" id="cajaMontoUsd" value="25.00" step="0.01">
+      </div>
     </div>
+    <button class="btn-magenta" onclick="registrarMovimientoManualCaja()">+ GUARDAR MOVIMIENTO EN FLUJO DE CAJA</button>
+  </div>
+
+  <!-- TABLA Y FILTROS DEL LIBRO DE INGRESOS Y EGRESOS -->
+  <div class="card">
+    <div class="row no-print" style="margin-bottom:10px;">
+      <div class="row" style="gap:6px;">
+        <strong style="color:var(--piki-magenta);">Filtrar Libro:</strong>
+        <button class="btn-turquesa" id="fc-TODOS" onclick="setFiltroCaja('TODOS')">Todos</button>
+        <button class="btn-outline" id="fc-INGRESO" onclick="setFiltroCaja('INGRESO')">🟢 Solo Ingresos</button>
+        <button class="btn-outline" id="fc-EGRESO" onclick="setFiltroCaja('EGRESO')">🔴 Solo Egresos/Gastos</button>
+        <input type="text" id="buscadorCaja" placeholder="🔍 Buscar concepto, tercero, método..." style="width:220px;" oninput="recalcularTodo()">
+      </div>
+      <button class="btn-outline" onclick="window.print()">🖨️ Imprimir Reporte Ingresos/Egresos</button>
+    </div>
+
     <div style="overflow-x:auto;">
       <table>
         <thead>
           <tr>
             <th>Fecha / Hora</th>
-            <th>Tipo Movimiento</th>
-            <th>Descripción / Concepto</th>
-            <th>Tercero (Cliente / Proveedor)</th>
-            <th style="text-align:right;">Monto USD (\$)</th>
-            <th style="text-align:right;">Monto Bs</th>
+            <th>Tipo</th>
+            <th>Categoría</th>
+            <th>Concepto / Descripción</th>
+            <th>Tercero</th>
+            <th>Método / Banco</th>
+            <th style="text-align:right;">Monto ($ USD)</th>
+            <th style="text-align:right;">Equivalente (Bs)</th>
+            <th class="no-print">Acción</th>
           </tr>
         </thead>
         <tbody id="tablaIngresosEgresos"></tbody>
@@ -331,342 +651,1134 @@
   </div>
 </div>
 
+<!-- =========================================================================
+     MÓDULO 6: MASTER DE CONFIGURACIÓN TOTAL (EDITA TODO EL SISTEMA EN CASCADA)
+     ========================================================================= -->
+<div id="sec-MASTER" class="hidden">
+  <div class="card" style="border-top:4px solid var(--piki-magenta);">
+    <div class="row" style="margin-bottom:12px;">
+      <div>
+        <h2 style="margin:0; color:var(--piki-magenta);">⚙️ MASTER DE CONFIGURACIÓN TOTAL DEL SISTEMA PIKI</h2>
+        <span style="color:var(--text-muted); font-size:12px;">Desde aquí puedes cambiar la identidad de la empresa, subir el logo, modificar porcentajes SENIAT y editar/renombrar en cascada todas las listas del sistema.</span>
+      </div>
+      <div class="row">
+        <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Respaldo (.JSON)</button>
+        <button class="btn-red" onclick="restaurarFabrica()">♻️ Restaurar Valores de Fábrica</button>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:14px;">
+      <!-- 1. IDENTIDAD EMPRESA Y LOGO -->
+      <div style="background:var(--bg-input); padding:14px; border-radius:12px; border:1px solid var(--border-color);">
+        <h3 style="margin-top:0; color:var(--piki-magenta);">🏢 1. Datos Fiscales e Imagen de Piki</h3>
+        <div class="grid2" style="margin-bottom:10px;">
+          <div>
+            <label>Nombre de la Empresa</label>
+            <input type="text" id="masEmpresaNombre" oninput="guardarConfigMaster()">
+          </div>
+          <div>
+            <label>RIF Fiscal</label>
+            <input type="text" id="masEmpresaRif" oninput="guardarConfigMaster()">
+          </div>
+          <div style="grid-column: span 2;">
+            <label>Eslogan Oficial (Debajo del Logo)</label>
+            <input type="text" id="masEmpresaSlogan" oninput="guardarConfigMaster()">
+          </div>
+          <div style="grid-column: span 2;">
+            <label>Dirección / Teléfonos en Factura</label>
+            <input type="text" id="masEmpresaDir" oninput="guardarConfigMaster()">
+          </div>
+        </div>
+        <div style="border-top:1px dashed var(--border-color); padding-top:10px;">
+          <label>Subir Imagen del Logo Oficial desde tu Computadora (Opcional, reemplaza el vector)</label>
+          <div class="row">
+            <input type="file" accept="image/*" onchange="subirLogoPersonalizado(event)" style="flex:1;">
+            <button class="btn-outline" onclick="restaurarLogoVectorial()">Usar Logo Vectorial Piki</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PARÁMETROS FISCALES SENIAT -->
+      <div style="background:var(--bg-input); padding:14px; border-radius:12px; border:1px solid var(--border-color);">
+        <h3 style="margin-top:0; color:var(--piki-turquesa-dark);">🏛️ 2. Impuestos y Retenciones SENIAT Editables</h3>
+        <div class="grid2">
+          <div>
+            <label>IVA Alícuota General (%)</label>
+            <input type="number" id="masIvaGen" step="0.1" oninput="guardarConfigMaster()">
+          </div>
+          <div>
+            <label>IVA Alícuota Reducida (%)</label>
+            <input type="number" id="masIvaRed" step="0.1" oninput="guardarConfigMaster()">
+          </div>
+          <div>
+            <label>IGTF Pagos en Divisas (%)</label>
+            <input type="number" id="masIgtf" step="0.1" oninput="guardarConfigMaster()">
+          </div>
+          <div>
+            <label>Retención de IVA Compras (%)</label>
+            <input type="number" id="masRetIva" step="1" oninput="guardarConfigMaster()">
+          </div>
+          <div>
+            <label>Retención de ISLR Compras (%)</label>
+            <input type="number" id="masRetIslr" step="0.5" oninput="guardarConfigMaster()">
+          </div>
+          <div>
+            <label>Correlativo Próxima Factura</label>
+            <input type="number" id="masCorrelativo" step="1" oninput="guardarConfigMaster()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. EDITORES EN CASCADA DE TODAS LAS LISTAS DEL SISTEMA -->
+    <div class="grid3">
+      <!-- CATEGORÍAS -->
+      <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+        <h4 style="margin-top:0; color:var(--piki-magenta);">🏷️ Categorías de Productos (Edición en Cascada)</h4>
+        <div class="row" style="margin-bottom:8px;">
+          <input type="text" id="inputNueva_categorias" placeholder="Nueva Categoría..." style="flex:1;">
+          <button class="btn-magenta" onclick="agregarItemMaster('categorias')">+ Agregar</button>
+        </div>
+        <div id="listaMaster_categorias"></div>
+      </div>
+
+      <!-- ALMACENES -->
+      <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+        <h4 style="margin-top:0; color:var(--piki-turquesa-dark);">🏬 Almacenes / Sucursales (Edición en Cascada)</h4>
+        <div class="row" style="margin-bottom:8px;">
+          <input type="text" id="inputNueva_almacenes" placeholder="Nuevo Almacén..." style="flex:1;">
+          <button class="btn-turquesa" onclick="agregarItemMaster('almacenes')">+ Agregar</button>
+        </div>
+        <div id="listaMaster_almacenes"></div>
+      </div>
+
+      <!-- UNIDADES DE MEDIDA -->
+      <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+        <h4 style="margin-top:0; color:#3b82f6;">📏 Unidades de Medida</h4>
+        <div class="row" style="margin-bottom:8px;">
+          <input type="text" id="inputNueva_unidades" placeholder="Ej: UND, CAJA, PAR..." style="flex:1;">
+          <button class="btn-blue" onclick="agregarItemMaster('unidades')">+ Agregar</button>
+        </div>
+        <div id="listaMaster_unidades"></div>
+      </div>
+
+      <!-- MÉTODOS DE PAGO / BANCOS -->
+      <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+        <h4 style="margin-top:0; color:#10b981;">💳 Bancos y Métodos de Pago</h4>
+        <div class="row" style="margin-bottom:8px;">
+          <input type="text" id="inputNueva_metodosPago" placeholder="Ej: Zelle, Banesco, Efectivo..." style="flex:1;">
+          <button class="btn-green" onclick="agregarItemMaster('metodosPago')">+ Agregar</button>
+        </div>
+        <div id="listaMaster_metodosPago"></div>
+      </div>
+
+      <!-- VENDEDORES -->
+      <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+        <h4 style="margin-top:0; color:#f59e0b;">👤 Vendedores / Cajeros</h4>
+        <div class="row" style="margin-bottom:8px;">
+          <input type="text" id="inputNueva_vendedores" placeholder="Nombre Vendedor..." style="flex:1;">
+          <button class="btn-amber" onclick="agregarItemMaster('vendedores')">+ Agregar</button>
+        </div>
+        <div id="listaMaster_vendedores"></div>
+      </div>
+
+      <!-- CATEGORÍAS DE INGRESOS Y GASTOS -->
+      <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+        <h4 style="margin-top:0; color:var(--piki-magenta);">📈 Conceptos de Ingresos y Egresos</h4>
+        <div class="row" style="margin-bottom:8px;">
+          <input type="text" id="inputNueva_conceptosCaja" placeholder="Ej: Alquiler, Nómina, Fletes..." style="flex:1;">
+          <button class="btn-magenta" onclick="agregarItemMaster('conceptosCaja')">+ Agregar</button>
+        </div>
+        <div id="listaMaster_conceptosCaja"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  let usarManual = false;
+  // =========================================================================
+  // ESTADO CENTRAL DEL ERP PIKI CON GUARDADO AUTOMÁTICO (LOCALSTORAGE)
+  // =========================================================================
+  const STORAGE_KEY = "PIKI_ERP_V10_STATE";
+
+  const estadoInicial = {
+    usarManual: false,
+    darkMode: false,
+    tasaBcv: 45.00,
+    tasaManual: 54.00,
+    empresa: {
+      nombre: "PIKI, C.A.",
+      rif: "J-50123456-0",
+      slogan: "Hogar · Cuidado Personal · Accesorios Eléctricos",
+      direccion: "Maracaibo, Edo. Zulia - Atención Mayor y Detal",
+      logoBase64: ""
+    },
+    impuestos: {
+      ivaGeneral: 16,
+      ivaReducido: 8,
+      igtf: 3,
+      retIva: 75,
+      retIslr: 2,
+      correlativoFactura: 1005
+    },
+    listas: {
+      categorias: ["Hogar", "Cuidado Personal", "Accesorios Eléctricos", "Iluminación", "Electrodomésticos"],
+      almacenes: ["Tienda Principal Piki", "Depósito Central", "Exhibición"],
+      unidades: ["UND", "CAJA", "BLISTER", "PAR", "KIT"],
+      metodosPago: ["Efectivo USD (\$)", "Zelle (\$)", "Pago Móvil (Bs)", "Punto de Venta (Bs)", "Binance USDT"],
+      vendedores: ["Caja Principal Piki", "Patricia Medina", "Ventas Mostrador"],
+      conceptosCaja: ["Ventas de Mercancía", "Cobranza a Clientes", "Compra a Proveedores", "Alquiler de Local", "Nómina y Comisiones", "Servicios (Luz/Internet)", "Fletes y Envíos"]
+    },
+    inventario: [
+      { id: 1, sku: "PIKI-001", barra: "759001", nombre: "Plancha a Vapor Vertical Portátil Piki", categoria: "Hogar", almacen: "Tienda Principal Piki", unidad: "UND", proveedor: "IMPORTADORA HOGAR", stock: 14, minimo: 4, maximo: 25, costoUsd: 14.00, precio1: 25.00, precio2: 21.00, precio3: 18.50, ivaTipo: "GENERAL" },
+      { id: 2, sku: "PIKI-002", barra: "759002", nombre: "Secador de Cabello Iónico Profesional 2200W", categoria: "Cuidado Personal", almacen: "Tienda Principal Piki", unidad: "UND", proveedor: "BEAUTY SUPPLY", stock: 9, minimo: 3, maximo: 20, costoUsd: 19.00, precio1: 35.00, precio2: 30.00, precio3: 26.00, ivaTipo: "GENERAL" },
+      { id: 3, sku: "PIKI-003", barra: "759003", nombre: "Protector de Voltaje Digital 110V Heladeras/TV", categoria: "Accesorios Eléctricos", almacen: "Tienda Principal Piki", unidad: "UND", proveedor: "ELECTRO ZULIA", stock: 3, minimo: 6, maximo: 40, costoUsd: 6.50, precio1: 12.00, precio2: 10.00, precio3: 8.50, ivaTipo: "GENERAL" },
+      { id: 4, sku: "PIKI-004", barra: "759004", nombre: "Regleta Multitoma 6 Salidas con Supresor Picos", categoria: "Accesorios Eléctricos", almacen: "Depósito Central", unidad: "UND", proveedor: "ELECTRO ZULIA", stock: 18, minimo: 5, maximo: 35, costoUsd: 5.00, precio1: 9.50, precio2: 8.00, precio3: 7.00, ivaTipo: "GENERAL" },
+      { id: 5, sku: "PIKI-005", barra: "759005", nombre: "Cepillo Secador Alisador 3 en 1 Cuidado Pro", categoria: "Cuidado Personal", almacen: "Tienda Principal Piki", unidad: "UND", proveedor: "BEAUTY SUPPLY", stock: 0, minimo: 4, maximo: 18, costoUsd: 11.00, precio1: 22.00, precio2: 18.00, precio3: 15.50, ivaTipo: "GENERAL" },
+      { id: 6, sku: "PIKI-006", barra: "759006", nombre: "Bombillo LED Recargable de Emergencia 15W", categoria: "Iluminación", almacen: "Tienda Principal Piki", unidad: "UND", proveedor: "ILUMINA CA", stock: 22, minimo: 8, maximo: 50, costoUsd: 3.20, precio1: 6.50, precio2: 5.50, precio3: 4.50, ivaTipo: "GENERAL" }
+    ],
+    kardex: [
+      { fecha: "20/10/2026 09:00 AM", tipo: "ENTRADA INICIAL", sku: "PIKI-001", nombre: "Plancha a Vapor Vertical Portátil Piki", cant: 14, saldo: 14, motivo: "Inventario Inicial Piki" }
+    ],
+    cobranzas: [
+      { id: 101, cliente: "COMERCIAL LA ESTRELLA, C.A.", factura: "FAC-1002", vence: "Vence en 3 días", saldoUsd: 120.00, tel: "584141234567" },
+      { id: 102, cliente: "DISTRIBUIDORA MARACAIBO", factura: "FAC-1004", vence: "VENCIDA (2d)", saldoUsd: 85.00, tel: "584129876543" }
+    ],
+    comprasPagar: [
+      { id: 201, prov: "ELECTRO ZULIA, C.A.", numFac: "FAC-PROV-051", info: "IVA 16% • Ret. IVA 75%", netoUsd: 290.00, estado: "PAGADA" }
+    ],
+    flujoCaja: [
+      { id: 301, fecha: "20/10/2026 09:30 AM", tipo: "INGRESO", categoria: "Ventas de Mercancía", concepto: "Factura FAC-1003 Contado", tercero: "Cliente Mostrador Piki", metodo: "Efectivo USD (\$)", usd: 145.00 },
+      { id: 302, fecha: "20/10/2026 11:00 AM", tipo: "INGRESO", categoria: "Cobranza a Clientes", concepto: "Abono Factura FAC-1001", tercero: "Inversiones Norte", metodo: "Pago Móvil (Bs)", usd: 60.00 },
+      { id: 303, fecha: "20/10/2026 01:15 PM", tipo: "EGRESO", categoria: "Compra a Proveedores", concepto: "Pago Factura FAC-PROV-051", tercero: "Electro Zulia, C.A.", metodo: "Zelle (\$)", usd: 95.00 },
+      { id: 304, fecha: "20/10/2026 03:40 PM", tipo: "EGRESO", categoria: "Fletes y Envíos", concepto: "Traslado mercancía tienda", tercero: "Transporte Zuliano", metodo: "Pago Móvil (Bs)", usd: 18.00 }
+    ]
+  };
+
+  let state = cargarEstado();
   let condicionVenta = "CONTADO";
   let filtroStockActual = "TODOS";
+  let filtroCajaActual = "TODOS";
+  let carrito = [{ id: 1, nombre: "Plancha a Vapor Vertical Portátil Piki", cantidad: 1, precioUsd: 25.00, ivaTipo: "GENERAL" }];
 
-  let categorias = ["Hogar", "Cuidado Personal", "Accesorios Eléctricos", "Iluminación"];
-  let almacenes = ["Tienda Principal Piki", "Depósito Central"];
-
-  let inventario = [
-    { id: 1, sku: "PIKI-001", nombre: "Plancha a Vapor Portátil Piki", categoria: "Hogar", almacen: "Tienda Principal Piki", stock: 12, minimo: 3, costoUsd: 15.00, precioUsd: 28.00, iva: true },
-    { id: 2, sku: "PIKI-002", nombre: "Secador de Cabello iónico Cuidado Pro", categoria: "Cuidado Personal", almacen: "Tienda Principal Piki", stock: 8, minimo: 2, costoUsd: 22.00, precioUsd: 45.00, iva: true },
-    { id: 3, sku: "PIKI-003", nombre: "Protector de Voltaje LED 110V", categoria: "Accesorios Eléctricos", almacen: "Depósito Central", stock: 20, minimo: 5, costoUsd: 8.00, precioUsd: 15.00, iva: true },
-    { id: 4, sku: "PIKI-004", nombre: "Bombillo LED Inteligente RGB", categoria: "Iluminación", almacen: "Tienda Principal Piki", stock: 0, minimo: 4, costoUsd: 4.00, precioUsd: 9.00, iva: true }
-  ];
-
-  let carrito = [
-    { id: 1, nombre: "Plancha a Vapor Portátil Piki", cantidad: 1, precioUsd: 28.00, iva: true }
-  ];
-
-  let cobranzas = [
-    { id: 101, cliente: "INVERSIONES ZULIA, C.A.", factura: "FAC-00104", vence: "VENCIDA (3d)", saldoUsd: 85.00, tel: "584141112233" }
-  ];
-
-  let comprasPagar = [
-    { id: 201, prov: "PROVEEDOR INDUSTRIAL, C.A.", info: "CON IVA • Retenido: -\$12.00", netoUsd: 468.00 }
-  ];
-
-  let flujoCaja = [
-    { fecha: "20/10/2026 10:30 AM", tipo: "INGRESO", concepto: "Venta Contado Factura Inicial", tercero: "Cliente General Piki", usd: 56.00, bs: 2520.00 },
-    { fecha: "20/10/2026 11:15 AM", tipo: "EGRESO", concepto: "Compra Mercancía a Proveedor", tercero: "Proveedor Industrial, C.A.", usd: 468.00, bs: 21060.00 }
-  ];
-
-  function obtenerTasaActiva() {
-    const bcv = parseFloat(document.getElementById("tasaBcv").value) || 0;
-    const man = parseFloat(document.getElementById("tasaManual").value) || 0;
-    return usarManual ? man : bcv;
+  function cargarEstado() {
+    try {
+      const guardado = localStorage.getItem(STORAGE_KEY);
+      if (guardado) return Object.assign({}, estadoInicial, JSON.parse(guardado));
+    } catch (e) { console.error(e); }
+    return JSON.parse(JSON.stringify(estadoInicial));
   }
 
-  function cambiarModoTasa() {
-    usarManual = !usarManual;
-    recalcularTodo();
+  function guardarEstado() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error(e); }
+  }
+
+  function fechaActualTexto() {
+    const d = new Date();
+    return d.toLocaleDateString("es-VE") + " " + d.toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function obtenerTasaActiva() {
+    return state.usarManual ? (parseFloat(state.tasaManual) || 1) : (parseFloat(state.tasaBcv) || 1);
+  }
+
+  // =========================================================================
+  // NAVEGACIÓN Y TEMA CLARO / OSCURO
+  // =========================================================================
+  function alternarTema() {
+    state.darkMode = !state.darkMode;
+    aplicarTema();
+    guardarEstado();
+  }
+
+  function aplicarTema() {
+    document.body.classList.toggle("dark-mode", !!state.darkMode);
+    document.getElementById("btnTema").textContent = state.darkMode ? "☀️ Tema Claro Piki" : "🌙 Modo Oscuro";
   }
 
   function verPestana(nombre) {
-    ["INVENTARIO", "FACTURACION", "COBRANZAS", "COMPRAS", "MASTER", "INGRESOS"].forEach(p => {
+    ["INVENTARIO", "FACTURACION", "COBRANZAS", "COMPRAS", "INGRESOS", "MASTER"].forEach(p => {
       document.getElementById("sec-" + p).classList.toggle("hidden", p !== nombre);
       document.getElementById("tab-" + p).classList.toggle("active", p === nombre);
     });
     recalcularTodo();
   }
 
-  function setFiltroStock(f) {
-    filtroStockActual = f;
-    ["TODOS", "BAJO", "AGOTADO"].forEach(k => {
-      document.getElementById("f-" + k).className = (k === f) ? "btn-turquesa" : "tab";
+  function verSubInv(sub) {
+    ["CATALOGO", "REPORTE", "KARDEX"].forEach(s => {
+      document.getElementById("vista-inv-" + s).classList.toggle("hidden", s !== sub);
+      document.getElementById("subinv-" + s).classList.toggle("active", s === sub);
     });
     recalcularTodo();
   }
 
-  function setCondicionVenta(cond) {
-    condicionVenta = cond;
-    document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-magenta" : "tab";
-    document.getElementById("btnCredito").className = cond === "CREDITO" ? "btn-amber" : "tab";
+  function guardarTasasYRecalcular() {
+    state.tasaBcv = parseFloat(document.getElementById("tasaBcv").value) || 0;
+    state.tasaManual = parseFloat(document.getElementById("tasaManual").value) || 0;
+    guardarEstado();
     recalcularTodo();
   }
 
-  function actualizarSelectsMaster() {
-    const selCat = document.getElementById("invCategoria");
-    const selAlm = document.getElementById("invAlmacen");
-    if(selCat) selCat.innerHTML = categorias.map(c => `<option value="${c}">${c}</option>`).join("");
-    if(selAlm) selAlm.innerHTML = almacenes.map(a => `<option value="${a}">${a}</option>`).join("");
-
-    const masterCat = document.getElementById("listaMasterCat");
-    if(masterCat) masterCat.innerHTML = categorias.map((c, i) => `
-      <div class="row" style="margin-bottom:6px;">
-        <span>• ${c}</span>
-        <button class="btn-red" style="padding:2px 6px; font-size:10px;" onclick="eliminarCategoriaMaster(${i})">Eliminar</button>
-      </div>
-    `).join("");
-
-    const masterAlm = document.getElementById("listaMasterAlm");
-    if(masterAlm) masterAlm.innerHTML = almacenes.map((a, i) => `
-      <div class="row" style="margin-bottom:6px;">
-        <span>• ${a}</span>
-        <button class="btn-red" style="padding:2px 6px; font-size:10px;" onclick="eliminarAlmacenMaster(${i})">Eliminar</button>
-      </div>
-    `).join("");
+  function cambiarModoTasa() {
+    state.usarManual = !state.usarManual;
+    guardarEstado();
+    recalcularTodo();
   }
 
-  function crearCategoriaRapida() {
-    const nueva = prompt("Nombre de la nueva categoría:");
-    if(nueva && nueva.trim()) {
-      categorias.push(nueva.trim());
-      actualizarSelectsMaster();
-      document.getElementById("invCategoria").value = nueva.trim();
+  // =========================================================================
+  // MÓDULO MASTER: LISTAS DINÁMICAS Y RENOMBRADO EN CASCADA
+  // =========================================================================
+  function sincronizarInputsMaster() {
+    document.getElementById("tasaBcv").value = state.tasaBcv;
+    document.getElementById("tasaManual").value = state.tasaManual;
+    document.getElementById("masEmpresaNombre").value = state.empresa.nombre;
+    document.getElementById("masEmpresaRif").value = state.empresa.rif;
+    document.getElementById("masEmpresaSlogan").value = state.empresa.slogan;
+    document.getElementById("masEmpresaDir").value = state.empresa.direccion;
+
+    document.getElementById("masIvaGen").value = state.impuestos.ivaGeneral;
+    document.getElementById("masIvaRed").value = state.impuestos.ivaReducido;
+    document.getElementById("masIgtf").value = state.impuestos.igtf;
+    document.getElementById("masRetIva").value = state.impuestos.retIva;
+    document.getElementById("masRetIslr").value = state.impuestos.retIslr;
+    document.getElementById("masCorrelativo").value = state.impuestos.correlativoFactura;
+
+    // Mostrar logo personalizado si fue subido o el vectorial oficial
+    const imgLogo = document.getElementById("imgLogoPersonalizado");
+    const svgLogo = document.getElementById("svgLogoOficialPiki");
+    if (state.empresa.logoBase64) {
+      imgLogo.src = state.empresa.logoBase64;
+      imgLogo.classList.remove("hidden");
+      svgLogo.classList.add("hidden");
+    } else {
+      imgLogo.classList.add("hidden");
+      svgLogo.classList.remove("hidden");
+    }
+
+    document.getElementById("lblNombreEmpresa").textContent = state.empresa.nombre;
+    document.getElementById("lblRifEmpresa").textContent = state.empresa.rif;
+    document.getElementById("lblSloganEmpresa").textContent = state.empresa.slogan;
+    document.getElementById("lblDirEmpresa").textContent = state.empresa.direccion;
+
+    // Rellenar todos los selects dinámicos
+    const llenarSelect = (id, arr, incluirTodosTexto) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const valorPrevio = el.value;
+      let html = incluirTodosTexto ? `<option value="TODOS">${incluirTodosTexto}</option>` : "";
+      html += arr.map(x => `<option value="${x}">${x}</option>`).join("");
+      el.innerHTML = html;
+      if (arr.includes(valorPrevio) || (incluirTodosTexto && valorPrevio === "TODOS")) el.value = valorPrevio;
+    };
+
+    llenarSelect("invCategoria", state.listas.categorias);
+    llenarSelect("invAlmacen", state.listas.almacenes);
+    llenarSelect("invUnidad", state.listas.unidades);
+    llenarSelect("filtroCatInv", state.listas.categorias, "🏷️ Todas las Categorías");
+    llenarSelect("filtroAlmInv", state.listas.almacenes, "🏬 Todos los Almacenes");
+    llenarSelect("facVendedor", state.listas.vendedores);
+    llenarSelect("cajaCategoria", state.listas.conceptosCaja);
+    llenarSelect("cajaMetodo", state.listas.metodosPago);
+
+    // Selector de productos en facturación
+    const selProdFac = document.getElementById("selProductoFactura");
+    if (selProdFac) {
+      selProdFac.innerHTML = state.inventario.map(p => `<option value="${p.id}">${p.sku} - ${p.nombre} (Stock: ${p.stock} | $${p.precio1.toFixed(2)})</option>`).join("");
+    }
+
+    // Renderizar las 6 listas en la pestaña MASTER
+    ["categorias", "almacenes", "unidades", "metodosPago", "vendedores", "conceptosCaja"].forEach(clave => {
+      const cont = document.getElementById("listaMaster_" + clave);
+      if (!cont) return;
+      cont.innerHTML = state.listas[clave].map((item, idx) => `
+        <div class="master-list-item">
+          <span style="font-weight:700;">${item}</span>
+          <div style="display:flex; gap:4px;">
+            <button class="btn-outline" style="padding:3px 7px; font-size:10px;" onclick="renombrarItemMaster('${clave}', ${idx})">✏️ Renombrar</button>
+            <button class="btn-red" style="padding:3px 7px; font-size:10px;" onclick="eliminarItemMaster('${clave}', ${idx})">✖</button>
+          </div>
+        </div>
+      `).join("");
+    });
+  }
+
+  function guardarConfigMaster() {
+    state.empresa.nombre = document.getElementById("masEmpresaNombre").value || "PIKI, C.A.";
+    state.empresa.rif = document.getElementById("masEmpresaRif").value || "J-00000000-0";
+    state.empresa.slogan = document.getElementById("masEmpresaSlogan").value || "";
+    state.empresa.direccion = document.getElementById("masEmpresaDir").value || "";
+
+    state.impuestos.ivaGeneral = parseFloat(document.getElementById("masIvaGen").value) || 16;
+    state.impuestos.ivaReducido = parseFloat(document.getElementById("masIvaRed").value) || 8;
+    state.impuestos.igtf = parseFloat(document.getElementById("masIgtf").value) || 3;
+    state.impuestos.retIva = parseFloat(document.getElementById("masRetIva").value) || 75;
+    state.impuestos.retIslr = parseFloat(document.getElementById("masRetIslr").value) || 2;
+    state.impuestos.correlativoFactura = parseInt(document.getElementById("masCorrelativo").value) || 1001;
+
+    guardarEstado();
+    sincronizarInputsMaster();
+    recalcularTodo();
+  }
+
+  function crearRapidoMaster(claveLista, etiqueta) {
+    const nuevo = prompt(`Escribe el nombre para agregar a ${etiqueta}:`);
+    if (nuevo && nuevo.trim()) {
+      const limpio = nuevo.trim();
+      if (!state.listas[claveLista].includes(limpio)) {
+        state.listas[claveLista].push(limpio);
+        guardarEstado();
+        sincronizarInputsMaster();
+      }
     }
   }
 
-  function crearAlmacenRapido() {
-    const nuevo = prompt("Nombre del nuevo almacén:");
-    if(nuevo && nuevo.trim()) {
-      almacenes.push(nuevo.trim());
-      actualizarSelectsMaster();
-      document.getElementById("invAlmacen").value = nuevo.trim();
+  function agregarItemMaster(claveLista) {
+    const inp = document.getElementById("inputNueva_" + claveLista);
+    if (!inp || !inp.value.trim()) return;
+    const limpio = inp.value.trim();
+    if (!state.listas[claveLista].includes(limpio)) {
+      state.listas[claveLista].push(limpio);
+      inp.value = "";
+      guardarEstado();
+      sincronizarInputsMaster();
+      recalcularTodo();
     }
   }
 
-  function agregarCategoriaMaster() {
-    const val = document.getElementById("nuevoCatMaster").value;
-    if(val && val.trim()) {
-      categorias.push(val.trim());
-      document.getElementById("nuevoCatMaster").value = "";
-      actualizarSelectsMaster();
+  function renombrarItemMaster(claveLista, idx) {
+    const valorViejo = state.listas[claveLista][idx];
+    const valorNuevo = prompt(`Renombrar "${valorViejo}" en todo el sistema por:`, valorViejo);
+    if (!valorNuevo || !valorNuevo.trim() || valorNuevo.trim() === valorViejo) return;
+    const limpio = valorNuevo.trim();
+    state.listas[claveLista][idx] = limpio;
+
+    // Actualización en cascada en productos y movimientos
+    if (claveLista === "categorias") {
+      state.inventario.forEach(p => { if (p.categoria === valorViejo) p.categoria = limpio; });
+    } else if (claveLista === "almacenes") {
+      state.inventario.forEach(p => { if (p.almacen === valorViejo) p.almacen = limpio; });
+    } else if (claveLista === "unidades") {
+      state.inventario.forEach(p => { if (p.unidad === valorViejo) p.unidad = limpio; });
+    } else if (claveLista === "metodosPago") {
+      state.flujoCaja.forEach(m => { if (m.metodo === valorViejo) m.metodo = limpio; });
+    } else if (claveLista === "conceptosCaja") {
+      state.flujoCaja.forEach(m => { if (m.categoria === valorViejo) m.categoria = limpio; });
+    }
+
+    guardarEstado();
+    sincronizarInputsMaster();
+    recalcularTodo();
+  }
+
+  function eliminarItemMaster(claveLista, idx) {
+    if (state.listas[claveLista].length <= 1) {
+      alert("Debe existir al menos una opción en esta lista.");
+      return;
+    }
+    state.listas[claveLista].splice(idx, 1);
+    guardarEstado();
+    sincronizarInputsMaster();
+    recalcularTodo();
+  }
+
+  function subirLogoPersonalizado(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      state.empresa.logoBase64 = e.target.result;
+      guardarEstado();
+      sincronizarInputsMaster();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function restaurarLogoVectorial() {
+    state.empresa.logoBase64 = "";
+    guardarEstado();
+    sincronizarInputsMaster();
+  }
+
+  function exportarRespaldoJson() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+    const a = document.createElement("a");
+    a.setAttribute("href", dataStr);
+    a.setAttribute("download", "respaldo_piki_erp.json");
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function restaurarFabrica() {
+    if (confirm("¿Seguro que deseas restaurar los datos de demostración de fábrica?")) {
+      localStorage.removeItem(STORAGE_KEY);
+      state = cargarEstado();
+      sincronizarInputsMaster();
+      recalcularTodo();
     }
   }
 
-  function agregarAlmacenMaster() {
-    const val = document.getElementById("nuevoAlmMaster").value;
-    if(val && val.trim()) {
-      almacenes.push(val.trim());
-      document.getElementById("nuevoAlmMaster").value = "";
-      actualizarSelectsMaster();
-    }
+  // =========================================================================
+  // MÓDULO 1: GESTIÓN DE INVENTARIO, EDICIÓN Y KARDEX
+  // =========================================================================
+  function calcularMargenesPreview() {
+    const costo = parseFloat(document.getElementById("invCosto").value) || 0;
+    [1, 2, 3].forEach(n => {
+      const p = parseFloat(document.getElementById("invPrecio" + n).value) || 0;
+      const m = costo > 0 ? (((p - costo) / costo) * 100).toFixed(0) : 0;
+      document.getElementById("lblMargen" + n).textContent = `+${m}%`;
+    });
   }
 
-  function eliminarCategoriaMaster(i) {
-    if(categorias.length <= 1) { alert("Debe haber al menos una categoría."); return; }
-    categorias.splice(i, 1);
-    actualizarSelectsMaster();
-  }
-
-  function eliminarAlmacenMaster(i) {
-    if(almacenes.length <= 1) { alert("Debe haber al menos un almacén."); return; }
-    almacenes.splice(i, 1);
-    actualizarSelectsMaster();
-  }
-
-  function agregarAlInventario() {
-    const sku = document.getElementById("invSku").value || "PIKI-999";
-    const nombre = document.getElementById("invNombre").value;
+  function guardarProductoCatalogo() {
+    const editId = document.getElementById("editProdId").value;
+    const sku = document.getElementById("invSku").value.trim() || "PIKI-NEW";
+    const barra = document.getElementById("invBarra").value.trim();
+    const nombre = document.getElementById("invNombre").value.trim();
     const categoria = document.getElementById("invCategoria").value;
     const almacen = document.getElementById("invAlmacen").value;
+    const unidad = document.getElementById("invUnidad").value;
+    const proveedor = document.getElementById("invProveedor").value.trim() || "GENERAL";
     const stock = parseFloat(document.getElementById("invStock").value) || 0;
     const minimo = parseFloat(document.getElementById("invMinimo").value) || 0;
+    const maximo = parseFloat(document.getElementById("invMaximo").value) || 20;
     const costoUsd = parseFloat(document.getElementById("invCosto").value) || 0;
-    const precioUsd = parseFloat(document.getElementById("invPrecio").value) || 0;
-    const iva = document.getElementById("invIva").value === "1";
+    const precio1 = parseFloat(document.getElementById("invPrecio1").value) || 0;
+    const precio2 = parseFloat(document.getElementById("invPrecio2").value) || precio1;
+    const precio3 = parseFloat(document.getElementById("invPrecio3").value) || precio2;
+    const ivaTipo = document.getElementById("invIva").value;
 
-    if (!nombre.trim()) { alert("Escribe el nombre del producto."); return; }
+    if (!nombre) { alert("Por favor ingresa la descripción del producto Piki."); return; }
 
-    inventario.unshift({ id: Date.now(), sku, nombre, categoria, almacen, stock, minimo, costoUsd, precioUsd, iva });
+    if (editId) {
+      state.inventario = state.inventario.map(p => p.id === Number(editId) ? {
+        ...p, sku, barra, nombre, categoria, almacen, unidad, proveedor, stock, minimo, maximo, costoUsd, precio1, precio2, precio3, ivaTipo
+      } : p);
+      state.kardex.unshift({ fecha: fechaActualTexto(), tipo: "EDICIÓN MASTER", sku, nombre, cant: stock, saldo: stock, motivo: "Actualización de ficha de producto" });
+    } else {
+      state.inventario.unshift({
+        id: Date.now(), sku, barra, nombre, categoria, almacen, unidad, proveedor, stock, minimo, maximo, costoUsd, precio1, precio2, precio3, ivaTipo
+      });
+      state.kardex.unshift({ fecha: fechaActualTexto(), tipo: "CARGA NUEVA", sku, nombre, cant: stock, saldo: stock, motivo: "Ingreso manual al catálogo" });
+    }
+
+    limpiarFormularioProducto();
+    guardarEstado();
+    sincronizarInputsMaster();
+    recalcularTodo();
+  }
+
+  function cargarProductoEnFormulario(id) {
+    const p = state.inventario.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById("editProdId").value = p.id;
+    document.getElementById("invSku").value = p.sku;
+    document.getElementById("invBarra").value = p.barra || "";
+    document.getElementById("invNombre").value = p.nombre;
+    document.getElementById("invCategoria").value = p.categoria;
+    document.getElementById("invAlmacen").value = p.almacen;
+    document.getElementById("invUnidad").value = p.unidad || "UND";
+    document.getElementById("invProveedor").value = p.proveedor || "";
+    document.getElementById("invStock").value = p.stock;
+    document.getElementById("invMinimo").value = p.minimo;
+    document.getElementById("invMaximo").value = p.maximo || 30;
+    document.getElementById("invCosto").value = p.costoUsd;
+    document.getElementById("invPrecio1").value = p.precio1;
+    document.getElementById("invPrecio2").value = p.precio2;
+    document.getElementById("invPrecio3").value = p.precio3;
+    document.getElementById("invIva").value = p.ivaTipo || "GENERAL";
+
+    document.getElementById("tituloFormProducto").textContent = `✏️ Editando Producto: ${p.sku} - ${p.nombre}`;
+    document.getElementById("btnGuardarProducto").textContent = "💾 GUARDAR CAMBIOS DEL PRODUCTO";
+    document.getElementById("btnCancelarEdicionProd").classList.remove("hidden");
+    calcularMargenesPreview();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function limpiarFormularioProducto() {
+    document.getElementById("editProdId").value = "";
+    document.getElementById("invSku").value = "PIKI-00" + (state.inventario.length + 1);
+    document.getElementById("invBarra").value = "";
     document.getElementById("invNombre").value = "";
+    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Con acceso directo al Master)";
+    document.getElementById("btnGuardarProducto").textContent = "+ GUARDAR EN CATÁLOGO PIKI";
+    document.getElementById("btnCancelarEdicionProd").classList.add("hidden");
+  }
+
+  function cambiarCategoriaDirectaTabla(idProd, nuevaCat) {
+    state.inventario = state.inventario.map(p => p.id === idProd ? { ...p, categoria: nuevaCat } : p);
+    guardarEstado();
     recalcularTodo();
   }
 
   function cambiarStock(id, delta) {
-    inventario = inventario.map(p => p.id === id ? { ...p, stock: Math.max(0, p.stock + delta) } : p);
+    state.inventario = state.inventario.map(p => {
+      if (p.id !== id) return p;
+      const nuevo = Math.max(0, p.stock + delta);
+      state.kardex.unshift({
+        fecha: fechaActualTexto(),
+        tipo: delta > 0 ? "ENTRADA (+)" : "SALIDA (-)",
+        sku: p.sku,
+        nombre: p.nombre,
+        cant: Math.abs(delta),
+        saldo: nuevo,
+        motivo: "Ajuste rápido en tabla"
+      });
+      return { ...p, stock: nuevo };
+    });
+    guardarEstado();
+    recalcularTodo();
+  }
+
+  function reponerStockOptimo(id) {
+    const p = state.inventario.find(x => x.id === id);
+    if (!p) return;
+    const faltante = Math.max(1, (p.maximo || 20) - p.stock);
+    cambiarStock(id, faltante);
+    alert(`Se sumaron +${faltante} unidades a "${p.nombre}" para alcanzar su Stock Óptimo.`);
+  }
+
+  function eliminarProducto(id) {
+    if (!confirm("¿Eliminar este producto del catálogo Piki?")) return;
+    state.inventario = state.inventario.filter(p => p.id !== id);
+    guardarEstado();
+    sincronizarInputsMaster();
+    recalcularTodo();
+  }
+
+  function setFiltroStock(f) {
+    filtroStockActual = f;
+    ["TODOS", "OPTIMO", "BAJO", "AGOTADO"].forEach(k => {
+      document.getElementById("f-" + k).className = (k === f) ? "btn-turquesa" : "btn-outline";
+    });
+    recalcularTodo();
+  }
+
+  // =========================================================================
+  // MÓDULO 2: FACTURACIÓN Y CAJA MIXTA
+  // =========================================================================
+  function setCondicionVenta(cond) {
+    condicionVenta = cond;
+    document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-magenta" : "btn-outline";
+    document.getElementById("btnCredito").className = cond === "CREDITO" ? "btn-amber" : "btn-outline";
+    document.getElementById("boxDiasCredito").classList.toggle("hidden", cond !== "CREDITO");
     recalcularTodo();
   }
 
   function mandarAFactura(id) {
-    const prod = inventario.find(p => p.id === id);
+    const prod = state.inventario.find(p => p.id === id);
     if (!prod) return;
+    const lista = document.getElementById("facListaPrecio").value || "1";
+    const precioAplicar = prod["precio" + lista] || prod.precio1;
     const existe = carrito.find(c => c.id === id);
     if (existe) existe.cantidad += 1;
-    else carrito.push({ id: prod.id, nombre: prod.nombre, cantidad: 1, precioUsd: prod.precioUsd, iva: prod.iva });
+    else carrito.push({ id: prod.id, nombre: prod.nombre, cantidad: 1, precioUsd: precioAplicar, ivaTipo: prod.ivaTipo });
     verPestana("FACTURACION");
   }
 
+  function agregarDesdeSelectorFactura() {
+    const id = Number(document.getElementById("selProductoFactura").value);
+    if (id) mandarAFactura(id);
+  }
+
+  function cambiarListaPrecioCarrito() {
+    const lista = document.getElementById("facListaPrecio").value || "1";
+    carrito = carrito.map(item => {
+      const prod = state.inventario.find(p => p.id === item.id);
+      if (!prod) return item;
+      return { ...item, precioUsd: prod["precio" + lista] || prod.precio1 };
+    });
+    recalcularTodo();
+  }
+
+  function emitirFactura() {
+    if (carrito.length === 0) { alert("El carrito de facturación está vacío."); return; }
+    const cliNombre = document.getElementById("cliNombre").value.trim() || "CLIENTE PIKI";
+    const cliTel = document.getElementById("cliTel").value.trim() || "584140000000";
+    const numFac = "FAC-" + state.impuestos.correlativoFactura;
+    state.impuestos.correlativoFactura += 1;
+
+    // Descontar del inventario y alimentar Kardex
+    carrito.forEach(item => {
+      state.inventario = state.inventario.map(p => {
+        if (p.id !== item.id) return p;
+        const nuevoStock = Math.max(0, p.stock - item.cantidad);
+        state.kardex.unshift({
+          fecha: fechaActualTexto(),
+          tipo: "VENTA " + numFac,
+          sku: p.sku,
+          nombre: p.nombre,
+          cant: item.cantidad,
+          saldo: nuevoStock,
+          motivo: `Cliente: ${cliNombre}`
+        });
+        return { ...p, stock: nuevoStock };
+      });
+    });
+
+    const totalFacturaUsd = window.ultimoTotalFacturaUsd || 0;
+    const recibidoUsd = window.ultimoRecibidoUsd || 0;
+    const faltanteUsd = window.ultimoFaltanteUsd || 0;
+
+    if (condicionVenta === "CREDITO" || faltanteUsd > 0.01) {
+      const deuda = condicionVenta === "CREDITO" ? totalFacturaUsd : faltanteUsd;
+      const dias = document.getElementById("facDiasCredito").value || 7;
+      state.cobranzas.unshift({
+        id: Date.now(),
+        cliente: cliNombre,
+        factura: numFac,
+        vence: `Crédito (${dias} días)`,
+        saldoUsd: deuda,
+        tel: cliTel
+      });
+      if (recibidoUsd > 0 && condicionVenta !== "CREDITO") {
+        state.flujoCaja.unshift({
+          id: Date.now() + 1,
+          fecha: fechaActualTexto(),
+          tipo: "INGRESO",
+          categoria: "Ventas de Mercancía",
+          concepto: `Abono inicial ${numFac}`,
+          tercero: cliNombre,
+          metodo: "Caja Mixta Piki",
+          usd: recibidoUsd
+        });
+      }
+      alert(`Factura ${numFac} emitida. Se registró saldo pendiente por cobrar de $${deuda.toFixed(2)} USD.`);
+      verPestana("COBRANZAS");
+    } else {
+      state.flujoCaja.unshift({
+        id: Date.now(),
+        fecha: fechaActualTexto(),
+        tipo: "INGRESO",
+        categoria: "Ventas de Mercancía",
+        concepto: `Venta Contado ${numFac}`,
+        tercero: cliNombre,
+        metodo: "Caja Mixta Piki",
+        usd: totalFacturaUsd
+      });
+      alert(`¡Factura ${numFac} emitida con éxito! Se descontó el stock y se sumó +$${totalFacturaUsd.toFixed(2)} USD al Reporte de Ingresos.`);
+      verPestana("INGRESOS");
+    }
+
+    guardarEstado();
+    sincronizarInputsMaster();
+    recalcularTodo();
+  }
+
+  // =========================================================================
+  // MÓDULO 3, 4 Y 5: COBRANZAS, COMPRAS Y FLUJO DE CAJA
+  // =========================================================================
+  function cobrarCuentaCliente(id) {
+    const c = state.cobranzas.find(x => x.id === id);
+    if (!c) return;
+    state.flujoCaja.unshift({
+      id: Date.now(),
+      fecha: fechaActualTexto(),
+      tipo: "INGRESO",
+      categoria: "Cobranza a Clientes",
+      concepto: `Cobro de ${c.factura}`,
+      tercero: c.cliente,
+      metodo: state.listas.metodosPago[0] || "Efectivo USD ($)",
+      usd: c.saldoUsd
+    });
+    state.cobranzas = state.cobranzas.filter(x => x.id !== id);
+    guardarEstado();
+    recalcularTodo();
+    alert(`¡Cobro de $${c.saldoUsd.toFixed(2)} USD registrado en el Reporte de Ingresos y Egresos!`);
+  }
+
+  function enviarWhatsappCobro(cliente, factura, usd, bs, tel) {
+    const msg = `Hola *${cliente}*, te saludamos de *${state.empresa.nombre}*. Te recordamos que tu factura *${factura}* presenta un saldo pendiente de *$${usd.toFixed(2)} USD* (equivalente a *Bs. ${bs.toFixed(2)}* a la tasa del día). ¡Muchas gracias!`;
+    window.open(`https://wa.me/${tel.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, "_blank");
+  }
+
+  function guardarCompra() {
+    const u = window.ultimaCompra;
+    if (!u || u.netoC <= 0) return;
+    const estadoPago = document.getElementById("compEstadoPago").value;
+    const numFac = document.getElementById("compNumFac").value || "S/N";
+
+    state.comprasPagar.unshift({
+      id: Date.now(),
+      prov: u.prov,
+      numFac,
+      info: u.detalleRet,
+      netoUsd: u.netoC,
+      estado: estadoPago
+    });
+
+    if (estadoPago === "PAGADA") {
+      state.flujoCaja.unshift({
+        id: Date.now() + 1,
+        fecha: fechaActualTexto(),
+        tipo: "EGRESO",
+        categoria: "Compra a Proveedores",
+        concepto: `Pago Compra ${numFac} (${u.detalleRet})`,
+        tercero: u.prov,
+        metodo: state.listas.metodosPago[0] || "Efectivo USD ($)",
+        usd: u.netoC
+      });
+    }
+
+    guardarEstado();
+    recalcularTodo();
+    alert(`Compra registrada por $${u.netoC.toFixed(2)} USD neto.`);
+    if (estadoPago === "PAGADA") verPestana("INGRESOS");
+  }
+
+  function registrarMovimientoManualCaja() {
+    const tipo = document.getElementById("cajaTipo").value;
+    const categoria = document.getElementById("cajaCategoria").value;
+    const concepto = document.getElementById("cajaConcepto").value.trim();
+    const tercero = document.getElementById("cajaTercero").value.trim() || "General";
+    const metodo = document.getElementById("cajaMetodo").value;
+    const usd = parseFloat(document.getElementById("cajaMontoUsd").value) || 0;
+
+    if (!concepto || usd <= 0) {
+      alert("Ingresa la descripción del movimiento y un monto mayor a 0.");
+      return;
+    }
+
+    state.flujoCaja.unshift({
+      id: Date.now(),
+      fecha: fechaActualTexto(),
+      tipo,
+      categoria,
+      concepto,
+      tercero,
+      metodo,
+      usd
+    });
+
+    document.getElementById("cajaConcepto").value = "";
+    document.getElementById("cajaTercero").value = "";
+    guardarEstado();
+    recalcularTodo();
+  }
+
+  function eliminarMovimientoCaja(id) {
+    if (!confirm("¿Anular este registro del flujo de caja?")) return;
+    state.flujoCaja = state.flujoCaja.filter(m => m.id !== id);
+    guardarEstado();
+    recalcularTodo();
+  }
+
+  function setFiltroCaja(f) {
+    filtroCajaActual = f;
+    ["TODOS", "INGRESO", "EGRESO"].forEach(k => {
+      document.getElementById("fc-" + k).className = (k === f) ? "btn-turquesa" : "btn-outline";
+    });
+    recalcularTodo();
+  }
+
+  // =========================================================================
+  // MOTOR DE CÁLCULO INTEGRAL BIMONETARIO
+  // =========================================================================
   function recalcularTodo() {
-    const bcv = parseFloat(document.getElementById("tasaBcv").value) || 0;
-    const man = parseFloat(document.getElementById("tasaManual").value) || 0;
     const tasa = obtenerTasaActiva();
-
     const btnTasa = document.getElementById("btnModoTasa");
-    btnTasa.textContent = usarManual ? `Usando: Mi Tasa (${man.toFixed(2)} Bs)` : `Usando: Tasa BCV (${bcv.toFixed(2)} Bs)`;
-    btnTasa.className = usarManual ? "btn-turquesa" : "btn-magenta";
+    btnTasa.textContent = state.usarManual
+      ? `Usando: Mi Tasa (${Number(state.tasaManual).toFixed(2)} Bs)`
+      : `Usando: BCV (${Number(state.tasaBcv).toFixed(2)} Bs)`;
+    btnTasa.className = state.usarManual ? "btn-magenta" : "btn-turquesa";
 
-    const textoBuscar = (document.getElementById("buscadorInv").value || "").toLowerCase();
-    const invFiltrado = inventario.filter(p => {
-      const match = p.nombre.toLowerCase().includes(textoBuscar) || p.sku.toLowerCase().includes(textoBuscar) || p.categoria.toLowerCase().includes(textoBuscar);
-      if (!match) return false;
-      if (filtroStockActual === "AGOTADO") return p.stock <= 0;
+    // 1. KPIs DE INVENTARIO Y VALORIZACIÓN
+    let totalCostoUsd = 0, totalVentaUsd = 0, cantOpt = 0, cantBajo = 0, cantAgot = 0;
+    const resumenCat = {};
+
+    state.inventario.forEach(p => {
+      const cTot = p.stock * p.costoUsd;
+      const vTot = p.stock * p.precio1;
+      totalCostoUsd += cTot;
+      totalVentaUsd += vTot;
+      if (p.stock <= 0) cantAgot++;
+      else if (p.stock <= p.minimo) cantBajo++;
+      else cantOpt++;
+
+      if (!resumenCat[p.categoria]) resumenCat[p.categoria] = { items: 0, unds: 0, costo: 0, venta: 0 };
+      resumenCat[p.categoria].items += 1;
+      resumenCat[p.categoria].unds += p.stock;
+      resumenCat[p.categoria].costo += cTot;
+      resumenCat[p.categoria].venta += vTot;
+    });
+
+    const gananciaInv = totalVentaUsd - totalCostoUsd;
+    const porcMargenInv = totalCostoUsd > 0 ? ((gananciaInv / totalCostoUsd) * 100).toFixed(1) : 0;
+
+    document.getElementById("kpiInvCostoUsd").textContent = `$${totalCostoUsd.toFixed(2)} USD`;
+    document.getElementById("kpiInvCostoBs").textContent = `Bs. ${(totalCostoUsd * tasa).toFixed(2)}`;
+    document.getElementById("kpiInvVentaUsd").textContent = `$${totalVentaUsd.toFixed(2)} USD`;
+    document.getElementById("kpiInvVentaBs").textContent = `Bs. ${(totalVentaUsd * tasa).toFixed(2)}`;
+    document.getElementById("kpiInvGananciaUsd").textContent = `+$${gananciaInv.toFixed(2)} (+${porcMargenInv}%)`;
+    document.getElementById("kpiInvSemaforo").innerHTML = `<span style="color:#10b981;">🟢 ${cantOpt} Óptimos</span> • <span style="color:#f59e0b;">🟠 ${cantBajo} Bajos</span> • <span style="color:#ef4444;">🔴 ${cantAgot} Cero</span>`;
+    document.getElementById("kpiInvTotalItems").textContent = `${state.inventario.length} productos en catálogo`;
+
+    // 2. TABLA CATÁLOGO DE INVENTARIO
+    const txtBus = (document.getElementById("buscadorInv").value || "").toLowerCase();
+    const catFiltro = document.getElementById("filtroCatInv").value || "TODOS";
+    const almFiltro = document.getElementById("filtroAlmInv").value || "TODOS";
+
+    const invFiltrado = state.inventario.filter(p => {
+      const coincideTexto = p.nombre.toLowerCase().includes(txtBus) || p.sku.toLowerCase().includes(txtBus) || (p.proveedor || "").toLowerCase().includes(txtBus);
+      if (!coincideTexto) return false;
+      if (catFiltro !== "TODOS" && p.categoria !== catFiltro) return false;
+      if (almFiltro !== "TODOS" && p.almacen !== almFiltro) return false;
+      if (filtroStockActual === "OPTIMO") return p.stock > p.minimo;
       if (filtroStockActual === "BAJO") return p.stock > 0 && p.stock <= p.minimo;
+      if (filtroStockActual === "AGOTADO") return p.stock <= 0;
       return true;
     });
 
     document.getElementById("tablaInventario").innerHTML = invFiltrado.map(p => {
-      let badge = `<span class="badge" style="background:#064e3b; color:#34d399;">Óptimo</span>`;
-      if (p.stock <= 0) badge = `<span class="badge" style="background:#7f1d1d; color:#fecaca;">Agotado</span>`;
-      else if (p.stock <= p.minimo) badge = `<span class="badge" style="background:#78350f; color:#fde68a;">Bajo Stock</span>`;
+      let badge = `<span class="badge" style="background:#d1fae5; color:#065f46;">🟢 Óptimo</span>`;
+      if (p.stock <= 0) badge = `<span class="badge" style="background:#fee2e2; color:#991b1b;">🔴 Agotado</span>`;
+      else if (p.stock <= p.minimo) badge = `<span class="badge" style="background:#fef3c7; color:#92400e;">🟠 Reponer</span>`;
+
+      const selectCatInline = `<select style="padding:3px 6px; font-size:10px; margin-top:3px; width:135px;" onchange="cambiarCategoriaDirectaTabla(${p.id}, this.value)">
+        ${state.listas.categorias.map(c => `<option value="${c}" ${c === p.categoria ? 'selected' : ''}>${c}</option>`).join("")}
+      </select>`;
 
       return `
         <tr>
           <td>${badge}</td>
-          <td><strong>${p.sku}</strong><br><span style="font-size:10px; color:#94a3b8;">${p.categoria}</span></td>
-          <td><strong>${p.nombre}</strong><br><span style="font-size:10px; color:#00B8B5;">📍 ${p.almacen}</span></td>
+          <td><strong>${p.sku}</strong><br>${selectCatInline}</td>
           <td>
-            <button class="tab no-print" onclick="cambiarStock(${p.id}, -1)">-</button>
-            <strong style="margin:0 6px;">${p.stock}</strong>
-            <button class="tab no-print" onclick="cambiarStock(${p.id}, 1)">+</button>
+            <strong style="font-size:13px;">${p.nombre}</strong><br>
+            <span style="font-size:10px; color:var(--piki-turquesa-dark); font-weight:700;">📍 ${p.almacen} • ${p.unidad || 'UND'} • Prov: ${p.proveedor || 'N/A'}</span>
           </td>
-          <td style="color:#94a3b8;">$${p.costoUsd.toFixed(2)}</td>
-          <td style="color:#EA0A6A; font-weight:bold;">$${p.precioUsd.toFixed(2)}</td>
-          <td style="font-weight:bold; color:#fff;">$${(p.stock * p.precioUsd).toFixed(2)}</td>
-          <td class="no-print"><button class="btn-turquesa" onclick="mandarAFactura(${p.id})">+ Facturar</button></td>
+          <td>
+            <button class="btn-outline no-print" style="padding:2px 7px;" onclick="cambiarStock(${p.id}, -1)">-</button>
+            <strong style="margin:0 6px; font-size:13px;">${p.stock}</strong>
+            <button class="btn-outline no-print" style="padding:2px 7px;" onclick="cambiarStock(${p.id}, 1)">+</button>
+            <div style="font-size:9px; color:var(--text-muted);">Mín: ${p.minimo} / Máx: ${p.maximo || 30}</div>
+          </td>
+          <td style="color:var(--text-muted); font-weight:700;">$${p.costoUsd.toFixed(2)}</td>
+          <td>
+            <strong style="color:var(--piki-magenta); font-size:13px;">$${p.precio1.toFixed(2)}</strong><br>
+            <span style="font-size:10px; color:var(--text-muted);">Bs. ${(p.precio1 * tasa).toFixed(2)}</span>
+          </td>
+          <td style="color:var(--piki-turquesa-dark); font-weight:700;">$${(p.precio2 || p.precio1).toFixed(2)}</td>
+          <td style="font-weight:800;">$${(p.stock * p.precio1).toFixed(2)}</td>
+          <td class="no-print">
+            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+              <button class="btn-turquesa" style="padding:5px 8px; font-size:11px;" onclick="mandarAFactura(${p.id})">+ Facturar</button>
+              <button class="btn-outline" style="padding:5px 8px; font-size:11px;" onclick="cargarProductoEnFormulario(${p.id})">✏️ Editar Todo</button>
+              <button class="btn-red" style="padding:5px 8px; font-size:11px;" onclick="eliminarProducto(${p.id})">🗑️</button>
+            </div>
+          </td>
         </tr>
       `;
     }).join("");
 
-    let baseUsd = 0, exentoUsd = 0;
-    document.getElementById("tablaCarrito").innerHTML = carrito.map((c, i) => {
-      const sub = c.cantidad * c.precioUsd;
-      if (c.iva) baseUsd += sub; else exentoUsd += sub;
-      return `<tr>
-        <td>${c.nombre}</td>
-        <td><input type="number" min="1" value="${c.cantidad}" style="width:55px;" oninput="carrito[${i}].cantidad=Math.max(1,Number(this.value)); recalcularTodo();"></td>
-        <td style="color:#EA0A6A; font-weight:bold;">$${sub.toFixed(2)}</td>
-        <td>Bs. ${(sub * tasa).toFixed(2)}</td>
-      </tr>`;
+    // 3. SUB-VISTA 1.2: VALORIZACIÓN POR CATEGORÍA Y LISTA DE REPOSICIÓN
+    document.getElementById("tablaValorizacionCat").innerHTML = Object.keys(resumenCat).map(cat => {
+      const r = resumenCat[cat];
+      const ut = r.venta - r.costo;
+      return `
+        <tr>
+          <td><strong style="color:var(--piki-magenta);">${cat}</strong></td>
+          <td>${r.items} ítems</td>
+          <td><strong>${r.unds}</strong></td>
+          <td>$${r.costo.toFixed(2)}</td>
+          <td>$${r.venta.toFixed(2)}</td>
+          <td style="color:#10b981; font-weight:800;">+$${ut.toFixed(2)}</td>
+        </tr>
+      `;
     }).join("");
 
-    const ivaUsd = baseUsd * 0.16;
-    const subtotalUsd = baseUsd + exentoUsd + ivaUsd;
-    const divisasUsd = (parseFloat(document.getElementById("pagoEfecUsd").value) || 0) + (parseFloat(document.getElementById("pagoZelleUsd").value) || 0);
-    const bsEnUsd = tasa > 0 ? (parseFloat(document.getElementById("pagoBs").value) || 0) / tasa : 0;
+    const porReponer = state.inventario.filter(p => p.stock <= p.minimo);
+    document.getElementById("tablaReposicion").innerHTML = porReponer.length === 0
+      ? `<tr><td colspan="5" style="text-align:center; color:#10b981; font-weight:800;">🎉 ¡Todo el stock de Piki está en niveles óptimos!</td></tr>`
+      : porReponer.map(p => {
+          const sugerido = Math.max(1, (p.maximo || 25) - p.stock);
+          const costoRepUsd = sugerido * p.costoUsd;
+          return `
+            <tr>
+              <td><strong>${p.nombre}</strong><br><span style="font-size:10px; color:var(--text-muted);">Prov: ${p.proveedor || 'General'}</span></td>
+              <td><span class="badge" style="background:#fee2e2; color:#991b1b;">Actual: ${p.stock} (Mín ${p.minimo})</span></td>
+              <td><strong style="color:var(--piki-magenta); font-size:13px;">+${sugerido} ${p.unidad || 'UND'}</strong></td>
+              <td><strong>$${costoRepUsd.toFixed(2)}</strong><br><span style="font-size:10px;">Bs. ${(costoRepUsd * tasa).toFixed(2)}</span></td>
+              <td class="no-print"><button class="btn-turquesa" onclick="reponerStockOptimo(${p.id})">⚡ Reponer Ahora</button></td>
+            </tr>
+          `;
+        }).join("");
+
+    // 4. SUB-VISTA 1.3: KARDEX
+    document.getElementById("tablaKardex").innerHTML = state.kardex.slice(0, 40).map(k => `
+      <tr>
+        <td style="color:var(--text-muted);">${k.fecha}</td>
+        <td><span class="badge" style="background:var(--piki-turquesa-light); color:var(--piki-turquesa-dark);">${k.tipo}</span></td>
+        <td><strong>${k.sku}</strong> - ${k.nombre}</td>
+        <td><strong>${k.cant}</strong></td>
+        <td><strong>${k.saldo}</strong></td>
+        <td>${k.motivo}</td>
+      </tr>
+    `).join("");
+
+    // 5. FACTURACIÓN Y CAJA MIXTA
+    document.getElementById("lblPorcIgtfFac").textContent = state.impuestos.igtf;
+    let baseGen = 0, baseRed = 0, exento = 0;
+
+    document.getElementById("tablaCarrito").innerHTML = carrito.map((c, idx) => {
+      const sub = c.cantidad * c.precioUsd;
+      if (c.ivaTipo === "REDUCIDO") baseRed += sub;
+      else if (c.ivaTipo === "EXENTO") exento += sub;
+      else baseGen += sub;
+
+      return `
+        <tr>
+          <td><strong>${c.nombre}</strong></td>
+          <td><input type="number" min="1" value="${c.cantidad}" style="width:60px;" oninput="carrito[${idx}].cantidad=Math.max(1,Number(this.value)); recalcularTodo();"></td>
+          <td><input type="number" step="0.01" value="${c.precioUsd}" style="width:75px;" oninput="carrito[${idx}].precioUsd=Math.max(0,Number(this.value)); recalcularTodo();"></td>
+          <td style="color:var(--piki-magenta); font-weight:800;">$${sub.toFixed(2)}</td>
+          <td>Bs. ${(sub * tasa).toFixed(2)}</td>
+          <td class="no-print"><button class="btn-red" style="padding:3px 7px;" onclick="carrito.splice(${idx},1); recalcularTodo();">✖</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    const ivaUsd = (baseGen * (state.impuestos.ivaGeneral / 100)) + (baseRed * (state.impuestos.ivaReducido / 100));
+    const subConIvaUsd = baseGen + baseRed + exento + ivaUsd;
+    const divisasRecibidasUsd = (parseFloat(document.getElementById("pagoEfecUsd").value) || 0) + (parseFloat(document.getElementById("pagoZelleUsd").value) || 0);
+    const bsRecibidosEnUsd = tasa > 0 ? (parseFloat(document.getElementById("pagoBs").value) || 0) / tasa : 0;
     const aplicaIgtf = document.getElementById("chkIgtf").checked;
-    const igtfUsd = aplicaIgtf ? Math.min(subtotalUsd, divisasUsd) * 0.03 : 0;
-    const totalCobrarUsd = subtotalUsd + igtfUsd;
-    const recibidoUsd = divisasUsd + bsEnUsd;
-    const difUsd = recibidoUsd - totalCobrarUsd;
+    const baseIgtf = Math.min(subConIvaUsd, divisasRecibidasUsd);
+    const igtfUsd = aplicaIgtf ? baseIgtf * (state.impuestos.igtf / 100) : 0;
+    const totalFacturaUsd = subConIvaUsd + igtfUsd;
+    const totalRecibidoUsd = divisasRecibidasUsd + bsRecibidosEnUsd;
+    const difUsd = totalRecibidoUsd - totalFacturaUsd;
+
+    window.ultimoTotalFacturaUsd = totalFacturaUsd;
+    window.ultimoRecibidoUsd = totalRecibidoUsd;
+    window.ultimoFaltanteUsd = difUsd < -0.01 ? Math.abs(difUsd) : 0;
 
     document.getElementById("resumenFactura").innerHTML = `
-      <div class="row"><span>Subtotal + IVA ($${ivaUsd.toFixed(2)}):</span><strong>$${subtotalUsd.toFixed(2)}</strong></div>
-      <div class="row" style="color:#EA0A6A; margin-top:4px;"><span>IGTF (3%):</span><strong>${aplicaIgtf ? '+$' + igtfUsd.toFixed(2) : '$0.00'}</strong></div>
-      <div class="row" style="color:#00B8B5; font-size:15px; border-top:1px solid #334155; margin-top:6px; padding-top:6px;">
-        <strong>TOTAL:</strong><strong>$${totalCobrarUsd.toFixed(2)} / Bs. ${(totalCobrarUsd * tasa).toFixed(2)}</strong>
+      <div class="row"><span>Base Imponible + Exento:</span><strong>$${(baseGen + baseRed + exento).toFixed(2)}</strong></div>
+      <div class="row" style="margin-top:4px;"><span>IVA SENIAT (${state.impuestos.ivaGeneral}%):</span><strong>$${ivaUsd.toFixed(2)}</strong></div>
+      <div class="row" style="color:var(--piki-magenta); margin-top:4px;"><span>IGTF (${state.impuestos.igtf}% sobre $${baseIgtf.toFixed(2)} en divisas):</span><strong>+$${igtfUsd.toFixed(2)}</strong></div>
+      <div class="row" style="font-size:16px; color:var(--piki-turquesa-dark); border-top:1px solid var(--border-color); margin-top:8px; padding-top:8px;">
+        <strong>TOTAL A COBRAR:</strong>
+        <strong>$${totalFacturaUsd.toFixed(2)} USD / Bs. ${(totalFacturaUsd * tasa).toFixed(2)}</strong>
       </div>
     `;
 
     const cajaSaldo = document.getElementById("cajaSaldoFactura");
     if (difUsd < -0.01) {
-      cajaSaldo.innerHTML = `<div style="background:#450a0a; border:1px solid #ef4444; padding:10px; border-radius:8px;">Falta por pagar: <strong>$${Math.abs(difUsd).toFixed(2)} USD</strong></div>`;
+      const falta = Math.abs(difUsd);
+      cajaSaldo.innerHTML = `<div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:8px; font-weight:700;">⚠️ Restan por pagar: $${falta.toFixed(2)} USD (Bs. ${(falta * tasa).toFixed(2)}) — Pasará a Cuentas por Cobrar si emites la factura.</div>`;
     } else {
-      cajaSaldo.innerHTML = `<div style="background:#064e3b; border:1px solid #10b981; padding:10px; border-radius:8px;">Vuelto: <strong>$${Math.max(0, difUsd).toFixed(2)} USD</strong></div>`;
+      cajaSaldo.innerHTML = `<div style="background:#d1fae5; color:#065f46; padding:10px; border-radius:8px; font-weight:700;">✅ Pago Completo. Vuelto a entregar: $${Math.max(0, difUsd).toFixed(2)} USD (Bs. ${(Math.max(0, difUsd) * tasa).toFixed(2)})</div>`;
     }
 
-    document.getElementById("tablaCobranzas").innerHTML = cobranzas.map(c => `
-      <tr>
-        <td><span class="badge" style="background:#7f1d1d; color:#fff;">${c.vence}</span></td>
-        <td><strong>${c.cliente}</strong></td>
-        <td>${c.factura}</td>
-        <td style="color:#EA0A6A; font-weight:bold;">$${c.saldoUsd.toFixed(2)}</td>
-        <td><strong>Bs. ${(c.saldoUsd * tasa).toFixed(2)}</strong></td>
-        <td><button class="btn-green" onclick="cobranzas=cobranzas.filter(x=>x.id!==${c.id}); recalcularTodo();">Cobrada</button></td>
-      </tr>
-    `).join("");
+    // 6. CUENTAS POR COBRAR
+    document.getElementById("tablaCobranzas").innerHTML = state.cobranzas.map(c => {
+      const bsHoy = c.saldoUsd * tasa;
+      return `
+        <tr>
+          <td><span class="badge" style="background:var(--piki-magenta-light); color:var(--piki-magenta);">${c.vence}</span></td>
+          <td><strong>${c.cliente}</strong><br><span style="font-size:10px; color:var(--text-muted);">📱 ${c.tel}</span></td>
+          <td><strong>${c.factura}</strong></td>
+          <td style="color:var(--piki-magenta); font-weight:900; font-size:14px;">$${c.saldoUsd.toFixed(2)}</td>
+          <td style="font-weight:800;">Bs. ${bsHoy.toFixed(2)}</td>
+          <td class="no-print">
+            <button class="btn-green" onclick="cobrarCuentaCliente(${c.id})">💵 Registrar Cobro</button>
+            <button class="btn-turquesa" onclick="enviarWhatsappCobro('${c.cliente}', '${c.factura}', ${c.saldoUsd}, ${bsHoy}, '${c.tel}')">📲 WhatsApp</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    // 7. COMPRAS Y RETENCIONES SENIAT
+    document.getElementById("lblCompIvaPorc").textContent = state.impuestos.ivaGeneral;
+    document.getElementById("lblCompRetIvaPorc").textContent = state.impuestos.retIva;
+    document.getElementById("lblCompRetIslrPorc").textContent = state.impuestos.retIslr;
 
     const montoC = parseFloat(document.getElementById("compMonto").value) || 0;
     const cIva = document.getElementById("chkCompIva").checked;
     const cRetIva = document.getElementById("chkCompRetIva").checked;
     const cRetIslr = document.getElementById("chkCompRetIslr").checked;
-    const ivaCompra = cIva ? montoC * 0.16 : 0;
-    const totalC = montoC + ivaCompra;
-    const netoC = totalC - ((cIva && cRetIva) ? ivaCompra * 0.75 : 0) - (cRetIslr ? montoC * 0.02 : 0);
-    window.ultimaCompra = { netoC, prov: document.getElementById("compProv").value };
+    const ivaCompra = cIva ? montoC * (state.impuestos.ivaGeneral / 100) : 0;
+    const retIvaMonto = (cIva && cRetIva) ? ivaCompra * (state.impuestos.retIva / 100) : 0;
+    const retIslrMonto = cRetIslr ? montoC * (state.impuestos.retIslr / 100) : 0;
+    const netoC = (montoC + ivaCompra) - retIvaMonto - retIslrMonto;
 
-    document.getElementById("resumenCompra").innerHTML = `<div>Neto a Pagar Proveedor: <strong style="color:#00B8B5;">$${netoC.toFixed(2)} USD</strong></div>`;
-    document.getElementById("listaComprasPagar").innerHTML = comprasPagar.map(x => `<div style="background:#0f172a; padding:10px; border-radius:8px; margin-bottom:8px;"><strong>${x.prov}</strong><br><strong style="color:#00B8B5;">$${x.netoUsd.toFixed(2)}</strong></div>`).join("");
+    window.ultimaCompra = {
+      netoC,
+      prov: document.getElementById("compProv").value || "PROVEEDOR",
+      detalleRet: `Base $${montoC.toFixed(2)} • Ret.IVA -$${retIvaMonto.toFixed(2)} • Ret.ISLR -$${retIslrMonto.toFixed(2)}`
+    };
 
+    document.getElementById("resumenCompra").innerHTML = `
+      <div class="row"><span>Total Factura con IVA:</span><strong>$${(montoC + ivaCompra).toFixed(2)}</strong></div>
+      <div class="row" style="color:var(--piki-magenta); margin-top:4px;"><span>Retenciones SENIAT (IVA + ISLR):</span><strong>-$${(retIvaMonto + retIslrMonto).toFixed(2)}</strong></div>
+      <div class="row" style="color:var(--piki-turquesa-dark); font-size:15px; border-top:1px solid var(--border-color); margin-top:6px; padding-top:6px;">
+        <strong>NETO A PAGAR AL PROVEEDOR:</strong>
+        <strong>$${netoC.toFixed(2)} USD / Bs. ${(netoC * tasa).toFixed(2)}</strong>
+      </div>
+    `;
+
+    document.getElementById("listaComprasPagar").innerHTML = state.comprasPagar.map(x => `
+      <div style="background:var(--bg-input); padding:10px 12px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:8px;" class="row">
+        <div>
+          <strong>${x.prov} (${x.numFac || 'S/N'})</strong><br>
+          <span style="font-size:11px; color:var(--text-muted);">${x.info}</span>
+        </div>
+        <div style="text-align:right;">
+          <strong style="color:var(--piki-turquesa-dark); font-size:14px;">$${x.netoUsd.toFixed(2)}</strong><br>
+          <span class="badge" style="background:${x.estado === 'PAGADA' ? '#d1fae5' : '#fef3c7'}; color:${x.estado === 'PAGADA' ? '#065f46' : '#92400e'};">${x.estado || 'PAGADA'}</span>
+        </div>
+      </div>
+    `).join("");
+
+    // 8. REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA)
     let sumIngresos = 0, sumEgresos = 0;
-    document.getElementById("tablaIngresosEgresos").innerHTML = flujoCaja.map(m => {
+    const busCaja = (document.getElementById("buscadorCaja").value || "").toLowerCase();
+
+    state.flujoCaja.forEach(m => {
       if (m.tipo === "INGRESO") sumIngresos += m.usd;
       else sumEgresos += m.usd;
+    });
+
+    const movsFiltrados = state.flujoCaja.filter(m => {
+      if (filtroCajaActual !== "TODOS" && m.tipo !== filtroCajaActual) return false;
+      if (!busCaja) return true;
+      return m.concepto.toLowerCase().includes(busCaja) || m.tercero.toLowerCase().includes(busCaja) || (m.categoria || "").toLowerCase().includes(busCaja) || (m.metodo || "").toLowerCase().includes(busCaja);
+    });
+
+    document.getElementById("tablaIngresosEgresos").innerHTML = movsFiltrados.map(m => {
+      const esIngreso = m.tipo === "INGRESO";
       return `
         <tr>
-          <td style="color:#94a3b8;">${m.fecha}</td>
-          <td><span class="badge" style="background:${m.tipo === 'INGRESO' ? '#064e3b' : '#7f1d1d'}; color:#fff;">${m.tipo}</span></td>
+          <td style="color:var(--text-muted);">${m.fecha}</td>
+          <td><span class="badge" style="background:${esIngreso ? '#d1fae5' : '#fee2e2'}; color:${esIngreso ? '#065f46' : '#991b1b'};">${esIngreso ? '🟢 INGRESO' : '🔴 EGRESO'}</span></td>
+          <td><strong>${m.categoria || 'General'}</strong></td>
           <td><strong>${m.concepto}</strong></td>
           <td>${m.tercero}</td>
-          <td style="text-align:right; font-weight:bold; color:${m.tipo === 'INGRESO' ? '#34d399' : '#f87171'};">$${m.usd.toFixed(2)}</td>
-          <td style="text-align:right;">Bs. ${(m.bs).toFixed(2)}</td>
+          <td><span class="badge" style="background:var(--bg-input); border:1px solid var(--border-color);">${m.metodo || 'Caja'}</span></td>
+          <td style="text-align:right; font-weight:900; font-size:13px; color:${esIngreso ? '#10b981' : '#ef4444'};">${esIngreso ? '+' : '-'}$${m.usd.toFixed(2)}</td>
+          <td style="text-align:right; font-weight:700;">Bs. ${(m.usd * tasa).toFixed(2)}</td>
+          <td class="no-print"><button class="btn-red" style="padding:3px 7px; font-size:10px;" onclick="eliminarMovimientoCaja(${m.id})">✖</button></td>
         </tr>
       `;
     }).join("");
 
     const netoCaja = sumIngresos - sumEgresos;
-    document.getElementById("lblTotalIngresos").textContent = `$${sumIngresos.toFixed(2)} USD`;
+    const margenCaja = sumIngresos > 0 ? ((netoCaja / sumIngresos) * 100).toFixed(1) : 0;
+
+    document.getElementById("lblTotalIngresos").textContent = `+$${sumIngresos.toFixed(2)} USD`;
     document.getElementById("lblTotalIngresosBs").textContent = `Bs. ${(sumIngresos * tasa).toFixed(2)}`;
-    document.getElementById("lblTotalEgresos").textContent = `$${sumEgresos.toFixed(2)} USD`;
+    document.getElementById("lblTotalEgresos").textContent = `-$${sumEgresos.toFixed(2)} USD`;
     document.getElementById("lblTotalEgresosBs").textContent = `Bs. ${(sumEgresos * tasa).toFixed(2)}`;
-    document.getElementById("lblFlujoNeto").textContent = `$${netoCaja.toFixed(2)} USD`;
-    document.getElementById("lblCantMovimientos").textContent = flujoCaja.length;
+    document.getElementById("lblFlujoNeto").textContent = `${netoCaja >= 0 ? '+' : ''}$${netoCaja.toFixed(2)} USD`;
+    document.getElementById("lblFlujoNetoBs").textContent = `Bs. ${(netoCaja * tasa).toFixed(2)}`;
+    document.getElementById("lblRentabilidadCaja").textContent = `${margenCaja}% Utilidad`;
+    document.getElementById("lblCantMovimientos").textContent = `${state.flujoCaja.length} transacciones en caja`;
   }
 
-  function emitirFactura() {
-    let totalVentaUsd = 0;
-    carrito.forEach(item => {
-      totalVentaUsd += (item.cantidad * item.precioUsd);
-      inventario = inventario.map(p => p.id === item.id ? { ...p, stock: Math.max(0, p.stock - item.cantidad) } : p);
-    });
-
-    const tasa = obtenerTasaActiva();
-    flujoCaja.unshift({
-      fecha: "Justo ahora",
-      tipo: "INGRESO",
-      concepto: "Venta de Contado / Factura",
-      tercero: document.getElementById("cliNombre").value,
-      usd: totalVentaUsd,
-      bs: totalVentaUsd * tasa
-    });
-
-    alert("¡Factura emitida con éxito! Ingreso registrado en el Flujo de Caja.");
-    verPestana("INGRESOS");
-  }
-
-  function guardarCompra() {
-    const u = window.ultimaCompra;
-    const tasa = obtenerTasaActiva();
-    comprasPagar.unshift({ id: Date.now(), prov: u.prov, info: "Compra registrada", netoUsd: u.netoC });
-    
-    flujoCaja.unshift({
-      fecha: "Justo ahora",
-      tipo: "EGRESO",
-      concepto: "Pago a Proveedor / Compra",
-      tercero: u.prov,
-      usd: u.netoC,
-      bs: u.netoC * tasa
-    });
-
-    recalcularTodo();
-    alert("¡Compra guardada! Egreso registrado en el Flujo de Caja.");
-    verPestana("INGRESOS");
-  }
-
-  actualizarSelectsMaster();
+  // Inicialización automática al abrir la app
+  aplicarTema();
+  sincronizarInputsMaster();
+  calcularMargenesPreview();
   recalcularTodo();
 </script>
 </body>
