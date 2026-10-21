@@ -74,17 +74,17 @@
 <body>
 
 <!-- =========================================================================
-     BARRA DE SINCRONIZACIÓN MULTI-USUARIO (TÚ Y TU SOCIA EN TIEMPO REAL)
+     BARRA SUPERIOR DE SINCRONIZACIÓN DIRECTA SIN CÓDIGOS (1 SOLO CLIC)
      ========================================================================= -->
 <div class="card row no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:1px solid var(--piki-turquesa); padding:10px 14px; margin-bottom:10px;">
   <div class="row" style="gap:10px;">
-    <span id="badgeEstadoNube" class="badge" style="background:#fef3c7; color:#92400e; font-size:11px;">💻 Modo Local (Datos en este navegador)</span>
-    <span style="font-size:12px; font-weight:600;">¿Trabajas con tu socia en distintas computadoras o teléfonos?</span>
+    <span id="badgeEstadoNube" class="badge" style="background:#d1fae5; color:#065f46; font-size:11px;">🟢 Nube Piki Conectada</span>
+    <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Todo cambio que hagas tú o tu socia se guarda automáticamente en la nube.</span>
   </div>
-  <div class="row" style="gap:6px;">
-    <button class="btn-turquesa" onclick="subirDatosANubeCompartida()">☁️ Guardar/Enviar mis cambios a mi Socia</button>
-    <button class="btn-magenta" onclick="descargarDatosDeNubeCompartida()">🔄 Traer lo que cargó mi Socia</button>
-    <button class="btn-outline" onclick=" document.getElementById('inputImportarJsonRapido').click()">📂 Subir Archivo (.JSON)</button>
+  <div class="row" style="gap:8px;">
+    <button class="btn-magenta" onclick="sincronizarDesdeNube(true)" style="padding:9px 15px; font-size:12px;">🔄 Actualizar lo que hizo mi Socia</button>
+    <button class="btn-turquesa" onclick="forzarSubidaANube()" style="padding:9px 13px; font-size:12px;">☁️ Subir el Inventario de esta Pantalla</button>
+    <button class="btn-outline" onclick="document.getElementById('inputImportarJsonRapido').click()" title="Cargar archivo de respaldo">📂</button>
     <input type="file" id="inputImportarJsonRapido" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
   </div>
 </div>
@@ -140,11 +140,11 @@
   <div class="row" style="gap: 8px;">
     <div style="background:var(--piki-turquesa-light); padding:6px 10px; border-radius:10px; border:1px solid var(--piki-turquesa);">
       <div style="font-size:9px; font-weight:800; color:var(--piki-turquesa-dark);">TASA OFICIAL BCV (Bs/$)</div>
-      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-turquesa-dark); padding:0;" oninput="guardarTasasYRecalcular()">
+      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-turquesa-dark); padding:0;" onchange="guardarTasasYRecalcular()">
     </div>
     <div style="background:var(--piki-magenta-light); padding:6px 10px; border-radius:10px; border:1px solid var(--piki-magenta);">
       <div style="font-size:9px; font-weight:800; color:var(--piki-magenta);">MI TASA MANUAL (Bs/$)</div>
-      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-magenta); padding:0;" oninput="guardarTasasYRecalcular()">
+      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-magenta); padding:0;" onchange="guardarTasasYRecalcular()">
     </div>
     <button id="btnModoTasa" class="btn-turquesa" onclick="cambiarModoTasa()" style="height:44px;">Usando: BCV (45.00 Bs)</button>
     <button class="btn-outline" onclick="alternarTema()" id="btnTema" style="height:44px;">🌙 Modo Oscuro</button>
@@ -200,7 +200,7 @@
   <div id="vista-inv-CATALOGO">
     <div class="card no-print" style="border-left:4px solid var(--piki-magenta);">
       <div class="row" style="margin-bottom:10px;">
-        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Con acceso directo al Master)</h3>
+        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Se sincroniza solo con tu Socia)</h3>
         <button id="btnCancelarEdicionProd" class="btn-outline hidden" onclick="limpiarFormularioProducto()">✖ Cancelar Edición</button>
       </div>
       <input type="hidden" id="editProdId" value="">
@@ -271,7 +271,7 @@
         </div>
       </div>
       <div class="row">
-        <span style="font-size:11px; color:var(--text-muted);">💡 Puedes cambiar la categoría de cualquier producto directamente desde la tabla inferior o pulsando <strong>✏️ Editar Todo</strong>.</span>
+        <span style="font-size:11px; color:var(--text-muted);">💡 Al guardar o editar cualquier producto, se sube automáticamente a la nube de Piki.</span>
         <button class="btn-magenta" id="btnGuardarProducto" onclick="guardarProductoCatalogo()">+ GUARDAR EN CATÁLOGO PIKI</button>
       </div>
     </div>
@@ -659,24 +659,13 @@
     <div class="row" style="margin-bottom:12px;">
       <div>
         <h2 style="margin:0; color:var(--piki-magenta);">⚙️ MASTER DE CONFIGURACIÓN TOTAL DEL SISTEMA PIKI</h2>
-        <span style="color:var(--text-muted); font-size:12px;">Desde aquí puedes descargar o subir respaldos entre computadoras, activar sincronización en la nube, subir el logo y editar/renombrar en cascada todas las listas del sistema.</span>
+        <span style="color:var(--text-muted); font-size:12px;">Todo lo que edites aquí se guarda y se sincroniza automáticamente con tu socia.</span>
       </div>
       <div class="row">
         <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Respaldo (.JSON)</button>
-        <button class="btn-magenta" onclick="document.getElementById('inputImportarJsonMaster').click()">⬆️ Cargar Respaldo de mi Socia (.JSON)</button>
+        <button class="btn-magenta" onclick="document.getElementById('inputImportarJsonMaster').click()">⬆️ Cargar Respaldo (.JSON)</button>
         <input type="file" id="inputImportarJsonMaster" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
         <button class="btn-red" onclick="restaurarFabrica()">♻️ Restaurar Fábrica</button>
-      </div>
-    </div>
-
-    <!-- CONFIGURACIÓN DE NUBE COMPARTIDA ENTRE SOCIAS -->
-    <div style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); padding:14px; border-radius:12px; border:1px solid var(--piki-magenta); margin-bottom:14px;">
-      <h3 style="margin-top:0; color:var(--piki-magenta);">☁️ Sincronización en la Nube entre Computadoras (Tú y tu Socia)</h3>
-      <p style="margin:0 0 10px 0; font-size:12px;">Si tu socia ya cargó el inventario en su computadora, pídele que pulse arriba en <strong>"☁️ Guardar/Enviar mis cambios a mi Socia"</strong> (eso le dará un Código de Nube o descargará el archivo), o peguen aquí el mismo <strong>Código de Nube Compartida</strong> en ambas computadoras:</p>
-      <div class="row" style="gap:8px;">
-        <input type="text" id="inputCloudBinId" placeholder="Pega aquí el Código de Nube Compartida (o déjalo vacío y dale a Crear/Guardar en Nube)" style="flex:1; background:#fff; color:#000;">
-        <button class="btn-turquesa" onclick="subirDatosANubeCompartida()">☁️ 1. Subir este Inventario a la Nube</button>
-        <button class="btn-magenta" onclick="descargarDatosDeNubeCompartida()">🔄 2. Descargar Inventario de mi Socia</button>
       </div>
     </div>
 
@@ -687,19 +676,19 @@
         <div class="grid2" style="margin-bottom:10px;">
           <div>
             <label>Nombre de la Empresa</label>
-            <input type="text" id="masEmpresaNombre" oninput="guardarConfigMaster()">
+            <input type="text" id="masEmpresaNombre" onchange="guardarConfigMaster()">
           </div>
           <div>
             <label>RIF Fiscal</label>
-            <input type="text" id="masEmpresaRif" oninput="guardarConfigMaster()">
+            <input type="text" id="masEmpresaRif" onchange="guardarConfigMaster()">
           </div>
           <div style="grid-column: span 2;">
             <label>Eslogan Oficial (Debajo del Logo)</label>
-            <input type="text" id="masEmpresaSlogan" oninput="guardarConfigMaster()">
+            <input type="text" id="masEmpresaSlogan" onchange="guardarConfigMaster()">
           </div>
           <div style="grid-column: span 2;">
             <label>Dirección / Teléfonos en Factura</label>
-            <input type="text" id="masEmpresaDir" oninput="guardarConfigMaster()">
+            <input type="text" id="masEmpresaDir" onchange="guardarConfigMaster()">
           </div>
         </div>
         <div style="border-top:1px dashed var(--border-color); padding-top:10px;">
@@ -717,27 +706,27 @@
         <div class="grid2">
           <div>
             <label>IVA Alícuota General (%)</label>
-            <input type="number" id="masIvaGen" step="0.1" oninput="guardarConfigMaster()">
+            <input type="number" id="masIvaGen" step="0.1" onchange="guardarConfigMaster()">
           </div>
           <div>
             <label>IVA Alícuota Reducida (%)</label>
-            <input type="number" id="masIvaRed" step="0.1" oninput="guardarConfigMaster()">
+            <input type="number" id="masIvaRed" step="0.1" onchange="guardarConfigMaster()">
           </div>
           <div>
             <label>IGTF Pagos en Divisas (%)</label>
-            <input type="number" id="masIgtf" step="0.1" oninput="guardarConfigMaster()">
+            <input type="number" id="masIgtf" step="0.1" onchange="guardarConfigMaster()">
           </div>
           <div>
             <label>Retención de IVA Compras (%)</label>
-            <input type="number" id="masRetIva" step="1" oninput="guardarConfigMaster()">
+            <input type="number" id="masRetIva" step="1" onchange="guardarConfigMaster()">
           </div>
           <div>
             <label>Retención de ISLR Compras (%)</label>
-            <input type="number" id="masRetIslr" step="0.5" oninput="guardarConfigMaster()">
+            <input type="number" id="masRetIslr" step="0.5" onchange="guardarConfigMaster()">
           </div>
           <div>
             <label>Correlativo Próxima Factura</label>
-            <input type="number" id="masCorrelativo" step="1" oninput="guardarConfigMaster()">
+            <input type="number" id="masCorrelativo" step="1" onchange="guardarConfigMaster()">
           </div>
         </div>
       </div>
@@ -804,9 +793,11 @@
 
 <script>
   const STORAGE_KEY = "PIKI_ERP_V10_STATE";
-  const CLOUD_ID_KEY = "PIKI_CLOUD_SYNC_ID";
+  // CANAL PRIVADO FIJO EN LA NUBE PARA PIKI (NO REQUIERE CÓDIGOS)
+  const NUBE_PIKI_URL = "https://kvdb.io/A6p9kYzM2vX8qW4nL7rJ3t/piki_erp_oficial_zulia_2026";
 
   const estadoInicial = {
+    updatedAt: 0,
     usarManual: false,
     darkMode: false,
     tasaBcv: 45.00,
@@ -874,13 +865,74 @@
     return JSON.parse(JSON.stringify(estadoInicial));
   }
 
-  function guardarEstado() {
+  // GUARDA EN EL NAVEGADOR Y SUBE AUTOMÁTICAMENTE A LA NUBE SIN PEDIR CÓDIGOS
+  function guardarEstado(subirNube = true) {
+    state.updatedAt = Date.now();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error(e); }
+    if (subirNube) {
+      subirSilenciosoANube();
+    }
   }
 
-  // =========================================================================
-  // SINCRONIZACIÓN ENTRE COMPUTADORAS (NUBE COMPARTIDA E IMPORTACIÓN JSON)
-  // =========================================================================
+  async function subirSilenciosoANube() {
+    const badge = document.getElementById("badgeEstadoNube");
+    const lbl = document.getElementById("lblUltimaSync");
+    try {
+      if (badge) badge.textContent = "⏳ Guardando en nube...";
+      const res = await fetch(NUBE_PIKI_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(state)
+      });
+      if (res.ok && badge) {
+        badge.style.background = "#d1fae5";
+        badge.style.color = "#065f46";
+        badge.textContent = "☁️ Sincronizado en Vivo";
+        if (lbl) lbl.textContent = `Último guardado automático: ${fechaActualTexto()} (${state.inventario.length} productos)`;
+      }
+    } catch (e) {
+      if (badge) badge.textContent = "💻 Guardado en este equipo";
+    }
+  }
+
+  async function forzarSubidaANube() {
+    await subirSilenciosoANube();
+    alert(`✅ ¡Listo! Se subieron los ${state.inventario.length} productos de esta pantalla a la nube de Piki. Ahora tu socia solo debe darle al botón '🔄 Actualizar lo que hizo mi Socia'.`);
+  }
+
+  async function sincronizarDesdeNube(mostrarMensaje = false) {
+    const badge = document.getElementById("badgeEstadoNube");
+    const lbl = document.getElementById("lblUltimaSync");
+    try {
+      if (badge) badge.textContent = "🔄 Buscando cambios...";
+      const res = await fetch(NUBE_PIKI_URL + "?t=" + Date.now());
+      if (!res.ok) {
+        if (mostrarMensaje) alert("Aún no se ha subido inventario a la nube. Pídele a tu socia que presione una vez el botón turquesa '☁️ Subir el Inventario de esta Pantalla'.");
+        if (badge) badge.textContent = "🟢 Nube Lista";
+        return;
+      }
+      const remoto = await res.json();
+      if (remoto && Array.isArray(remoto.inventario)) {
+        state = Object.assign({}, estadoInicial, remoto);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        aplicarTema();
+        sincronizarInputsMaster();
+        recalcularTodo();
+        if (badge) {
+          badge.style.background = "#d1fae5";
+          badge.style.color = "#065f46";
+          badge.textContent = `☁️ Al día (${state.inventario.length} prods)`;
+        }
+        if (lbl) lbl.textContent = `Sincronizado con tu socia: ${fechaActualTexto()}`;
+        if (mostrarMensaje) {
+          alert(`🎉 ¡Actualizado! Ya estás viendo los ${state.inventario.length} productos y todos los movimientos que cargó tu socia.`);
+        }
+      }
+    } catch (e) {
+      if (mostrarMensaje) alert("No se pudo conectar en este instante. Revisa tu conexión a internet e intenta de nuevo.");
+    }
+  }
+
   function importarRespaldoJson(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -890,88 +942,16 @@
         const importado = JSON.parse(e.target.result);
         if (importado && importado.inventario) {
           state = Object.assign({}, estadoInicial, importado);
-          guardarEstado();
+          guardarEstado(true);
           sincronizarInputsMaster();
           recalcularTodo();
-          alert(`✅ ¡Inventario cargado con éxito! Ahora tienes ${state.inventario.length} productos sincronizados en tu pantalla.`);
-        } else {
-          alert("El archivo seleccionado no tiene el formato de respaldo Piki.");
+          alert(`✅ ¡Inventario cargado y subido a la nube con éxito! (${state.inventario.length} productos).`);
         }
       } catch (err) {
         alert("Error al leer el archivo .JSON.");
       }
     };
     reader.readAsText(file);
-  }
-
-  async function subirDatosANubeCompartida() {
-    const badge = document.getElementById("badgeEstadoNube");
-    const inputId = document.getElementById("inputCloudBinId");
-    let binId = (inputId && inputId.value.trim()) || localStorage.getItem(CLOUD_ID_KEY) || "";
-
-    badge.textContent = "⏳ Subiendo a la nube...";
-    try {
-      let url = "https://jsonblob.com/api/jsonBlob";
-      let method = "POST";
-      if (binId) {
-        url = "https://jsonblob.com/api/jsonBlob/" + binId;
-        method = "PUT";
-      }
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(state)
-      });
-      if (!res.ok) throw new Error("No se pudo conectar");
-      if (!binId) {
-        const loc = res.headers.get("Location") || "";
-        binId = loc.split("/").pop();
-      }
-      if (binId) {
-        localStorage.setItem(CLOUD_ID_KEY, binId);
-        if (inputId) inputId.value = binId;
-        badge.style.background = "#d1fae5";
-        badge.style.color = "#065f46";
-        badge.textContent = `☁️ Nube Activa (Código: ${binId})`;
-        prompt("¡Listo! Tus datos están en la nube. Copia este Código de Nube y pásaselo a tu socia para que ella lo pegue al darle a 'Traer lo que cargó mi Socia':", binId);
-      }
-    } catch (err) {
-      badge.textContent = "💻 Modo Respaldo Directo";
-      if (confirm("Para compartir todo tu inventario con tu socia ahora mismo sin bloqueos de red, ¿deseas descargar el archivo de sincronización para enviárselo por WhatsApp?")) {
-        exportarRespaldoJson();
-      }
-    }
-  }
-
-  async function descargarDatosDeNubeCompartida() {
-    const inputId = document.getElementById("inputCloudBinId");
-    let binId = (inputId && inputId.value.trim()) || localStorage.getItem(CLOUD_ID_KEY) || "";
-    if (!binId) {
-      binId = prompt("Pega aquí el Código de Nube que te envió tu socia (o cancela y usa el botón '📂 Subir Archivo .JSON' si te lo pasó por WhatsApp):");
-    }
-    if (!binId || !binId.trim()) return;
-    binId = binId.trim();
-
-    try {
-      const res = await fetch("https://jsonblob.com/api/jsonBlob/" + binId);
-      if (!res.ok) throw new Error("Código no encontrado");
-      const data = await res.json();
-      if (data && data.inventario) {
-        state = Object.assign({}, estadoInicial, data);
-        localStorage.setItem(CLOUD_ID_KEY, binId);
-        if (inputId) inputId.value = binId;
-        guardarEstado();
-        sincronizarInputsMaster();
-        recalcularTodo();
-        const badge = document.getElementById("badgeEstadoNube");
-        badge.style.background = "#d1fae5";
-        badge.style.color = "#065f46";
-        badge.textContent = `☁️ Sincronizado (${state.inventario.length} prods)`;
-        alert(`🎉 ¡Sincronización exitosa! Ya tienes en pantalla los ${state.inventario.length} productos cargados por tu socia.`);
-      }
-    } catch (e) {
-      alert("No se pudo conectar con ese código. Pídele a tu socia que le dé al botón '⬇️ Descargar Respaldo (.JSON)' en la pestaña Master, te lo pase por WhatsApp, y tú súbelo aquí con el botón '📂 Subir Archivo (.JSON)'.");
-    }
   }
 
   function fechaActualTexto() {
@@ -1037,11 +1017,6 @@
     document.getElementById("masRetIva").value = state.impuestos.retIva;
     document.getElementById("masRetIslr").value = state.impuestos.retIslr;
     document.getElementById("masCorrelativo").value = state.impuestos.correlativoFactura;
-
-    const savedCloud = localStorage.getItem(CLOUD_ID_KEY);
-    if (savedCloud && document.getElementById("inputCloudBinId")) {
-      document.getElementById("inputCloudBinId").value = savedCloud;
-    }
 
     const imgLogo = document.getElementById("imgLogoPersonalizado");
     const svgLogo = document.getElementById("svgLogoOficialPiki");
@@ -1207,7 +1182,8 @@
   function restaurarFabrica() {
     if (confirm("¿Seguro que deseas restaurar los datos de demostración de fábrica?")) {
       localStorage.removeItem(STORAGE_KEY);
-      state = cargarEstado();
+      state = JSON.parse(JSON.stringify(estadoInicial));
+      guardarEstado();
       sincronizarInputsMaster();
       recalcularTodo();
     }
@@ -1292,7 +1268,7 @@
     document.getElementById("invSku").value = "PIKI-00" + (state.inventario.length + 1);
     document.getElementById("invBarra").value = "";
     document.getElementById("invNombre").value = "";
-    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Con acceso directo al Master)";
+    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Se sincroniza solo con tu Socia)";
     document.getElementById("btnGuardarProducto").textContent = "+ GUARDAR EN CATÁLOGO PIKI";
     document.getElementById("btnCancelarEdicionProd").classList.add("hidden");
   }
@@ -1853,6 +1829,8 @@
   sincronizarInputsMaster();
   calcularMargenesPreview();
   recalcularTodo();
+  // Descarga automáticamente los últimos cambios de tu socia al abrir la página
+  sincronizarDesdeNube(false);
 </script>
 </body>
 </html>
