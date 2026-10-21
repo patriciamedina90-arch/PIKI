@@ -74,11 +74,27 @@
 <body>
 
 <!-- =========================================================================
+     BARRA DE SINCRONIZACIÓN MULTI-USUARIO (TÚ Y TU SOCIA EN TIEMPO REAL)
+     ========================================================================= -->
+<div class="card row no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:1px solid var(--piki-turquesa); padding:10px 14px; margin-bottom:10px;">
+  <div class="row" style="gap:10px;">
+    <span id="badgeEstadoNube" class="badge" style="background:#fef3c7; color:#92400e; font-size:11px;">💻 Modo Local (Datos en este navegador)</span>
+    <span style="font-size:12px; font-weight:600;">¿Trabajas con tu socia en distintas computadoras o teléfonos?</span>
+  </div>
+  <div class="row" style="gap:6px;">
+    <button class="btn-turquesa" onclick="subirDatosANubeCompartida()">☁️ Guardar/Enviar mis cambios a mi Socia</button>
+    <button class="btn-magenta" onclick="descargarDatosDeNubeCompartida()">🔄 Traer lo que cargó mi Socia</button>
+    <button class="btn-outline" onclick=" document.getElementById('inputImportarJsonRapido').click()">📂 Subir Archivo (.JSON)</button>
+    <input type="file" id="inputImportarJsonRapido" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
+  </div>
+</div>
+
+<!-- =========================================================================
      CABECERA CORPORATIVA CON EL LOGO OFICIAL DE PIKI Y CONTROL MULTIMONEDA
      ========================================================================= -->
 <div class="card row no-print" style="border-top: 4px solid var(--piki-magenta); border-bottom: 2px solid var(--piki-turquesa);">
   <div class="row" style="gap: 14px;">
-    <!-- LOGOTIPO OFICIAL PIKI (Enchufe Turquesa + Hoja Magenta + Tipografía 3D Piki) -->
+    <!-- LOGOTIPO OFICIAL PIKI -->
     <div id="contenedorLogoPiki" style="display:flex; align-items:center; gap:12px; background:#ffffff; padding:8px 16px; border-radius:14px; border:2px solid #f1f5f9; box-shadow: 0 2px 10px rgba(234,10,106,0.08);">
       <img id="imgLogoPersonalizado" class="hidden" src="" alt="Logo Piki" style="max-height:54px; width:auto; object-fit:contain;">
       <svg id="svgLogoOficialPiki" width="145" height="58" viewBox="0 0 260 110" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,29 +108,20 @@
             <stop offset="100%" stop-color="#008F8C"/>
           </linearGradient>
         </defs>
-        <!-- Ícono Superior: Círculo Turquesa con Enchufe + Hoja Magenta entrelazada -->
         <g transform="translate(72, 2)">
-          <!-- Círculo turquesa izquierdo -->
           <circle cx="28" cy="22" r="17" stroke="url(#pikiCyan)" stroke-width="4.5" fill="none"/>
-          <!-- Enchufe turquesa y cable -->
           <path d="M18 42 C14 35, 18 27, 25 22" stroke="url(#pikiCyan)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
           <rect x="22" y="15" width="9" height="7" rx="2" transform="rotate(-40 22 15)" fill="url(#pikiCyan)"/>
           <line x1="29" y1="11" x2="32" y2="8" stroke="#008F8C" stroke-width="2.5" stroke-linecap="round"/>
           <line x1="32" y1="14" x2="35" y2="11" stroke="#008F8C" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- Gota / Hoja magenta derecha entrelazada -->
           <path d="M40 22 C40 11, 50 5, 64 5 L64 22 C64 33, 54 39, 40 39 C34 39, 31 31, 40 22 Z" stroke="url(#pikiPink)" stroke-width="4.5" fill="none"/>
-          <!-- Hoja interna bicolor -->
           <path d="M45 31 C45 19, 57 13, 59 13 C59 25, 53 33, 45 31 Z" fill="url(#pikiCyan)"/>
           <path d="M45 31 C49 24, 54 18, 59 13" stroke="#EA0A6A" stroke-width="2.2" stroke-linecap="round"/>
         </g>
-        <!-- Letras 3D Piki (Fucsia con reborde 3D Turquesa) -->
         <g transform="translate(18, 44)">
-          <!-- Sombra/Reborde 3D Turquesa -->
           <text x="19" y="46" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="54" fill="url(#pikiCyan)" letter-spacing="2">Piki</text>
-          <!-- Cuerpo Principal Magenta -->
           <text x="15" y="44" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="54" fill="url(#pikiPink)" letter-spacing="2">Piki</text>
         </g>
-        <!-- Eslogan inferior -->
         <text x="130" y="103" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="600" font-size="9.2" fill="#64748b">Hogar · Cuidado Personal · Accesorios Eléctricos</text>
       </svg>
     </div>
@@ -160,7 +167,6 @@
      MÓDULO 1: CENTRO DE INVENTARIO, VALORIZACIÓN, REPOSICIÓN Y KARDEX
      ========================================================================= -->
 <div id="sec-INVENTARIO">
-  <!-- TARJETAS EJECUTIVAS DE INVENTARIO -->
   <div class="grid4">
     <div class="stat-card" style="border-left:4px solid var(--piki-turquesa);">
       <div style="font-size:10px; font-weight:800; color:var(--text-muted);">💰 CAPITAL PIKI INVERTIDO (COSTO)</div>
@@ -184,7 +190,6 @@
     </div>
   </div>
 
-  <!-- SUB-NAVEGACIÓN DE INVENTARIO -->
   <div class="row no-print" style="margin-bottom:12px; justify-content:flex-start;">
     <button class="subtab active" id="subinv-CATALOGO" onclick="verSubInv('CATALOGO')">📋 1.1 Catálogo y Carga/Edición Manual</button>
     <button class="subtab" id="subinv-REPORTE" onclick="verSubInv('REPORTE')">📊 1.2 Reporte de Valorización y Lista de Compras por Reponer</button>
@@ -271,7 +276,6 @@
       </div>
     </div>
 
-    <!-- FILTROS Y TABLA PRINCIPAL DE INVENTARIO -->
     <div class="card">
       <div class="row no-print" style="margin-bottom:10px;">
         <div class="row" style="gap:6px;">
@@ -420,7 +424,6 @@
         </div>
       </div>
 
-      <!-- AGREGAR PRODUCTO RÁPIDO AL CARRITO -->
       <div class="row no-print" style="background:var(--bg-input); padding:8px; border-radius:8px; margin-bottom:10px;">
         <select id="selProductoFactura" style="flex:1;"></select>
         <button class="btn-turquesa" onclick="agregarDesdeSelectorFactura()">+ Agregar a Factura</button>
@@ -558,7 +561,6 @@
      MÓDULO 5: REPORTE COMPLETO DE INGRESOS, EGRESOS Y FLUJO DE CAJA
      ========================================================================= -->
 <div id="sec-INGRESOS" class="hidden">
-  <!-- KPI FINANCIEROS DE FLUJO DE CAJA -->
   <div class="grid4">
     <div class="stat-card" style="border-left:4px solid #10b981;">
       <div style="font-size:10px; font-weight:800; color:var(--text-muted);">🟢 TOTAL INGRESOS (ENTRADAS)</div>
@@ -582,7 +584,6 @@
     </div>
   </div>
 
-  <!-- FORMULARIO PARA REGISTRAR INGRESOS O GASTOS OPERATIVOS MANUALES -->
   <div class="card no-print" style="border-left:4px solid var(--piki-turquesa);">
     <h3 style="margin-top:0; color:var(--piki-turquesa-dark);">➕ Registrar Ingreso Extra o Gasto Operativo (Alquiler, Nómina, Servicios, Fletes...)</h3>
     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:10px;">
@@ -617,7 +618,6 @@
     <button class="btn-magenta" onclick="registrarMovimientoManualCaja()">+ GUARDAR MOVIMIENTO EN FLUJO DE CAJA</button>
   </div>
 
-  <!-- TABLA Y FILTROS DEL LIBRO DE INGRESOS Y EGRESOS -->
   <div class="card">
     <div class="row no-print" style="margin-bottom:10px;">
       <div class="row" style="gap:6px;">
@@ -659,11 +659,24 @@
     <div class="row" style="margin-bottom:12px;">
       <div>
         <h2 style="margin:0; color:var(--piki-magenta);">⚙️ MASTER DE CONFIGURACIÓN TOTAL DEL SISTEMA PIKI</h2>
-        <span style="color:var(--text-muted); font-size:12px;">Desde aquí puedes cambiar la identidad de la empresa, subir el logo, modificar porcentajes SENIAT y editar/renombrar en cascada todas las listas del sistema.</span>
+        <span style="color:var(--text-muted); font-size:12px;">Desde aquí puedes descargar o subir respaldos entre computadoras, activar sincronización en la nube, subir el logo y editar/renombrar en cascada todas las listas del sistema.</span>
       </div>
       <div class="row">
         <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Respaldo (.JSON)</button>
-        <button class="btn-red" onclick="restaurarFabrica()">♻️ Restaurar Valores de Fábrica</button>
+        <button class="btn-magenta" onclick="document.getElementById('inputImportarJsonMaster').click()">⬆️ Cargar Respaldo de mi Socia (.JSON)</button>
+        <input type="file" id="inputImportarJsonMaster" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
+        <button class="btn-red" onclick="restaurarFabrica()">♻️ Restaurar Fábrica</button>
+      </div>
+    </div>
+
+    <!-- CONFIGURACIÓN DE NUBE COMPARTIDA ENTRE SOCIAS -->
+    <div style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); padding:14px; border-radius:12px; border:1px solid var(--piki-magenta); margin-bottom:14px;">
+      <h3 style="margin-top:0; color:var(--piki-magenta);">☁️ Sincronización en la Nube entre Computadoras (Tú y tu Socia)</h3>
+      <p style="margin:0 0 10px 0; font-size:12px;">Si tu socia ya cargó el inventario en su computadora, pídele que pulse arriba en <strong>"☁️ Guardar/Enviar mis cambios a mi Socia"</strong> (eso le dará un Código de Nube o descargará el archivo), o peguen aquí el mismo <strong>Código de Nube Compartida</strong> en ambas computadoras:</p>
+      <div class="row" style="gap:8px;">
+        <input type="text" id="inputCloudBinId" placeholder="Pega aquí el Código de Nube Compartida (o déjalo vacío y dale a Crear/Guardar en Nube)" style="flex:1; background:#fff; color:#000;">
+        <button class="btn-turquesa" onclick="subirDatosANubeCompartida()">☁️ 1. Subir este Inventario a la Nube</button>
+        <button class="btn-magenta" onclick="descargarDatosDeNubeCompartida()">🔄 2. Descargar Inventario de mi Socia</button>
       </div>
     </div>
 
@@ -690,7 +703,7 @@
           </div>
         </div>
         <div style="border-top:1px dashed var(--border-color); padding-top:10px;">
-          <label>Subir Imagen del Logo Oficial desde tu Computadora (Opcional, reemplaza el vector)</label>
+          <label>Subir Imagen del Logo Oficial desde tu Computadora (Opcional)</label>
           <div class="row">
             <input type="file" accept="image/*" onchange="subirLogoPersonalizado(event)" style="flex:1;">
             <button class="btn-outline" onclick="restaurarLogoVectorial()">Usar Logo Vectorial Piki</button>
@@ -732,7 +745,6 @@
 
     <!-- 3. EDITORES EN CASCADA DE TODAS LAS LISTAS DEL SISTEMA -->
     <div class="grid3">
-      <!-- CATEGORÍAS -->
       <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
         <h4 style="margin-top:0; color:var(--piki-magenta);">🏷️ Categorías de Productos (Edición en Cascada)</h4>
         <div class="row" style="margin-bottom:8px;">
@@ -742,7 +754,6 @@
         <div id="listaMaster_categorias"></div>
       </div>
 
-      <!-- ALMACENES -->
       <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
         <h4 style="margin-top:0; color:var(--piki-turquesa-dark);">🏬 Almacenes / Sucursales (Edición en Cascada)</h4>
         <div class="row" style="margin-bottom:8px;">
@@ -752,7 +763,6 @@
         <div id="listaMaster_almacenes"></div>
       </div>
 
-      <!-- UNIDADES DE MEDIDA -->
       <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
         <h4 style="margin-top:0; color:#3b82f6;">📏 Unidades de Medida</h4>
         <div class="row" style="margin-bottom:8px;">
@@ -762,7 +772,6 @@
         <div id="listaMaster_unidades"></div>
       </div>
 
-      <!-- MÉTODOS DE PAGO / BANCOS -->
       <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
         <h4 style="margin-top:0; color:#10b981;">💳 Bancos y Métodos de Pago</h4>
         <div class="row" style="margin-bottom:8px;">
@@ -772,7 +781,6 @@
         <div id="listaMaster_metodosPago"></div>
       </div>
 
-      <!-- VENDEDORES -->
       <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
         <h4 style="margin-top:0; color:#f59e0b;">👤 Vendedores / Cajeros</h4>
         <div class="row" style="margin-bottom:8px;">
@@ -782,7 +790,6 @@
         <div id="listaMaster_vendedores"></div>
       </div>
 
-      <!-- CATEGORÍAS DE INGRESOS Y GASTOS -->
       <div style="background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-color);">
         <h4 style="margin-top:0; color:var(--piki-magenta);">📈 Conceptos de Ingresos y Egresos</h4>
         <div class="row" style="margin-bottom:8px;">
@@ -796,10 +803,8 @@
 </div>
 
 <script>
-  // =========================================================================
-  // ESTADO CENTRAL DEL ERP PIKI CON GUARDADO AUTOMÁTICO (LOCALSTORAGE)
-  // =========================================================================
   const STORAGE_KEY = "PIKI_ERP_V10_STATE";
+  const CLOUD_ID_KEY = "PIKI_CLOUD_SYNC_ID";
 
   const estadoInicial = {
     usarManual: false,
@@ -873,6 +878,102 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error(e); }
   }
 
+  // =========================================================================
+  // SINCRONIZACIÓN ENTRE COMPUTADORAS (NUBE COMPARTIDA E IMPORTACIÓN JSON)
+  // =========================================================================
+  function importarRespaldoJson(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const importado = JSON.parse(e.target.result);
+        if (importado && importado.inventario) {
+          state = Object.assign({}, estadoInicial, importado);
+          guardarEstado();
+          sincronizarInputsMaster();
+          recalcularTodo();
+          alert(`✅ ¡Inventario cargado con éxito! Ahora tienes ${state.inventario.length} productos sincronizados en tu pantalla.`);
+        } else {
+          alert("El archivo seleccionado no tiene el formato de respaldo Piki.");
+        }
+      } catch (err) {
+        alert("Error al leer el archivo .JSON.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  async function subirDatosANubeCompartida() {
+    const badge = document.getElementById("badgeEstadoNube");
+    const inputId = document.getElementById("inputCloudBinId");
+    let binId = (inputId && inputId.value.trim()) || localStorage.getItem(CLOUD_ID_KEY) || "";
+
+    badge.textContent = "⏳ Subiendo a la nube...";
+    try {
+      let url = "https://jsonblob.com/api/jsonBlob";
+      let method = "POST";
+      if (binId) {
+        url = "https://jsonblob.com/api/jsonBlob/" + binId;
+        method = "PUT";
+      }
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(state)
+      });
+      if (!res.ok) throw new Error("No se pudo conectar");
+      if (!binId) {
+        const loc = res.headers.get("Location") || "";
+        binId = loc.split("/").pop();
+      }
+      if (binId) {
+        localStorage.setItem(CLOUD_ID_KEY, binId);
+        if (inputId) inputId.value = binId;
+        badge.style.background = "#d1fae5";
+        badge.style.color = "#065f46";
+        badge.textContent = `☁️ Nube Activa (Código: ${binId})`;
+        prompt("¡Listo! Tus datos están en la nube. Copia este Código de Nube y pásaselo a tu socia para que ella lo pegue al darle a 'Traer lo que cargó mi Socia':", binId);
+      }
+    } catch (err) {
+      badge.textContent = "💻 Modo Respaldo Directo";
+      if (confirm("Para compartir todo tu inventario con tu socia ahora mismo sin bloqueos de red, ¿deseas descargar el archivo de sincronización para enviárselo por WhatsApp?")) {
+        exportarRespaldoJson();
+      }
+    }
+  }
+
+  async function descargarDatosDeNubeCompartida() {
+    const inputId = document.getElementById("inputCloudBinId");
+    let binId = (inputId && inputId.value.trim()) || localStorage.getItem(CLOUD_ID_KEY) || "";
+    if (!binId) {
+      binId = prompt("Pega aquí el Código de Nube que te envió tu socia (o cancela y usa el botón '📂 Subir Archivo .JSON' si te lo pasó por WhatsApp):");
+    }
+    if (!binId || !binId.trim()) return;
+    binId = binId.trim();
+
+    try {
+      const res = await fetch("https://jsonblob.com/api/jsonBlob/" + binId);
+      if (!res.ok) throw new Error("Código no encontrado");
+      const data = await res.json();
+      if (data && data.inventario) {
+        state = Object.assign({}, estadoInicial, data);
+        localStorage.setItem(CLOUD_ID_KEY, binId);
+        if (inputId) inputId.value = binId;
+        guardarEstado();
+        sincronizarInputsMaster();
+        recalcularTodo();
+        const badge = document.getElementById("badgeEstadoNube");
+        badge.style.background = "#d1fae5";
+        badge.style.color = "#065f46";
+        badge.textContent = `☁️ Sincronizado (${state.inventario.length} prods)`;
+        alert(`🎉 ¡Sincronización exitosa! Ya tienes en pantalla los ${state.inventario.length} productos cargados por tu socia.`);
+      }
+    } catch (e) {
+      alert("No se pudo conectar con ese código. Pídele a tu socia que le dé al botón '⬇️ Descargar Respaldo (.JSON)' en la pestaña Master, te lo pase por WhatsApp, y tú súbelo aquí con el botón '📂 Subir Archivo (.JSON)'.");
+    }
+  }
+
   function fechaActualTexto() {
     const d = new Date();
     return d.toLocaleDateString("es-VE") + " " + d.toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" });
@@ -882,9 +983,6 @@
     return state.usarManual ? (parseFloat(state.tasaManual) || 1) : (parseFloat(state.tasaBcv) || 1);
   }
 
-  // =========================================================================
-  // NAVEGACIÓN Y TEMA CLARO / OSCURO
-  // =========================================================================
   function alternarTema() {
     state.darkMode = !state.darkMode;
     aplicarTema();
@@ -925,9 +1023,6 @@
     recalcularTodo();
   }
 
-  // =========================================================================
-  // MÓDULO MASTER: LISTAS DINÁMICAS Y RENOMBRADO EN CASCADA
-  // =========================================================================
   function sincronizarInputsMaster() {
     document.getElementById("tasaBcv").value = state.tasaBcv;
     document.getElementById("tasaManual").value = state.tasaManual;
@@ -943,7 +1038,11 @@
     document.getElementById("masRetIslr").value = state.impuestos.retIslr;
     document.getElementById("masCorrelativo").value = state.impuestos.correlativoFactura;
 
-    // Mostrar logo personalizado si fue subido o el vectorial oficial
+    const savedCloud = localStorage.getItem(CLOUD_ID_KEY);
+    if (savedCloud && document.getElementById("inputCloudBinId")) {
+      document.getElementById("inputCloudBinId").value = savedCloud;
+    }
+
     const imgLogo = document.getElementById("imgLogoPersonalizado");
     const svgLogo = document.getElementById("svgLogoOficialPiki");
     if (state.empresa.logoBase64) {
@@ -960,7 +1059,6 @@
     document.getElementById("lblSloganEmpresa").textContent = state.empresa.slogan;
     document.getElementById("lblDirEmpresa").textContent = state.empresa.direccion;
 
-    // Rellenar todos los selects dinámicos
     const llenarSelect = (id, arr, incluirTodosTexto) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -980,13 +1078,11 @@
     llenarSelect("cajaCategoria", state.listas.conceptosCaja);
     llenarSelect("cajaMetodo", state.listas.metodosPago);
 
-    // Selector de productos en facturación
     const selProdFac = document.getElementById("selProductoFactura");
     if (selProdFac) {
       selProdFac.innerHTML = state.inventario.map(p => `<option value="${p.id}">${p.sku} - ${p.nombre} (Stock: ${p.stock} | $${p.precio1.toFixed(2)})</option>`).join("");
     }
 
-    // Renderizar las 6 listas en la pestaña MASTER
     ["categorias", "almacenes", "unidades", "metodosPago", "vendedores", "conceptosCaja"].forEach(clave => {
       const cont = document.getElementById("listaMaster_" + clave);
       if (!cont) return;
@@ -1052,7 +1148,6 @@
     const limpio = valorNuevo.trim();
     state.listas[claveLista][idx] = limpio;
 
-    // Actualización en cascada en productos y movimientos
     if (claveLista === "categorias") {
       state.inventario.forEach(p => { if (p.categoria === valorViejo) p.categoria = limpio; });
     } else if (claveLista === "almacenes") {
@@ -1118,9 +1213,6 @@
     }
   }
 
-  // =========================================================================
-  // MÓDULO 1: GESTIÓN DE INVENTARIO, EDICIÓN Y KARDEX
-  // =========================================================================
   function calcularMargenesPreview() {
     const costo = parseFloat(document.getElementById("invCosto").value) || 0;
     [1, 2, 3].forEach(n => {
@@ -1254,9 +1346,6 @@
     recalcularTodo();
   }
 
-  // =========================================================================
-  // MÓDULO 2: FACTURACIÓN Y CAJA MIXTA
-  // =========================================================================
   function setCondicionVenta(cond) {
     condicionVenta = cond;
     document.getElementById("btnContado").className = cond === "CONTADO" ? "btn-magenta" : "btn-outline";
@@ -1298,7 +1387,6 @@
     const numFac = "FAC-" + state.impuestos.correlativoFactura;
     state.impuestos.correlativoFactura += 1;
 
-    // Descontar del inventario y alimentar Kardex
     carrito.forEach(item => {
       state.inventario = state.inventario.map(p => {
         if (p.id !== item.id) return p;
@@ -1365,9 +1453,6 @@
     recalcularTodo();
   }
 
-  // =========================================================================
-  // MÓDULO 3, 4 Y 5: COBRANZAS, COMPRAS Y FLUJO DE CAJA
-  // =========================================================================
   function cobrarCuentaCliente(id) {
     const c = state.cobranzas.find(x => x.id === id);
     if (!c) return;
@@ -1471,9 +1556,6 @@
     recalcularTodo();
   }
 
-  // =========================================================================
-  // MOTOR DE CÁLCULO INTEGRAL BIMONETARIO
-  // =========================================================================
   function recalcularTodo() {
     const tasa = obtenerTasaActiva();
     const btnTasa = document.getElementById("btnModoTasa");
@@ -1482,7 +1564,6 @@
       : `Usando: BCV (${Number(state.tasaBcv).toFixed(2)} Bs)`;
     btnTasa.className = state.usarManual ? "btn-magenta" : "btn-turquesa";
 
-    // 1. KPIs DE INVENTARIO Y VALORIZACIÓN
     let totalCostoUsd = 0, totalVentaUsd = 0, cantOpt = 0, cantBajo = 0, cantAgot = 0;
     const resumenCat = {};
 
@@ -1513,7 +1594,6 @@
     document.getElementById("kpiInvSemaforo").innerHTML = `<span style="color:#10b981;">🟢 ${cantOpt} Óptimos</span> • <span style="color:#f59e0b;">🟠 ${cantBajo} Bajos</span> • <span style="color:#ef4444;">🔴 ${cantAgot} Cero</span>`;
     document.getElementById("kpiInvTotalItems").textContent = `${state.inventario.length} productos en catálogo`;
 
-    // 2. TABLA CATÁLOGO DE INVENTARIO
     const txtBus = (document.getElementById("buscadorInv").value || "").toLowerCase();
     const catFiltro = document.getElementById("filtroCatInv").value || "TODOS";
     const almFiltro = document.getElementById("filtroAlmInv").value || "TODOS";
@@ -1570,7 +1650,6 @@
       `;
     }).join("");
 
-    // 3. SUB-VISTA 1.2: VALORIZACIÓN POR CATEGORÍA Y LISTA DE REPOSICIÓN
     document.getElementById("tablaValorizacionCat").innerHTML = Object.keys(resumenCat).map(cat => {
       const r = resumenCat[cat];
       const ut = r.venta - r.costo;
@@ -1603,7 +1682,6 @@
           `;
         }).join("");
 
-    // 4. SUB-VISTA 1.3: KARDEX
     document.getElementById("tablaKardex").innerHTML = state.kardex.slice(0, 40).map(k => `
       <tr>
         <td style="color:var(--text-muted);">${k.fecha}</td>
@@ -1615,7 +1693,6 @@
       </tr>
     `).join("");
 
-    // 5. FACTURACIÓN Y CAJA MIXTA
     document.getElementById("lblPorcIgtfFac").textContent = state.impuestos.igtf;
     let baseGen = 0, baseRed = 0, exento = 0;
 
@@ -1670,7 +1747,6 @@
       cajaSaldo.innerHTML = `<div style="background:#d1fae5; color:#065f46; padding:10px; border-radius:8px; font-weight:700;">✅ Pago Completo. Vuelto a entregar: $${Math.max(0, difUsd).toFixed(2)} USD (Bs. ${(Math.max(0, difUsd) * tasa).toFixed(2)})</div>`;
     }
 
-    // 6. CUENTAS POR COBRAR
     document.getElementById("tablaCobranzas").innerHTML = state.cobranzas.map(c => {
       const bsHoy = c.saldoUsd * tasa;
       return `
@@ -1688,7 +1764,6 @@
       `;
     }).join("");
 
-    // 7. COMPRAS Y RETENCIONES SENIAT
     document.getElementById("lblCompIvaPorc").textContent = state.impuestos.ivaGeneral;
     document.getElementById("lblCompRetIvaPorc").textContent = state.impuestos.retIva;
     document.getElementById("lblCompRetIslrPorc").textContent = state.impuestos.retIslr;
@@ -1730,7 +1805,6 @@
       </div>
     `).join("");
 
-    // 8. REPORTE DE INGRESOS Y EGRESOS (FLUJO DE CAJA)
     let sumIngresos = 0, sumEgresos = 0;
     const busCaja = (document.getElementById("buscadorCaja").value || "").toLowerCase();
 
@@ -1775,7 +1849,6 @@
     document.getElementById("lblCantMovimientos").textContent = `${state.flujoCaja.length} transacciones en caja`;
   }
 
-  // Inicialización automática al abrir la app
   aplicarTema();
   sincronizarInputsMaster();
   calcularMargenesPreview();
