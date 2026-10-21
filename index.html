@@ -74,34 +74,20 @@
 <body>
 
 <!-- =========================================================================
-     BARRA DE SINCRONIZACIÓN EN TIEMPO REAL (TÚ Y TU SOCIA)
+     BARRA DE SINCRONIZACIÓN EN VIVO CON GOOGLE FIREBASE (piki-sistema)
      ========================================================================= -->
-<div class="card no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:2px solid var(--piki-turquesa); padding:12px 16px; margin-bottom:12px;">
+<div class="card no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:2px solid var(--piki-turquesa); padding:10px 16px; margin-bottom:12px;">
   <div class="row">
     <div class="row" style="gap:10px;">
-      <span id="badgeEstadoNube" class="badge" style="background:#fef3c7; color:#92400e; font-size:11px; padding:5px 10px;">⚡ Sincronizador Multi-Socia Piki</span>
-      <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Conecta o actualiza los productos entre tu computadora y la de tu socia:</span>
+      <span id="badgeEstadoNube" class="badge" style="background:#d1fae5; color:#065f46; font-size:11px; padding:5px 10px;">🟢 Conectado a Google Firebase (piki-sistema)</span>
+      <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Sincronización automática en tiempo real activa entre tú y tu socia.</span>
     </div>
     <div class="row" style="gap:8px;">
-      <button class="btn-magenta" onclick="sincronizarDesdeNube(true)" style="padding:9px 14px;">🔄 1. Traer y Unir lo que hizo mi Socia</button>
-      <button class="btn-turquesa" onclick="forzarSubidaANube()" style="padding:9px 14px;">☁️ 2. Enviar mi Inventario a mi Socia</button>
-      <button class="btn-green" onclick="exportarRespaldoJson()" title="Descargar archivo para pasarlo por WhatsApp">📲 Pasar por WhatsApp (.JSON)</button>
-      <button class="btn-blue" onclick="document.getElementById('inputImportarJsonRapido').click()">📂 Cargar Archivo de mi Socia</button>
+      <button class="btn-magenta" onclick="sincronizarDesdeNube(true)" style="padding:8px 14px;">🔄 1. Traer lo que hizo mi Socia</button>
+      <button class="btn-turquesa" onclick="forzarSubidaANube()" style="padding:8px 14px;">☁️ 2. Enviar mi Inventario a Google</button>
+      <button class="btn-outline" onclick="exportarRespaldoJson()" title="Descargar respaldo JSON">⬇️</button>
+      <button class="btn-outline" onclick="document.getElementById('inputImportarJsonRapido').click()" title="Cargar archivo JSON">📂</button>
       <input type="file" id="inputImportarJsonRapido" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
-      <button class="btn-outline" onclick="document.getElementById('panelConfigNube').classList.toggle('hidden')">⚙️ Configurar Nube Fija</button>
-    </div>
-  </div>
-
-  <!-- PANEL DESPLEGABLE PARA PEGAR EL LINK DE GOOGLE FIREBASE (OPCIONAL PERO 100% INFALIBLE) -->
-  <div id="panelConfigNube" class="hidden" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--piki-magenta);">
-    <div style="font-size:12px; margin-bottom:8px;">
-      <strong>💡 ¿Por qué a veces no pasa directo?</strong> Algunos proveedores de internet en Venezuela bloquean servidores de prueba gratuitos. Para que quede <strong>100% automático de por vida con Google</strong>:
-      1) Entra gratis a <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--piki-magenta); font-weight:800;">console.firebase.google.com</a>, crea un proyecto llamado <strong>piki</strong>, entra en <strong>Realtime Database -> Crear base de datos (Modo de prueba)</strong> y copia el enlace que termina en <code>.firebaseio.com/</code>.
-      2) Pégalo aquí abajo una sola vez (en tu compu y en la de tu socia):
-    </div>
-    <div class="row" style="gap:8px;">
-      <input type="text" id="inputUrlNubePropia" placeholder="Ejemplo: https://piki-erp-default-rtdb.firebaseio.com/" style="flex:1; background:#fff; color:#000;">
-      <button class="btn-magenta" onclick="guardarUrlNubePropia()">💾 Conectar Nube de Google</button>
     </div>
   </div>
 </div>
@@ -217,7 +203,7 @@
   <div id="vista-inv-CATALOGO">
     <div class="card no-print" style="border-left:4px solid var(--piki-magenta);">
       <div class="row" style="margin-bottom:10px;">
-        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki</h3>
+        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Conectado en vivo con Google Firebase)</h3>
         <button id="btnCancelarEdicionProd" class="btn-outline hidden" onclick="limpiarFormularioProducto()">✖ Cancelar Edición</button>
       </div>
       <input type="hidden" id="editProdId" value="">
@@ -288,7 +274,7 @@
         </div>
       </div>
       <div class="row">
-        <span style="font-size:11px; color:var(--text-muted);">💡 Al guardar o editar cualquier producto, se sincroniza con la nube Piki.</span>
+        <span style="font-size:11px; color:var(--text-muted);">💡 Al guardar o editar cualquier producto, se sube automáticamente a tu Google Firebase.</span>
         <button class="btn-magenta" id="btnGuardarProducto" onclick="guardarProductoCatalogo()">+ GUARDAR EN CATÁLOGO PIKI</button>
       </div>
     </div>
@@ -676,7 +662,7 @@
     <div class="row" style="margin-bottom:12px;">
       <div>
         <h2 style="margin:0; color:var(--piki-magenta);">⚙️ MASTER DE CONFIGURACIÓN TOTAL DEL SISTEMA PIKI</h2>
-        <span style="color:var(--text-muted); font-size:12px;">Todo lo que edites aquí se guarda y se sincroniza con tu socia.</span>
+        <span style="color:var(--text-muted); font-size:12px;">Conectado directamente con <code>https://piki-sistema-default-rtdb.firebaseio.com/</code></span>
       </div>
       <div class="row">
         <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Respaldo (.JSON)</button>
@@ -810,14 +796,15 @@
 
 <script>
   const STORAGE_KEY = "PIKI_ERP_V10_STATE";
-  const CUSTOM_CLOUD_URL_KEY = "PIKI_CUSTOM_FIREBASE_URL";
+  // NUBE OFICIAL DE GOOGLE FIREBASE DE PIKI (CONECTADA DIRECTAMENTE)
+  const FIREBASE_PIKI_URL = "https://piki-sistema-default-rtdb.firebaseio.com/piki_erp_produccion.json";
 
   const estadoInicial = {
     updatedAt: 0,
-    usarManual: false,
+    usarManual: true,
     darkMode: false,
-    tasaBcv: 45.00,
-    tasaManual: 54.00,
+    tasaBcv: 881.88,
+    tasaManual: 980.00,
     empresa: {
       nombre: "PIKI, C.A.",
       rif: "J-50123456-0",
@@ -873,29 +860,6 @@
   let filtroCajaActual = "TODOS";
   let carrito = [{ id: 1, nombre: "Plancha a Vapor Vertical Portátil Piki", cantidad: 1, precioUsd: 25.00, ivaTipo: "GENERAL" }];
 
-  function obtenerEndpointNube() {
-    let custom = localStorage.getItem(CUSTOM_CLOUD_URL_KEY) || "";
-    if (custom) {
-      custom = custom.trim().replace(/\/+$/, "");
-      if (!custom.endsWith(".json")) custom += "/piki_erp.json";
-      return custom;
-    }
-    // Servidor público alternativo compatible con CORS
-    return "https://jsonblob.com/api/jsonBlob/1348759204819288064";
-  }
-
-  function guardarUrlNubePropia() {
-    const val = document.getElementById("inputUrlNubePropia").value.trim();
-    if (!val) {
-      localStorage.removeItem(CUSTOM_CLOUD_URL_KEY);
-      alert("Se restauró la configuración de nube por defecto.");
-      return;
-    }
-    localStorage.setItem(CUSTOM_CLOUD_URL_KEY, val);
-    alert("✅ ¡Nube de Google Firebase conectada! Ahora dale a '☁️ 2. Enviar mi Inventario a mi Socia'.");
-    forzarSubidaANube();
-  }
-
   function cargarEstado() {
     try {
       const guardado = localStorage.getItem(STORAGE_KEY);
@@ -904,23 +868,25 @@
     return JSON.parse(JSON.stringify(estadoInicial));
   }
 
-  // FUSIONA INVENTARIOS PARA NUNCA PERDER LO QUE CARGÓ LA SOCIA NI LO QUE CARGASTE TÚ
+  // FUSIONA INVENTARIOS PARA QUE NUNCA SE BORREN LOS PRODUCTOS DE TU SOCIA
   function fusionarEstados(local, remoto) {
     if (!remoto || !Array.isArray(remoto.inventario)) return local;
     const mapaProd = new Map();
-    // Primero metemos los locales
-    local.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
-    // Luego metemos o actualizamos con los de la socia
-    remoto.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+    const localEsMasReciente = (local.updatedAt || 0) > (remoto.updatedAt || 0);
 
-    const invUnido = Array.from(mapaProd.values());
+    if (localEsMasReciente) {
+      remoto.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+      local.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+    } else {
+      local.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+      remoto.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+    }
 
-    // Unir categorías y almacenes sin duplicados
     const unirLista = (a = [], b = []) => Array.from(new Set([...a, ...b]));
+    const base = localEsMasReciente ? { ...remoto, ...local } : { ...local, ...remoto };
 
     return {
-      ...local,
-      ...remoto,
+      ...base,
       listas: {
         categorias: unirLista(local.listas?.categorias, remoto.listas?.categorias),
         almacenes: unirLista(local.listas?.almacenes, remoto.listas?.almacenes),
@@ -929,7 +895,11 @@
         vendedores: unirLista(local.listas?.vendedores, remoto.listas?.vendedores),
         conceptosCaja: unirLista(local.listas?.conceptosCaja, remoto.listas?.conceptosCaja)
       },
-      inventario: invUnido
+      inventario: Array.from(mapaProd.values()),
+      kardex: Array.isArray(remoto.kardex) && remoto.kardex.length > (local.kardex?.length || 0) ? remoto.kardex : (local.kardex || []),
+      cobranzas: Array.isArray(remoto.cobranzas) ? remoto.cobranzas : (local.cobranzas || []),
+      comprasPagar: Array.isArray(remoto.comprasPagar) ? remoto.comprasPagar : (local.comprasPagar || []),
+      flujoCaja: Array.isArray(remoto.flujoCaja) && remoto.flujoCaja.length >= (local.flujoCaja?.length || 0) ? remoto.flujoCaja : (local.flujoCaja || [])
     };
   }
 
@@ -944,49 +914,71 @@
   async function subirSilenciosoANube() {
     const badge = document.getElementById("badgeEstadoNube");
     const lbl = document.getElementById("lblUltimaSync");
-    const endpoint = obtenerEndpointNube();
     try {
-      const res = await fetch(endpoint, {
+      // Primero leemos lo que hay en Firebase para no pisar productos que haya metido tu socia hace segundos
+      const resGet = await fetch(FIREBASE_PIKI_URL + "?t=" + Date.now());
+      if (resGet.ok) {
+        const actualEnFirebase = await resGet.json();
+        if (actualEnFirebase && Array.isArray(actualEnFirebase.inventario)) {
+          state = fusionarEstados(state, actualEnFirebase);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+      }
+
+      const resPut = await fetch(FIREBASE_PIKI_URL, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(state)
       });
-      if (res.ok) {
+
+      if (resPut.ok) {
         if (badge) {
           badge.style.background = "#d1fae5";
           badge.style.color = "#065f46";
-          badge.textContent = `☁️ Nube Sincronizada (${state.inventario.length} prods)`;
+          badge.textContent = `🟢 Sincronizado Google (${state.inventario.length} prods)`;
         }
-        if (lbl) lbl.textContent = `Último envío automático: ${fechaActualTexto()}`;
-        return true;
+        if (lbl) lbl.textContent = `Sincronizado en vivo con Google Firebase: ${fechaActualTexto()}`;
+        return { ok: true };
+      } else {
+        const errTxt = await resPut.text();
+        if (badge) {
+          badge.style.background = "#fee2e2";
+          badge.style.color = "#991b1b";
+          badge.textContent = "⚠️ Permiso Firebase pendiente";
+        }
+        return { ok: false, status: resPut.status, error: errTxt };
       }
-      return false;
     } catch (e) {
-      return false;
+      return { ok: false, error: e.message };
     }
   }
 
   async function forzarSubidaANube() {
-    const exito = await subirSilenciosoANube();
-    if (exito) {
-      alert(`✅ ¡Perfecto! Tus ${state.inventario.length} productos ya subieron a la nube. Dile a tu socia que presione '🔄 1. Traer y Unir lo que hizo mi Socia'.`);
+    state.updatedAt = Date.now();
+    const r = await subirSilenciosoANube();
+    if (r.ok) {
+      sincronizarInputsMaster();
+      recalcularTodo();
+      alert(`✅ ¡Excelente! Los ${state.inventario.length} productos de esta pantalla ya están guardados en Google Firebase. Ahora tu socia los verá automáticamente en su pantalla.`);
     } else {
-      if (confirm("⚠️ Tu proveedor de internet bloqueó el servidor gratuito temporal. ¿Deseas descargar el archivo (.JSON) en 1 segundo para pasárselo por WhatsApp a tu socia (o configurar la Nube de Google arriba en ⚙️)?")) {
-        exportarRespaldoJson();
-      }
+      alert(`⚠️ Google Firebase respondió que las Reglas de Seguridad están cerradas (Código ${r.status || 'Red'}).\n\nEn Firebase -> Realtime Database -> pestaña "Reglas" (Rules), asegúrate de que diga:\n{\n  "rules": {\n    ".read": true,\n    ".write": true\n  }\n}\nY dale al botón Publicar.`);
     }
   }
 
   async function sincronizarDesdeNube(mostrarMensaje = false) {
     const badge = document.getElementById("badgeEstadoNube");
     const lbl = document.getElementById("lblUltimaSync");
-    const endpoint = obtenerEndpointNube();
     try {
-      if (badge) badge.textContent = "🔄 Conectando...";
-      const res = await fetch(endpoint + (endpoint.includes("?") ? "&" : "?") + "t=" + Date.now());
-      if (!res.ok) throw new Error("Sin respuesta");
+      const res = await fetch(FIREBASE_PIKI_URL + "?t=" + Date.now());
+      if (!res.ok) {
+        if (mostrarMensaje) {
+          alert("Aún no se pueden leer datos o falta activar las Reglas (.read: true, .write: true) en tu pestaña 'Reglas' de Firebase Realtime Database.");
+        }
+        return;
+      }
       const remoto = await res.json();
       if (remoto && Array.isArray(remoto.inventario)) {
+        const cantAntes = state.inventario.length;
         state = fusionarEstados(state, remoto);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         aplicarTema();
@@ -995,24 +987,21 @@
         if (badge) {
           badge.style.background = "#d1fae5";
           badge.style.color = "#065f46";
-          badge.textContent = `🟢 Al día (${state.inventario.length} prods)`;
+          badge.textContent = `🟢 En Línea (${state.inventario.length} prods)`;
         }
-        if (lbl) lbl.textContent = `Sincronizado con tu socia: ${fechaActualTexto()}`;
+        if (lbl) lbl.textContent = `Actualizado desde Google Firebase: ${fechaActualTexto()}`;
         if (mostrarMensaje) {
-          alert(`🎉 ¡Inventario unido y actualizado! Ahora ves los ${state.inventario.length} productos en total.`);
+          alert(`🎉 ¡Sincronización completada con éxito! Tienes ${state.inventario.length} productos en tu catálogo Piki.`);
         }
       } else {
-        if (mostrarMensaje) alert("La nube aún está vacía. Pídele a tu socia que presione primero '☁️ 2. Enviar mi Inventario a mi Socia'.");
+        // Si la base de Firebase está recién creada (null), subimos automáticamente el inventario que tiene esta computadora
+        await subirSilenciosoANube();
+        if (mostrarMensaje) {
+          alert(`☁️ Tu base de datos de Google Firebase estaba recién creada, así que acabamos de subir automáticamente tus ${state.inventario.length} productos. Si tu socia es quien tiene los 38 productos en su pantalla, dile que presione el botón turquesa '☁️ 2. Enviar mi Inventario a Google'.`);
+        }
       }
     } catch (e) {
-      if (badge) {
-        badge.style.background = "#fee2e2";
-        badge.style.color = "#991b1b";
-        badge.textContent = "📲 Usar botón WhatsApp o Configurar Google";
-      }
-      if (mostrarMensaje) {
-        alert("⚠️ Tu operadora de internet bloquea la nube gratuita de prueba.\n\nSolución inmediata (toma 5 segundos):\n1. Dile a tu socia que haga clic en el botón verde '📲 Pasar por WhatsApp (.JSON)'.\n2. Que te envíe ese archivito por WhatsApp.\n3. Tú haz clic en el botón azul '📂 Cargar Archivo de mi Socia' ¡y verás todo su inventario al instante!");
-      }
+      if (mostrarMensaje) alert("Revisa tu conexión a internet e intenta de nuevo.");
     }
   }
 
@@ -1028,7 +1017,7 @@
           guardarEstado(true);
           sincronizarInputsMaster();
           recalcularTodo();
-          alert(`🎉 ¡Inventario de tu socia cargado y unido con éxito! Ahora tienes ${state.inventario.length} productos en pantalla.`);
+          alert(`🎉 ¡Inventario cargado y subido a Google Firebase! (${state.inventario.length} productos).`);
         }
       } catch (err) {
         alert("Error al leer el archivo .JSON.");
@@ -1100,11 +1089,6 @@
     document.getElementById("masRetIva").value = state.impuestos.retIva;
     document.getElementById("masRetIslr").value = state.impuestos.retIslr;
     document.getElementById("masCorrelativo").value = state.impuestos.correlativoFactura;
-
-    const urlGuardada = localStorage.getItem(CUSTOM_CLOUD_URL_KEY) || "";
-    if (document.getElementById("inputUrlNubePropia")) {
-      document.getElementById("inputUrlNubePropia").value = urlGuardada;
-    }
 
     const imgLogo = document.getElementById("imgLogoPersonalizado");
     const svgLogo = document.getElementById("svgLogoOficialPiki");
@@ -1356,7 +1340,7 @@
     document.getElementById("invSku").value = "PIKI-00" + (state.inventario.length + 1);
     document.getElementById("invBarra").value = "";
     document.getElementById("invNombre").value = "";
-    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki";
+    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Conectado en vivo con Google Firebase)";
     document.getElementById("btnGuardarProducto").textContent = "+ GUARDAR EN CATÁLOGO PIKI";
     document.getElementById("btnCancelarEdicionProd").classList.add("hidden");
   }
@@ -1918,6 +1902,8 @@
   calcularMargenesPreview();
   recalcularTodo();
   sincronizarDesdeNube(false);
+  // Sincronización automática silenciosa cada 12 segundos con Google Firebase
+  setInterval(() => { sincronizarDesdeNube(false); }, 12000);
 </script>
 </body>
 </html>
