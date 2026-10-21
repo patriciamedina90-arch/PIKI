@@ -74,21 +74,15 @@
 <body>
 
 <!-- =========================================================================
-     BARRA DE SINCRONIZACIÓN EN VIVO CON GOOGLE FIREBASE (piki-sistema)
+     INDICADOR AUTOMÁTICO DE NUBE GOOGLE FIREBASE (SIN BOTONES COMPLICADOS)
      ========================================================================= -->
-<div class="card no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:2px solid var(--piki-turquesa); padding:10px 16px; margin-bottom:12px;">
-  <div class="row">
-    <div class="row" style="gap:10px;">
-      <span id="badgeEstadoNube" class="badge" style="background:#d1fae5; color:#065f46; font-size:11px; padding:5px 10px;">🟢 Conectado a Google Firebase (piki-sistema)</span>
-      <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Sincronización automática en tiempo real activa entre tú y tu socia.</span>
-    </div>
-    <div class="row" style="gap:8px;">
-      <button class="btn-magenta" onclick="sincronizarDesdeNube(true)" style="padding:8px 14px;">🔄 1. Traer lo que hizo mi Socia</button>
-      <button class="btn-turquesa" onclick="forzarSubidaANube()" style="padding:8px 14px;">☁️ 2. Enviar mi Inventario a Google</button>
-      <button class="btn-outline" onclick="exportarRespaldoJson()" title="Descargar respaldo JSON">⬇️</button>
-      <button class="btn-outline" onclick="document.getElementById('inputImportarJsonRapido').click()" title="Cargar archivo JSON">📂</button>
-      <input type="file" id="inputImportarJsonRapido" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
-    </div>
+<div class="card row no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:1px solid var(--piki-turquesa); padding:8px 16px; margin-bottom:10px;">
+  <div class="row" style="gap:10px;">
+    <span id="badgeEstadoNube" class="badge" style="background:#d1fae5; color:#065f46; font-size:11px; padding:4px 10px;">🟢 Nube Google Piki Activa</span>
+    <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Sincronización automática en vivo activada con tu socia.</span>
+  </div>
+  <div class="row" style="gap:6px;">
+    <button class="btn-magenta" onclick="sincronizarAhoraManual()" style="padding:6px 12px; font-size:11px;">🔄 Refrescar Ahora</button>
   </div>
 </div>
 
@@ -143,13 +137,13 @@
   <div class="row" style="gap: 8px;">
     <div style="background:var(--piki-turquesa-light); padding:6px 10px; border-radius:10px; border:1px solid var(--piki-turquesa);">
       <div style="font-size:9px; font-weight:800; color:var(--piki-turquesa-dark);">TASA OFICIAL BCV (Bs/$)</div>
-      <input type="number" id="tasaBcv" value="45.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-turquesa-dark); padding:0;" onchange="guardarTasasYRecalcular()">
+      <input type="number" id="tasaBcv" value="881.88" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-turquesa-dark); padding:0;" onchange="guardarTasasYRecalcular()">
     </div>
     <div style="background:var(--piki-magenta-light); padding:6px 10px; border-radius:10px; border:1px solid var(--piki-magenta);">
       <div style="font-size:9px; font-weight:800; color:var(--piki-magenta);">MI TASA MANUAL (Bs/$)</div>
-      <input type="number" id="tasaManual" value="54.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-magenta); padding:0;" onchange="guardarTasasYRecalcular()">
+      <input type="number" id="tasaManual" value="980.00" step="0.01" style="width:78px; border:none; background:transparent; font-weight:900; font-size:14px; color:var(--piki-magenta); padding:0;" onchange="guardarTasasYRecalcular()">
     </div>
-    <button id="btnModoTasa" class="btn-turquesa" onclick="cambiarModoTasa()" style="height:44px;">Usando: BCV (45.00 Bs)</button>
+    <button id="btnModoTasa" class="btn-magenta" onclick="cambiarModoTasa()" style="height:44px;">Usando: Mi Tasa (980.00 Bs)</button>
     <button class="btn-outline" onclick="alternarTema()" id="btnTema" style="height:44px;">🌙 Modo Oscuro</button>
   </div>
 </div>
@@ -203,7 +197,7 @@
   <div id="vista-inv-CATALOGO">
     <div class="card no-print" style="border-left:4px solid var(--piki-magenta);">
       <div class="row" style="margin-bottom:10px;">
-        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Conectado en vivo con Google Firebase)</h3>
+        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Sincronización Automática en la Nube)</h3>
         <button id="btnCancelarEdicionProd" class="btn-outline hidden" onclick="limpiarFormularioProducto()">✖ Cancelar Edición</button>
       </div>
       <input type="hidden" id="editProdId" value="">
@@ -274,7 +268,7 @@
         </div>
       </div>
       <div class="row">
-        <span style="font-size:11px; color:var(--text-muted);">💡 Al guardar o editar cualquier producto, se sube automáticamente a tu Google Firebase.</span>
+        <span style="font-size:11px; color:var(--text-muted);">💡 Todo lo que guardes o edites aquí aparece automáticamente en la pantalla de tu socia.</span>
         <button class="btn-magenta" id="btnGuardarProducto" onclick="guardarProductoCatalogo()">+ GUARDAR EN CATÁLOGO PIKI</button>
       </div>
     </div>
@@ -483,7 +477,7 @@
 </div>
 
 <!-- =========================================================================
-     MÓDULO 3: CUENTAS POR COBRAR Y RECORDATORIOS WHATSAPP
+     MÓDULO 3: CUENTAS POR COBRAR Y RECORDATORIOS WHATSAPP A CLIENTES
      ========================================================================= -->
 <div id="sec-COBRANZAS" class="hidden">
   <div class="card" style="border-top:3px solid var(--piki-magenta);">
@@ -662,13 +656,12 @@
     <div class="row" style="margin-bottom:12px;">
       <div>
         <h2 style="margin:0; color:var(--piki-magenta);">⚙️ MASTER DE CONFIGURACIÓN TOTAL DEL SISTEMA PIKI</h2>
-        <span style="color:var(--text-muted); font-size:12px;">Conectado directamente con <code>https://piki-sistema-default-rtdb.firebaseio.com/</code></span>
+        <span style="color:var(--text-muted); font-size:12px;">Sincronizado automáticamente en la nube con <code>piki-sistema-default-rtdb.firebaseio.com</code></span>
       </div>
       <div class="row">
-        <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Respaldo (.JSON)</button>
-        <button class="btn-magenta" onclick="document.getElementById('inputImportarJsonMaster').click()">⬆️ Cargar Respaldo (.JSON)</button>
+        <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Copia de Seguridad</button>
+        <button class="btn-magenta" onclick="document.getElementById('inputImportarJsonMaster').click()">⬆️ Restaurar Copia</button>
         <input type="file" id="inputImportarJsonMaster" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
-        <button class="btn-red" onclick="restaurarFabrica()">♻️ Restaurar Fábrica</button>
       </div>
     </div>
 
@@ -796,7 +789,7 @@
 
 <script>
   const STORAGE_KEY = "PIKI_ERP_V10_STATE";
-  // NUBE OFICIAL DE GOOGLE FIREBASE DE PIKI (CONECTADA DIRECTAMENTE)
+  // NUBE OFICIAL FIJA DE GOOGLE FIREBASE PARA PIKI ERP
   const FIREBASE_PIKI_URL = "https://piki-sistema-default-rtdb.firebaseio.com/piki_erp_produccion.json";
 
   const estadoInicial = {
@@ -858,6 +851,7 @@
   let condicionVenta = "CONTADO";
   let filtroStockActual = "TODOS";
   let filtroCajaActual = "TODOS";
+  let sincronizando = false;
   let carrito = [{ id: 1, nombre: "Plancha a Vapor Vertical Portátil Piki", cantidad: 1, precioUsd: 25.00, ivaTipo: "GENERAL" }];
 
   function cargarEstado() {
@@ -868,7 +862,7 @@
     return JSON.parse(JSON.stringify(estadoInicial));
   }
 
-  // FUSIONA INVENTARIOS PARA QUE NUNCA SE BORREN LOS PRODUCTOS DE TU SOCIA
+  // FUSIONA AUTOMÁTICAMENTE LOS PRODUCTOS DE TU SOCIA Y LOS TUYOS
   function fusionarEstados(local, remoto) {
     if (!remoto || !Array.isArray(remoto.inventario)) return local;
     const mapaProd = new Map();
@@ -915,7 +909,6 @@
     const badge = document.getElementById("badgeEstadoNube");
     const lbl = document.getElementById("lblUltimaSync");
     try {
-      // Primero leemos lo que hay en Firebase para no pisar productos que haya metido tu socia hace segundos
       const resGet = await fetch(FIREBASE_PIKI_URL + "?t=" + Date.now());
       if (resGet.ok) {
         const actualEnFirebase = await resGet.json();
@@ -935,74 +928,73 @@
         if (badge) {
           badge.style.background = "#d1fae5";
           badge.style.color = "#065f46";
-          badge.textContent = `🟢 Sincronizado Google (${state.inventario.length} prods)`;
+          badge.textContent = `🟢 Nube Google Activa (${state.inventario.length} prods)`;
         }
-        if (lbl) lbl.textContent = `Sincronizado en vivo con Google Firebase: ${fechaActualTexto()}`;
-        return { ok: true };
-      } else {
-        const errTxt = await resPut.text();
-        if (badge) {
-          badge.style.background = "#fee2e2";
-          badge.style.color = "#991b1b";
-          badge.textContent = "⚠️ Permiso Firebase pendiente";
-        }
-        return { ok: false, status: resPut.status, error: errTxt };
+        if (lbl) lbl.textContent = `Guardado automático en la nube: ${fechaActualTexto()}`;
+        return true;
       }
+      return false;
     } catch (e) {
-      return { ok: false, error: e.message };
+      return false;
     }
   }
 
-  async function forzarSubidaANube() {
-    state.updatedAt = Date.now();
-    const r = await subirSilenciosoANube();
-    if (r.ok) {
-      sincronizarInputsMaster();
-      recalcularTodo();
-      alert(`✅ ¡Excelente! Los ${state.inventario.length} productos de esta pantalla ya están guardados en Google Firebase. Ahora tu socia los verá automáticamente en su pantalla.`);
-    } else {
-      alert(`⚠️ Google Firebase respondió que las Reglas de Seguridad están cerradas (Código ${r.status || 'Red'}).\n\nEn Firebase -> Realtime Database -> pestaña "Reglas" (Rules), asegúrate de que diga:\n{\n  "rules": {\n    ".read": true,\n    ".write": true\n  }\n}\nY dale al botón Publicar.`);
-    }
-  }
-
-  async function sincronizarDesdeNube(mostrarMensaje = false) {
+  // SINCRONIZACIÓN AUTOMÁTICA EN SEGUNDO PLANO CADA 4 SEGUNDOS
+  async function cicloSincronizacionAutomatica() {
+    if (sincronizando) return;
+    sincronizando = true;
     const badge = document.getElementById("badgeEstadoNube");
     const lbl = document.getElementById("lblUltimaSync");
     try {
       const res = await fetch(FIREBASE_PIKI_URL + "?t=" + Date.now());
-      if (!res.ok) {
-        if (mostrarMensaje) {
-          alert("Aún no se pueden leer datos o falta activar las Reglas (.read: true, .write: true) en tu pestaña 'Reglas' de Firebase Realtime Database.");
-        }
-        return;
-      }
-      const remoto = await res.json();
-      if (remoto && Array.isArray(remoto.inventario)) {
-        const cantAntes = state.inventario.length;
-        state = fusionarEstados(state, remoto);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        aplicarTema();
-        sincronizarInputsMaster();
-        recalcularTodo();
-        if (badge) {
-          badge.style.background = "#d1fae5";
-          badge.style.color = "#065f46";
-          badge.textContent = `🟢 En Línea (${state.inventario.length} prods)`;
-        }
-        if (lbl) lbl.textContent = `Actualizado desde Google Firebase: ${fechaActualTexto()}`;
-        if (mostrarMensaje) {
-          alert(`🎉 ¡Sincronización completada con éxito! Tienes ${state.inventario.length} productos en tu catálogo Piki.`);
-        }
-      } else {
-        // Si la base de Firebase está recién creada (null), subimos automáticamente el inventario que tiene esta computadora
-        await subirSilenciosoANube();
-        if (mostrarMensaje) {
-          alert(`☁️ Tu base de datos de Google Firebase estaba recién creada, así que acabamos de subir automáticamente tus ${state.inventario.length} productos. Si tu socia es quien tiene los 38 productos en su pantalla, dile que presione el botón turquesa '☁️ 2. Enviar mi Inventario a Google'.`);
+      if (res.ok) {
+        const remoto = await res.json();
+        if (remoto && Array.isArray(remoto.inventario)) {
+          // Si este navegador tiene más productos que la nube (ej. la computadora de tu socia con 38 productos), los sube automáticamente
+          const localTieneMas = state.inventario.length > remoto.inventario.length;
+          const huboCambiosRemotos = (remoto.updatedAt || 0) > (state.updatedAt || 0) || remoto.inventario.length !== state.inventario.length;
+
+          if (localTieneMas || huboCambiosRemotos) {
+            state = fusionarEstados(state, remoto);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            aplicarTema();
+            // Solo re-sincronizar selects si el usuario no está escribiendo en un input
+            const activo = document.activeElement ? document.activeElement.tagName : "";
+            if (activo !== "INPUT" && activo !== "SELECT" && activo !== "TEXTAREA") {
+              sincronizarInputsMaster();
+            }
+            recalcularTodo();
+            if (localTieneMas) {
+              await fetch(FIREBASE_PIKI_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(state)
+              });
+            }
+          }
+          if (badge) {
+            badge.style.background = "#d1fae5";
+            badge.style.color = "#065f46";
+            badge.textContent = `🟢 Sincronizado en Vivo (${state.inventario.length} prods)`;
+          }
+          if (lbl) lbl.textContent = `Conectado en tiempo real con tu socia • ${state.inventario.length} productos en catálogo`;
+        } else {
+          // Si la nube de Firebase está recién creada, sube automáticamente todo lo de esta pantalla
+          await subirSilenciosoANube();
         }
       }
     } catch (e) {
-      if (mostrarMensaje) alert("Revisa tu conexión a internet e intenta de nuevo.");
+      // Silencioso en segundo plano
+    } finally {
+      sincronizando = false;
     }
+  }
+
+  async function sincronizarAhoraManual() {
+    await subirSilenciosoANube();
+    await cicloSincronizacionAutomatica();
+    sincronizarInputsMaster();
+    recalcularTodo();
   }
 
   function importarRespaldoJson(event) {
@@ -1017,7 +1009,6 @@
           guardarEstado(true);
           sincronizarInputsMaster();
           recalcularTodo();
-          alert(`🎉 ¡Inventario cargado y subido a Google Firebase! (${state.inventario.length} productos).`);
         }
       } catch (err) {
         alert("Error al leer el archivo .JSON.");
@@ -1245,20 +1236,10 @@
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
     const a = document.createElement("a");
     a.setAttribute("href", dataStr);
-    a.setAttribute("download", "inventario_piki_compartido.json");
+    a.setAttribute("download", "respaldo_piki_erp.json");
     document.body.appendChild(a);
     a.click();
     a.remove();
-  }
-
-  function restaurarFabrica() {
-    if (confirm("¿Seguro que deseas restaurar los datos de demostración de fábrica?")) {
-      localStorage.removeItem(STORAGE_KEY);
-      state = JSON.parse(JSON.stringify(estadoInicial));
-      guardarEstado();
-      sincronizarInputsMaster();
-      recalcularTodo();
-    }
   }
 
   function calcularMargenesPreview() {
@@ -1340,7 +1321,7 @@
     document.getElementById("invSku").value = "PIKI-00" + (state.inventario.length + 1);
     document.getElementById("invBarra").value = "";
     document.getElementById("invNombre").value = "";
-    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Conectado en vivo con Google Firebase)";
+    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Sincronización Automática en la Nube)";
     document.getElementById("btnGuardarProducto").textContent = "+ GUARDAR EN CATÁLOGO PIKI";
     document.getElementById("btnCancelarEdicionProd").classList.add("hidden");
   }
@@ -1375,7 +1356,6 @@
     if (!p) return;
     const faltante = Math.max(1, (p.maximo || 20) - p.stock);
     cambiarStock(id, faltante);
-    alert(`Se sumaron +${faltante} unidades a "${p.nombre}" para alcanzar su Stock Óptimo.`);
   }
 
   function eliminarProducto(id) {
@@ -1479,7 +1459,6 @@
           usd: recibidoUsd
         });
       }
-      alert(`Factura ${numFac} emitida. Se registró saldo pendiente por cobrar de $${deuda.toFixed(2)} USD.`);
       verPestana("COBRANZAS");
     } else {
       state.flujoCaja.unshift({
@@ -1492,7 +1471,6 @@
         metodo: "Caja Mixta Piki",
         usd: totalFacturaUsd
       });
-      alert(`¡Factura ${numFac} emitida con éxito! Se descontó el stock y se sumó +$${totalFacturaUsd.toFixed(2)} USD al Reporte de Ingresos.`);
       verPestana("INGRESOS");
     }
 
@@ -1517,7 +1495,6 @@
     state.cobranzas = state.cobranzas.filter(x => x.id !== id);
     guardarEstado();
     recalcularTodo();
-    alert(`¡Cobro de $${c.saldoUsd.toFixed(2)} USD registrado en el Reporte de Ingresos y Egresos!`);
   }
 
   function enviarWhatsappCobro(cliente, factura, usd, bs, tel) {
@@ -1555,7 +1532,6 @@
 
     guardarEstado();
     recalcularTodo();
-    alert(`Compra registrada por $${u.netoC.toFixed(2)} USD neto.`);
     if (estadoPago === "PAGADA") verPestana("INGRESOS");
   }
 
@@ -1901,9 +1877,9 @@
   sincronizarInputsMaster();
   calcularMargenesPreview();
   recalcularTodo();
-  sincronizarDesdeNube(false);
-  // Sincronización automática silenciosa cada 12 segundos con Google Firebase
-  setInterval(() => { sincronizarDesdeNube(false); }, 12000);
+  // Al abrir la app se conecta inmediato y luego se sincroniza solo cada 4 segundos
+  cicloSincronizacionAutomatica();
+  setInterval(cicloSincronizacionAutomatica, 4000);
 </script>
 </body>
 </html>
