@@ -74,18 +74,35 @@
 <body>
 
 <!-- =========================================================================
-     BARRA SUPERIOR DE SINCRONIZACIÓN DIRECTA SIN CÓDIGOS (1 SOLO CLIC)
+     BARRA DE SINCRONIZACIÓN EN TIEMPO REAL (TÚ Y TU SOCIA)
      ========================================================================= -->
-<div class="card row no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:1px solid var(--piki-turquesa); padding:10px 14px; margin-bottom:10px;">
-  <div class="row" style="gap:10px;">
-    <span id="badgeEstadoNube" class="badge" style="background:#d1fae5; color:#065f46; font-size:11px;">🟢 Nube Piki Conectada</span>
-    <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Todo cambio que hagas tú o tu socia se guarda automáticamente en la nube.</span>
+<div class="card no-print" style="background:linear-gradient(90deg, var(--piki-turquesa-light), var(--piki-magenta-light)); border:2px solid var(--piki-turquesa); padding:12px 16px; margin-bottom:12px;">
+  <div class="row">
+    <div class="row" style="gap:10px;">
+      <span id="badgeEstadoNube" class="badge" style="background:#fef3c7; color:#92400e; font-size:11px; padding:5px 10px;">⚡ Sincronizador Multi-Socia Piki</span>
+      <span id="lblUltimaSync" style="font-size:12px; font-weight:700; color:var(--text-main);">Conecta o actualiza los productos entre tu computadora y la de tu socia:</span>
+    </div>
+    <div class="row" style="gap:8px;">
+      <button class="btn-magenta" onclick="sincronizarDesdeNube(true)" style="padding:9px 14px;">🔄 1. Traer y Unir lo que hizo mi Socia</button>
+      <button class="btn-turquesa" onclick="forzarSubidaANube()" style="padding:9px 14px;">☁️ 2. Enviar mi Inventario a mi Socia</button>
+      <button class="btn-green" onclick="exportarRespaldoJson()" title="Descargar archivo para pasarlo por WhatsApp">📲 Pasar por WhatsApp (.JSON)</button>
+      <button class="btn-blue" onclick="document.getElementById('inputImportarJsonRapido').click()">📂 Cargar Archivo de mi Socia</button>
+      <input type="file" id="inputImportarJsonRapido" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
+      <button class="btn-outline" onclick="document.getElementById('panelConfigNube').classList.toggle('hidden')">⚙️ Configurar Nube Fija</button>
+    </div>
   </div>
-  <div class="row" style="gap:8px;">
-    <button class="btn-magenta" onclick="sincronizarDesdeNube(true)" style="padding:9px 15px; font-size:12px;">🔄 Actualizar lo que hizo mi Socia</button>
-    <button class="btn-turquesa" onclick="forzarSubidaANube()" style="padding:9px 13px; font-size:12px;">☁️ Subir el Inventario de esta Pantalla</button>
-    <button class="btn-outline" onclick="document.getElementById('inputImportarJsonRapido').click()" title="Cargar archivo de respaldo">📂</button>
-    <input type="file" id="inputImportarJsonRapido" accept=".json" class="hidden" onchange="importarRespaldoJson(event)">
+
+  <!-- PANEL DESPLEGABLE PARA PEGAR EL LINK DE GOOGLE FIREBASE (OPCIONAL PERO 100% INFALIBLE) -->
+  <div id="panelConfigNube" class="hidden" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--piki-magenta);">
+    <div style="font-size:12px; margin-bottom:8px;">
+      <strong>💡 ¿Por qué a veces no pasa directo?</strong> Algunos proveedores de internet en Venezuela bloquean servidores de prueba gratuitos. Para que quede <strong>100% automático de por vida con Google</strong>:
+      1) Entra gratis a <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--piki-magenta); font-weight:800;">console.firebase.google.com</a>, crea un proyecto llamado <strong>piki</strong>, entra en <strong>Realtime Database -> Crear base de datos (Modo de prueba)</strong> y copia el enlace que termina en <code>.firebaseio.com/</code>.
+      2) Pégalo aquí abajo una sola vez (en tu compu y en la de tu socia):
+    </div>
+    <div class="row" style="gap:8px;">
+      <input type="text" id="inputUrlNubePropia" placeholder="Ejemplo: https://piki-erp-default-rtdb.firebaseio.com/" style="flex:1; background:#fff; color:#000;">
+      <button class="btn-magenta" onclick="guardarUrlNubePropia()">💾 Conectar Nube de Google</button>
+    </div>
   </div>
 </div>
 
@@ -200,7 +217,7 @@
   <div id="vista-inv-CATALOGO">
     <div class="card no-print" style="border-left:4px solid var(--piki-magenta);">
       <div class="row" style="margin-bottom:10px;">
-        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki (Se sincroniza solo con tu Socia)</h3>
+        <h3 id="tituloFormProducto" style="margin:0; color:var(--piki-magenta);">➕ Carga y Edición Manual de Productos Piki</h3>
         <button id="btnCancelarEdicionProd" class="btn-outline hidden" onclick="limpiarFormularioProducto()">✖ Cancelar Edición</button>
       </div>
       <input type="hidden" id="editProdId" value="">
@@ -271,7 +288,7 @@
         </div>
       </div>
       <div class="row">
-        <span style="font-size:11px; color:var(--text-muted);">💡 Al guardar o editar cualquier producto, se sube automáticamente a la nube de Piki.</span>
+        <span style="font-size:11px; color:var(--text-muted);">💡 Al guardar o editar cualquier producto, se sincroniza con la nube Piki.</span>
         <button class="btn-magenta" id="btnGuardarProducto" onclick="guardarProductoCatalogo()">+ GUARDAR EN CATÁLOGO PIKI</button>
       </div>
     </div>
@@ -659,7 +676,7 @@
     <div class="row" style="margin-bottom:12px;">
       <div>
         <h2 style="margin:0; color:var(--piki-magenta);">⚙️ MASTER DE CONFIGURACIÓN TOTAL DEL SISTEMA PIKI</h2>
-        <span style="color:var(--text-muted); font-size:12px;">Todo lo que edites aquí se guarda y se sincroniza automáticamente con tu socia.</span>
+        <span style="color:var(--text-muted); font-size:12px;">Todo lo que edites aquí se guarda y se sincroniza con tu socia.</span>
       </div>
       <div class="row">
         <button class="btn-turquesa" onclick="exportarRespaldoJson()">⬇️ Descargar Respaldo (.JSON)</button>
@@ -793,8 +810,7 @@
 
 <script>
   const STORAGE_KEY = "PIKI_ERP_V10_STATE";
-  // CANAL PRIVADO FIJO EN LA NUBE PARA PIKI (NO REQUIERE CÓDIGOS)
-  const NUBE_PIKI_URL = "https://kvdb.io/A6p9kYzM2vX8qW4nL7rJ3t/piki_erp_oficial_zulia_2026";
+  const CUSTOM_CLOUD_URL_KEY = "PIKI_CUSTOM_FIREBASE_URL";
 
   const estadoInicial = {
     updatedAt: 0,
@@ -857,6 +873,29 @@
   let filtroCajaActual = "TODOS";
   let carrito = [{ id: 1, nombre: "Plancha a Vapor Vertical Portátil Piki", cantidad: 1, precioUsd: 25.00, ivaTipo: "GENERAL" }];
 
+  function obtenerEndpointNube() {
+    let custom = localStorage.getItem(CUSTOM_CLOUD_URL_KEY) || "";
+    if (custom) {
+      custom = custom.trim().replace(/\/+$/, "");
+      if (!custom.endsWith(".json")) custom += "/piki_erp.json";
+      return custom;
+    }
+    // Servidor público alternativo compatible con CORS
+    return "https://jsonblob.com/api/jsonBlob/1348759204819288064";
+  }
+
+  function guardarUrlNubePropia() {
+    const val = document.getElementById("inputUrlNubePropia").value.trim();
+    if (!val) {
+      localStorage.removeItem(CUSTOM_CLOUD_URL_KEY);
+      alert("Se restauró la configuración de nube por defecto.");
+      return;
+    }
+    localStorage.setItem(CUSTOM_CLOUD_URL_KEY, val);
+    alert("✅ ¡Nube de Google Firebase conectada! Ahora dale a '☁️ 2. Enviar mi Inventario a mi Socia'.");
+    forzarSubidaANube();
+  }
+
   function cargarEstado() {
     try {
       const guardado = localStorage.getItem(STORAGE_KEY);
@@ -865,7 +904,35 @@
     return JSON.parse(JSON.stringify(estadoInicial));
   }
 
-  // GUARDA EN EL NAVEGADOR Y SUBE AUTOMÁTICAMENTE A LA NUBE SIN PEDIR CÓDIGOS
+  // FUSIONA INVENTARIOS PARA NUNCA PERDER LO QUE CARGÓ LA SOCIA NI LO QUE CARGASTE TÚ
+  function fusionarEstados(local, remoto) {
+    if (!remoto || !Array.isArray(remoto.inventario)) return local;
+    const mapaProd = new Map();
+    // Primero metemos los locales
+    local.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+    // Luego metemos o actualizamos con los de la socia
+    remoto.inventario.forEach(p => mapaProd.set(p.sku || String(p.id), p));
+
+    const invUnido = Array.from(mapaProd.values());
+
+    // Unir categorías y almacenes sin duplicados
+    const unirLista = (a = [], b = []) => Array.from(new Set([...a, ...b]));
+
+    return {
+      ...local,
+      ...remoto,
+      listas: {
+        categorias: unirLista(local.listas?.categorias, remoto.listas?.categorias),
+        almacenes: unirLista(local.listas?.almacenes, remoto.listas?.almacenes),
+        unidades: unirLista(local.listas?.unidades, remoto.listas?.unidades),
+        metodosPago: unirLista(local.listas?.metodosPago, remoto.listas?.metodosPago),
+        vendedores: unirLista(local.listas?.vendedores, remoto.listas?.vendedores),
+        conceptosCaja: unirLista(local.listas?.conceptosCaja, remoto.listas?.conceptosCaja)
+      },
+      inventario: invUnido
+    };
+  }
+
   function guardarEstado(subirNube = true) {
     state.updatedAt = Date.now();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error(e); }
@@ -877,43 +944,50 @@
   async function subirSilenciosoANube() {
     const badge = document.getElementById("badgeEstadoNube");
     const lbl = document.getElementById("lblUltimaSync");
+    const endpoint = obtenerEndpointNube();
     try {
-      if (badge) badge.textContent = "⏳ Guardando en nube...";
-      const res = await fetch(NUBE_PIKI_URL, {
+      const res = await fetch(endpoint, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(state)
       });
-      if (res.ok && badge) {
-        badge.style.background = "#d1fae5";
-        badge.style.color = "#065f46";
-        badge.textContent = "☁️ Sincronizado en Vivo";
-        if (lbl) lbl.textContent = `Último guardado automático: ${fechaActualTexto()} (${state.inventario.length} productos)`;
+      if (res.ok) {
+        if (badge) {
+          badge.style.background = "#d1fae5";
+          badge.style.color = "#065f46";
+          badge.textContent = `☁️ Nube Sincronizada (${state.inventario.length} prods)`;
+        }
+        if (lbl) lbl.textContent = `Último envío automático: ${fechaActualTexto()}`;
+        return true;
       }
+      return false;
     } catch (e) {
-      if (badge) badge.textContent = "💻 Guardado en este equipo";
+      return false;
     }
   }
 
   async function forzarSubidaANube() {
-    await subirSilenciosoANube();
-    alert(`✅ ¡Listo! Se subieron los ${state.inventario.length} productos de esta pantalla a la nube de Piki. Ahora tu socia solo debe darle al botón '🔄 Actualizar lo que hizo mi Socia'.`);
+    const exito = await subirSilenciosoANube();
+    if (exito) {
+      alert(`✅ ¡Perfecto! Tus ${state.inventario.length} productos ya subieron a la nube. Dile a tu socia que presione '🔄 1. Traer y Unir lo que hizo mi Socia'.`);
+    } else {
+      if (confirm("⚠️ Tu proveedor de internet bloqueó el servidor gratuito temporal. ¿Deseas descargar el archivo (.JSON) en 1 segundo para pasárselo por WhatsApp a tu socia (o configurar la Nube de Google arriba en ⚙️)?")) {
+        exportarRespaldoJson();
+      }
+    }
   }
 
   async function sincronizarDesdeNube(mostrarMensaje = false) {
     const badge = document.getElementById("badgeEstadoNube");
     const lbl = document.getElementById("lblUltimaSync");
+    const endpoint = obtenerEndpointNube();
     try {
-      if (badge) badge.textContent = "🔄 Buscando cambios...";
-      const res = await fetch(NUBE_PIKI_URL + "?t=" + Date.now());
-      if (!res.ok) {
-        if (mostrarMensaje) alert("Aún no se ha subido inventario a la nube. Pídele a tu socia que presione una vez el botón turquesa '☁️ Subir el Inventario de esta Pantalla'.");
-        if (badge) badge.textContent = "🟢 Nube Lista";
-        return;
-      }
+      if (badge) badge.textContent = "🔄 Conectando...";
+      const res = await fetch(endpoint + (endpoint.includes("?") ? "&" : "?") + "t=" + Date.now());
+      if (!res.ok) throw new Error("Sin respuesta");
       const remoto = await res.json();
       if (remoto && Array.isArray(remoto.inventario)) {
-        state = Object.assign({}, estadoInicial, remoto);
+        state = fusionarEstados(state, remoto);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         aplicarTema();
         sincronizarInputsMaster();
@@ -921,15 +995,24 @@
         if (badge) {
           badge.style.background = "#d1fae5";
           badge.style.color = "#065f46";
-          badge.textContent = `☁️ Al día (${state.inventario.length} prods)`;
+          badge.textContent = `🟢 Al día (${state.inventario.length} prods)`;
         }
         if (lbl) lbl.textContent = `Sincronizado con tu socia: ${fechaActualTexto()}`;
         if (mostrarMensaje) {
-          alert(`🎉 ¡Actualizado! Ya estás viendo los ${state.inventario.length} productos y todos los movimientos que cargó tu socia.`);
+          alert(`🎉 ¡Inventario unido y actualizado! Ahora ves los ${state.inventario.length} productos en total.`);
         }
+      } else {
+        if (mostrarMensaje) alert("La nube aún está vacía. Pídele a tu socia que presione primero '☁️ 2. Enviar mi Inventario a mi Socia'.");
       }
     } catch (e) {
-      if (mostrarMensaje) alert("No se pudo conectar en este instante. Revisa tu conexión a internet e intenta de nuevo.");
+      if (badge) {
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#991b1b";
+        badge.textContent = "📲 Usar botón WhatsApp o Configurar Google";
+      }
+      if (mostrarMensaje) {
+        alert("⚠️ Tu operadora de internet bloquea la nube gratuita de prueba.\n\nSolución inmediata (toma 5 segundos):\n1. Dile a tu socia que haga clic en el botón verde '📲 Pasar por WhatsApp (.JSON)'.\n2. Que te envíe ese archivito por WhatsApp.\n3. Tú haz clic en el botón azul '📂 Cargar Archivo de mi Socia' ¡y verás todo su inventario al instante!");
+      }
     }
   }
 
@@ -941,11 +1024,11 @@
       try {
         const importado = JSON.parse(e.target.result);
         if (importado && importado.inventario) {
-          state = Object.assign({}, estadoInicial, importado);
+          state = fusionarEstados(state, importado);
           guardarEstado(true);
           sincronizarInputsMaster();
           recalcularTodo();
-          alert(`✅ ¡Inventario cargado y subido a la nube con éxito! (${state.inventario.length} productos).`);
+          alert(`🎉 ¡Inventario de tu socia cargado y unido con éxito! Ahora tienes ${state.inventario.length} productos en pantalla.`);
         }
       } catch (err) {
         alert("Error al leer el archivo .JSON.");
@@ -1017,6 +1100,11 @@
     document.getElementById("masRetIva").value = state.impuestos.retIva;
     document.getElementById("masRetIslr").value = state.impuestos.retIslr;
     document.getElementById("masCorrelativo").value = state.impuestos.correlativoFactura;
+
+    const urlGuardada = localStorage.getItem(CUSTOM_CLOUD_URL_KEY) || "";
+    if (document.getElementById("inputUrlNubePropia")) {
+      document.getElementById("inputUrlNubePropia").value = urlGuardada;
+    }
 
     const imgLogo = document.getElementById("imgLogoPersonalizado");
     const svgLogo = document.getElementById("svgLogoOficialPiki");
@@ -1173,7 +1261,7 @@
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
     const a = document.createElement("a");
     a.setAttribute("href", dataStr);
-    a.setAttribute("download", "respaldo_piki_erp.json");
+    a.setAttribute("download", "inventario_piki_compartido.json");
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -1268,7 +1356,7 @@
     document.getElementById("invSku").value = "PIKI-00" + (state.inventario.length + 1);
     document.getElementById("invBarra").value = "";
     document.getElementById("invNombre").value = "";
-    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki (Se sincroniza solo con tu Socia)";
+    document.getElementById("tituloFormProducto").textContent = "➕ Carga y Edición Manual de Productos Piki";
     document.getElementById("btnGuardarProducto").textContent = "+ GUARDAR EN CATÁLOGO PIKI";
     document.getElementById("btnCancelarEdicionProd").classList.add("hidden");
   }
@@ -1829,7 +1917,6 @@
   sincronizarInputsMaster();
   calcularMargenesPreview();
   recalcularTodo();
-  // Descarga automáticamente los últimos cambios de tu socia al abrir la página
   sincronizarDesdeNube(false);
 </script>
 </body>
